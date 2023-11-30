@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Html.Partial("Header")
+    <title>Document</title>
+</head>
+
+<body>
+    @* <div style="display:flex">
+        <label>Id</label>
+        <input id="id"/>
+    </div>
+    <div style="display:flex">
+        <label>Guid</label>
+        <input id="guid"/>
+    </div>
+    <div style="display:flex">
+        <label>LoaiNhom</label>
+        <input id="loai-nhom"/>
+    </div>
+    <div style="display:flex">
+        <label>TenNhomVatTu</label>
+        <input id="ten-nhom-vat-tu"/>
+    </div>
+    <div style="display:flex">
+        <label>TrangThai</label>
+        <input id="trang-thai"/>
+    </div>
+    <div style="display:flex">
+        <label>IsDeleted</label>
+        <input id="is-deleted"/>
+    </div>
+    <div style="display:flex">
+        <label>CreatedBy</label>
+        <input id="created-by"/>
+    </div>
+    <div style="display:flex">
+        <label>CreatedTime</label>
+        <input id="created-time"/>
+    </div>
+    <div style="display:flex">
+        <label>UpdatedBy</label>
+        <input id="updated-by"/>
+    </div>
+    <div style="display:flex">
+        <label>UpdatedTime</label>
+        <input id="updated-time"/>
+    </div>
+    <button onclick="submit()">CREATE</button> *@
+    @* <p>Index Student</p> *@
+    <table id="data-table">
+        <thead>
+            <th>Id</th>
+            <th>Guid</th>
+            <th>LoaiNhom</th>
+            <th>TenNhomVatTu</th>
+            <th>TrangThai</th>
+            <th>IsDeleted</th>
+            <th>CreatedBy</th>
+            <th>CreatedTime</th>
+            <th>UpdatedBy</th>
+            <th>UpdatedTime</th>
+        </thead>
+        <tbody>
+            @foreach(var item in ViewBag.result){
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Guid</td>
+                    <td>@item.LoaiNhom</td>
+                    <td>@item.TenNhomVatTu</td>
+                    <td>@item.TrangThai</td>
+                    <td>@item.IsDeleted</td>
+                    <td>@item.CreatedBy</td>
+                    <td>@item.CreatedTime</td>
+                    <td>@item.UpdatedBy</td>
+                    <td>@item.UpdatedTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+@* <script src="~/js/realtimeData.js" asp-append-version="true"></script> *@
+<script>
+    console.log($("#data-table").html(""))
+    let a = @Html.Raw(Json.Serialize(ViewBag.result));
+    console.log(a);
+</script>
+</html>

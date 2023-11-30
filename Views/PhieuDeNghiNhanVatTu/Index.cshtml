@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        #table-data tr th{
+            background-color: #34b7eb;
+            color: black;
+            font-size: 16px;
+        }
+        #table-data tr td{
+            color: black
+        }
+        #table-tong-hop tr th{
+            background-color: #75aac1;
+            color: black;
+            font-size: 16px;
+        }
+        #table-tong-hop tr td{
+            color: black
+        }
+        #table-tong-hop tr{
+            border-left: 1px solid #cbcbcb;
+        }
+    </style>
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        @* <div class="page-breadcrumb">
+            <div class="row">
+                <div class="col-12 d-flex no-block align-items-center">
+                    <h4 class="page-title">Tables</h4>
+                    <div class="ms-auto text-end">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Library
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div style="width: 100%; display: flex;" id="container-filter">
+            <input oninput="search(this)" placeholder="Tìm kiếm theo mã phiếu, thời gian lập phiếu, tên bộ phận, diễn giải, người yêu cầu" type="search" id="search" class="form-control"/>
+            <div class="filter" style="display: flex;">
+                <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status">CHƯA DUYỆT X</button>
+                <button onclick="xoaFilter('time-phieu',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-time">24/11/2023 X</button>
+            </div>
+            <button class="btn- btn-primary" style="width: 10%;" data-bs-toggle="modal" data-bs-target="#filter">BỘ LỌC</button>
+        </div>
+        <div style="overflow: scroll; display: flex;">
+            <table class="table" id="table-data" data-show-columns="true" style="width:50%">
+                <thead>
+                    <th style="display:none" class="check-box-column"></th>
+                    <th>STT</th>
+                    <th>MÃ PHIẾU</th>
+                    <th style="min-width: 250px;">TÊN BỘ PHẬN</th>
+                    <th>DIỄN GIẢI</th>
+                    <th style="min-width: 200px;">NGƯỜI YÊU CẦU</th>
+                </thead>
+                <tbody style="overflow: scroll">
+                    
+                </tbody>
+            </table>
+        </div>
+
+        @* <ul id="pagination" class="pagination"></ul> *@
+    </div>
+    <!-- Filter -->
+    <div class="modal fade" id="filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="static`BackdropLabel">BỘ LỌC</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table style="margin: 0 auto;" id="table-filter">
+                <tbody>
+                    <tr>
+                        <td style="font-weight: bold;">THỜI GIAN: </td>
+                        <td>
+                            <input style="width: 100%;" type="date" id="time-phieu" class="form-control"/>
+                        </td>
+                    </tr>
+                   
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ĐÓNG</button>
+            <button type="button" class="btn btn-primary" onclick="filter()">XÁC NHẬN</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    
+    @Html.Partial("layout/Footer")
+    <script>
+        //BO LOC
+        //dung de search tai o search
+        function search(param){
+            let timeOut;
+            clearTimeout(timeOut);
+            timeOut = setTimeout(()=>{
+                filter();
+            },900);  
+        }
+        let filterVal = {time:"", status:"", search:""};
+        // ham loc
+        let listFilter = [];
+        
+        
+        function filter(){
+            filterVal.time = $("#time-phieu").val()?.split("-").reverse().join("/")||null;
+            filterVal.status = $("#status").val()||null;
+            filterVal.search = $("#search").val()||null;
+            for(let key of Object.keys(filterVal)){
+                if(key!="search" && filterVal[key]){
+                    let str = filterVal[key]+" "+"X";
+                    $(`#show-${key}`).text(str);
+                    $(`#show-${key}`).css("display","");
+                }
+            }
+            
+            let paramFilter = {
+                Search: $("#search").val(),
+                Time: filterVal.time,
+                Status: filterVal.status,
+                ListFilters: listFilter,
+            }
+            
+            //loc
+            $.ajax({
+                url: host + "/api/phieu-nhan-vat-tu/filter",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                method: "POST",
+                data: JSON.stringify(paramFilter)
+            })
+            .done(res=>{
+    
+                let rows = $("#table-data tbody tr");
+                let stt = $("#table-data tbody tr .row-stt")
+                let x = 1;
+                for(let i=0; i<rows.length; i++){
+                    if(res.length==0){
+                        $(rows[i]).css("display","none")
+                    }else{
+                        for(let j=0; j<res.length; j++){
+                            let id = $(rows[i]).attr("id").split("-")[1];
+                            if(res[j]["id"]==id){
+                                $(rows[i]).css("display","");
+                                $(stt[i]).text(x);
+                                x++;
+                                break;
+                            }else if(j==res.length-1){
+                                $(rows[i]).css("display","none")
+                            }
+                        }
+                    }
+                }
+            })
+            @* renderDataTheoFilter();
+            resetStt(); *@
+            $(`#filter .btn-close`).click();
+        }
+        function xoaFilter(value, element){
+            filterVal[value] = "";
+            $(element).css("display","none");
+            //reset input loc
+            $(`#${value}`).val("");
+            filter();
+            resetStt();
+        }
+        function resetStt(){
+            let stt = $("#table-data tbody tr .row-stt");
+            let rows = $("#table-data tbody tr");
+            let t = 1;
+            for(let i=0; i<rows.length; i++){
+                if($(rows[i]).css("display")!="none"){
+                    $(stt[i]).text(t);
+                    t++;
+                }
+            }
+        }
+    </script>
+    <script>
+        {
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get("status");
+        //neu phieu da duyet thi hien bang tong hop 
+        if(status=='false'){
+            $("#table-data").css("width","50%");
+            let tableTongHop = `
+                <table class="table" id="table-tong-hop" data-show-columns="true" style="width: 50%;">
+                    <thead>
+                        <th style="display:none"></th>
+                        <th>STT</th>
+                        <th>MÃ PHIẾU</th>
+                        <th style="min-width: 250px;">TÊN BỘ PHẬN</th>
+                        <th>DIỄN GIẢI</th>
+                        <th style="min-width: 200px;">NGƯỜI YÊU CẦU</th>
+                    </thead>
+                    <tbody style="overflow: scroll">
+                        
+                    </tbody>
+                </table>`
+            $(tableTongHop).insertAfter("#table-data");
+        }else if(status=='true'){
+             $("#table-data").css("width","100%");
+        }
+
+        if(localStorage.getItem("listData")!=null){
+            localStorage.removeItem("listData");
+        }
+
+        function clickRow(index, param, table){
+            if(status=='false'){
+                let checkBox = $(`#${table} .check-box-export-${index}`);
+                $(checkBox).click();
+                if($(checkBox).is(":checked")){
+                    $(param).css("background","#76b5c5");   
+                }else{
+                    $(param).css("background","none");   
+                }
+            }
+        }
+        if(status=='false'){
+            $("#table-data").on("contextmenu", function(event) {
+                event.preventDefault();
+                tongHop(true);
+            });
+            $("#table-tong-hop").on("contextmenu", function(event) {
+                event.preventDefault();
+                tongHop(false);
+            });
+        };
+        function lapDanhSachTongHop(){
+                   
+        }
+        
+        //dua cac phieu da chon vao danh sach tong hop hoac huy tong hop tai bang tong hop
+
+        //TONG HOP ========================================================================================================================================
+        function tongHop(isTongHop){
+            let table1 = isTongHop ? 'table-data' : 'table-tong-hop';
+            let table2  = isTongHop ? 'table-tong-hop' : 'table-data';
+            Swal.fire({
+                title: isTongHop ? 'Bạn muốn đưa toàn bộ phiếu đã chọn vào danh sách chuẩn bị tổng hợp?': 'Bạn muốn hủy hoặc tổng hợp toàn bộ phiếu đã chọn?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: isTongHop ? 'Xác nhận' : "Hủy tổng hợp",
+                denyButtonText: isTongHop ? "Hủy" : "Tổng hợp",
+                }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    let listCheckbox = $(`#${table1} .check-box-export`);
+                    let listMaPhieu = $(`#${table1} .ma-phieu`);
+                    let listPhieuDatetime = $(`#${table1} .phieu-datetime`);
+                    @* let listMaPhieuSelected = []; *@
+                    let rowSelected = "";
+    
+                    for(let i=0; i<listCheckbox.length; i++){
+                        if($(listCheckbox[i]).is(":checked")){
+                           
+                            let rowClassSelected = $(listCheckbox[i]).parent().parent().attr("class").split(" ")[0];
+                            let maPhieu = $(`#${table1} .${rowClassSelected} .ma-phieu`).text().trim();
+                            let phieuDateTime = $(`#${table1} .${rowClassSelected} .phieu-datetime`).text().trim();
+                            let tenBp = $(`#${table1} .${rowClassSelected} .ten-bp`).text().trim();
+                            let dienGiai = $(`#${table1} .${rowClassSelected} .show-more`).text().trim();
+                            let tenNguoiDeNghi = $(`#${table1} .${rowClassSelected} .nguoi-de-nghi`).text().trim();
+                            let dateDeNghi = $(`#${table1} .${rowClassSelected} .date-de-nghi`).text().trim();
+                            let decodeYear = decodeDatetime(dateDeNghi);
+                            let indexRowSelected = rowClassSelected;
+                    
+                            //xoa row tai table da duyet
+                            $(`#${table1} .${rowClassSelected}`).remove();
+
+                            //them row vao table tong hop
+                            let row = `
+                            <tr onclick="clickRow('${indexRowSelected}', this, '${table2}')" class="${indexRowSelected}" id="rows-${i}">
+                                <td class="decode-year" style="display:none">${decodeYear}</td>
+                                <td style="display:none"><input class="check-box-export-${indexRowSelected} check-box-export" type="checkbox"/></td>
+                                <td class="row-stt"></td>
+                                <td>
+                                    <a href="#" onclick="directChitiet('${maPhieu}', '${decodeYear}', '${tenNguoiDeNghi}', ${i}, this, '${convertDateTimeDB(dateDeNghi)}')">
+                                        <span class="ma-phieu">${maPhieu}</span> <span class="phieu-datetime">${phieuDateTime}</span>
+                                    </a>
+                                </td>
+                                <td class=ten-bp>${tenBp}</td>
+                                <td style="min-width: 105px">
+                                    <span onclick="showMore('${indexRowSelected}', this, '${table2}')" class="show-brief-${indexRowSelected} show-brief">
+                                        <a href="#">...</a>
+                                    </span>
+                                    <span>
+                                        <a class="show-more-${indexRowSelected} show-more" style="display:none" onclick="showMoreOrDirect('${indexRowSelected}', this, '${maPhieu}', '${decodeYear}', '${tenNguoiDeNghi}','${dateDeNghi}', '${table2}')" href="#">
+                                            ${dienGiai}
+                                        </a>
+                                    </span>
+                                </td>
+                                <td class="nguoi-de-nghi">${tenNguoiDeNghi}</td>
+                            </tr>`;
+                            rowSelected+=row;
+                        }
+                    }
+                    
+                    if(rowSelected !== ""){
+                        $(`#${table2} tbody`).append(rowSelected);
+                        let rowStt = $(`#${table2} .row-stt`);
+                        for(let i=0; i<rowStt.length; i++){
+                            $(rowStt[i]).text(i+1);
+                        }
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Alert',
+                            text: 'Chưa có phiếu nào được chọn!'
+                        })
+                    }
+                    
+                }else if(result.isDenied){
+                    let listData = []
+                    if(!isTongHop){
+                        let listVatTu = $(`#table-tong-hop .check-box-export`);
+                        if(listVatTu.length == 0 ){
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Alert',
+                                text: 'Không có phiếu nào để tổng hợp!'
+                            })
+                        }else{
+                            let listId = {"listId":[]};
+                            for(let i=0; i<listVatTu.length; i++){
+                                let classRow = $($(listVatTu)[i]).parent().parent().attr("class").split(" ")[0];
+                                @* let maPhieu = $(`#table-tong-hop .${classRow} .ma-phieu`).text().trim();
+                                let codeYear = $(`#table-tong-hop .${classRow} .decode-year`).text().trim(); *@
+                                let id = classRow;
+                                listId.listId.push(id);
+                            }
+                            localStorage.setItem("listPhieuTongHop", JSON.stringify(listId));
+                            window.location.href = "/phieu-de-nghi/tong-hop"
+                        }
+                    }
+                }
+            })
+        }
+
+
+        function showMore(index, param, table){
+            $(param).css("display","none");
+            $(`#${table} .show-more-${index}`).css("display","block");
+        }
+
+        function showMoreOrDirect(index, param, maPhieu, codeYear, nguoiDeNghi, dateDeNghi, table){
+            let idRowSelected = $(param).parent().parent().parent().attr("id");
+            let dienGiai = $(`#table-data #${idRowSelected} .row-dien-giai`).text().trim();
+            let tenBp = $(`#table-data #${idRowSelected} .ten-bp`).text().trim();
+            Swal.fire({
+                title: 'Bạn muốn thu gọn hay chuyển hướng?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Thu gọn',
+                denyButtonText: `Chuyển hướng`,
+                }).then((result) => {
+                    if(result.isConfirmed){
+                        $(param).css("display","none");
+                        $(`#${table} .show-brief-${index}`).css("display","block");
+                    }else if(result.isDenied){
+                        let deNghiDate = convertDateTimeDB(dateDeNghi);
+                        let obj = {
+                            code: maPhieu,
+                            codeYear: codeYear,
+                            nguoiDeNghi: nguoiDeNghi,
+                            tenBp:tenBp,
+                            dienGiai: dienGiai,
+                        }
+                        localStorage.setItem("info", JSON.stringify(obj));
+                        window.location.href = `phieu-de-nghi/chi-tiet?code=${maPhieu}&codeYear=${codeYear}&nguoiDeNghi=${nguoiDeNghi}&dateDeNghi=${deNghiDate}`;
+                    }
+                });
+        }
+
+        function directChitiet(code, codeYear, nguoiDeNghi, index, param, dateDeNghi){
+            let idRowSelected = $(param).parent().parent().attr("id");
+            let dienGiai = $(`#table-data #${idRowSelected} .row-dien-giai`).text().trim();
+            let info = {
+                dienGiai,
+                tenBp: $($(".row-ten-bp")[index-1]).text(),
+                code, 
+                codeYear, 
+                nguoiDeNghi,
+            }
+            localStorage.setItem("info",JSON.stringify(info));
+            window.location.href = `phieu-de-nghi/chi-tiet?code=${code}&codeYear=${codeYear}&nguoiDeNghi=${nguoiDeNghi}&dateDeNghi=${dateDeNghi}`;
+        }
+        
+        //INIT DATA =============================================================================================================================
+
+        $.ajax({
+            url: host+ `/api/phieu-nhan-vat-tu?isDeleted=${status}`,
+            method: "GET"
+        })
+        .done(res=>{
+            let listPhieuNVTFast = res.listPhieuNVTFast?res.listPhieuNVTFast.reverse():null;
+            let listPhieuNVTDaDuyet = res.listPhieuNVTDaDuyet;
+            function importTable(listPhieuNVTDaDuyet, listPhieuNVTFast){
+                let rows = "";
+                $("#table-data tbody").html("");
+                if(!listPhieuNVTFast){
+                    //view da duyet
+                    $("#container-filter").css("display","none")
+                    for(let i=0; i<listPhieuNVTDaDuyet.length; i++){
+                        let decodeYear = decodeDatetime(listPhieuNVTDaDuyet[i]["dateDeNghi"]);
+                        let x = i;
+                        row = `
+                        <tr onclick="clickRow('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="${listPhieuNVTDaDuyet[i]["id"]}" id="rows-${i}">
+                            <td style="display:none"><input class="check-box-export-${listPhieuNVTDaDuyet[i]["id"]} check-box-export" type="checkbox"/></td>
+                            <td class=row-stt>${++x}</td>
+                            <td>
+                                <a href="#" onclick="directChitiet('${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTDaDuyet[i]["dateDeNghi"])}')">
+                                    <span class="ma-phieu">${listPhieuNVTDaDuyet[i]["maPhieu"]}</span> <span class="phieu-datetime">${convertDateTime(listPhieuNVTDaDuyet[i]["dateDeNghi"])}</span>
+                                </a>
+                            </td>
+                            <td class=ten-bp>${listPhieuNVTDaDuyet[i]["tenBoPhan"]}</td>
+                            <td style="min-width: 105px">
+                                <span onclick="showMore('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="show-brief-${listPhieuNVTDaDuyet[i]["id"]} show-brief">
+                                    <a href="#">...</a>
+                                </span>
+                                <span>
+                                    <a class="show-more-${listPhieuNVTDaDuyet[i]["id"]} show-more" style="display:none" onclick="showMoreOrDirect('${listPhieuNVTDaDuyet[i]["id"]}', this, '${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}','${listPhieuNVTDaDuyet[i]["dateDeNghi"]}','table-data', )" href="#">
+                                        ${listPhieuNVTDaDuyet[i]["dienGiai"]}
+                                    </a>
+                                    <div class="date-de-nghi" style="display:none">${listPhieuNVTDaDuyet[i]["dateDeNghi"]}</div>
+                                </span>
+                            </td>
+                            <td class="nguoi-de-nghi">${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}</td>
+                        </tr>`;
+                        rows+=row;
+                    };
+                }else{
+                    //view chua duyet
+                    let x = 0;
+                    for(let i=0; i<listPhieuNVTFast.length; i++){
+                        if(listPhieuNVTDaDuyet.length > 0){
+                            for(let j=0; j<listPhieuNVTDaDuyet.length; j++){
+                                if(listPhieuNVTFast[i]["stt_rec"]==listPhieuNVTDaDuyet[j]["maPhieu"]){
+                                    break;
+                                }else if(j==listPhieuNVTDaDuyet.length-1){
+                                    let decodeYear = decodeDatetime(listPhieuNVTFast[i]["ngay_ct"]);
+                                    row = `
+                                    <tr onclick="clickRow('${x}', this , 'table-data')" id="rows-${x+1}">
+                                        <td class="row-time-ma-phieu" style="display:none">${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}</td>
+                                        <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
+                                        <td class="row-stt">${++x}</td>
+                                        <td>
+                                            <a class="ma-phieu" href="#" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')">
+                                                ${listPhieuNVTFast[i]["stt_rec"]} ${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}
+                                            </a>
+                                        </td>                                        
+                                        <td class="row-ten-bp">${listPhieuNVTFast[i]["ten_bp"]}</td>
+                                        <td class="row-dien-giai">
+                                            <a class="dien-giai" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')" href="#">
+                                                ${listPhieuNVTFast[i]["dien_giai"]}
+                                            </a>
+                                        </td>
+                                        <td class="nguoi-yeu-cau">${listPhieuNVTFast[i]["u1"]}</td>
+                                    </tr>`;
+                                    rows+=row;
+                                }
+                            }
+                        }else{
+                            let decodeYear = decodeDatetime(listPhieuNVTFast[i]["ngay_ct"]);
+                            row = `
+                            <tr onclick="clickRow('${x}', this, 'table-data')" id="rows-${x+1}">
+                                <td class="row-time-ma-phieu" style="display:none">${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}</td>
+                                <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
+                                <td class="row-stt">${++x}</td>
+                                <td>
+                                    <a class="ma-phieu" href="#" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')">
+                                        ${listPhieuNVTFast[i]["stt_rec"]} ${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}
+                                    </a>
+                                </td>
+                                <td class="row-ten-bp">${listPhieuNVTFast[i]["ten_bp"]}</td>
+                                <td class="row-dien-giai">
+                                    <a class="dien-giai" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x},this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')" href="#">
+                                        ${listPhieuNVTFast[i]["dien_giai"]}
+                                    </a>
+                                </td>
+                                <td class="nguoi-yeu-cau">${listPhieuNVTFast[i]["u1"]}</td>
+                            </tr>`;
+                            rows+=row;
+                        }
+                    }
+                }
+            
+                $("#table-data tbody").html(rows);
+
+                let rowss = $("#table-data tbody tr");
+                for(let i=0; i<rowss.length; i++){
+                    let filter = {};
+                    filter.Id = i+1;
+                    filter.Time = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
+                    filter.MaPhieu = $($("#table-data tbody tr .ma-phieu")[i]).text().trim().split(" ")[0];
+                    filter.TenBoPhan = $($("#table-data tbody tr .row-ten-bp")[i]).text().trim();
+                    filter.DienGiai = $($("#table-data tbody tr .dien-giai")[i]).text().trim();
+                    filter.NguoiYeuCau = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
+                    filter.Status = $($("#table-data tbody tr .row-status")[i]).text().trim();
+
+                    listFilter.push(filter);
+                }
+            }
+            
+            let count = res.length;
+            let totalPage = 0;
+            if(count%10 != 0){
+                totalPages = Math.floor(count/10)+1;
+            }else{
+                totalPages = Math.floor(count/10);
+            }  
+            importTable(listPhieuNVTDaDuyet, listPhieuNVTFast);
+            // Cấu hình twbsPagination
+            @* var options = {
+                totalPages: totalPages, // Tổng số trang
+                visiblePages: 5, // Số trang hiển thị trên thanh phân trang
+                onPageClick: function (event, page) {
+                    let pag = +(page-1)*10;
+                    let listResult = res.slice(pag, pag+10);
+                    console.log(listResult);
+                    importTable(listResult);
+            }
+            }
+            // Áp dụng twbsPagination vào phần tử phân trang
+            $('#pagination').twbsPagination(options); *@
+        })
+        .fail(err=>{
+            console.log(err);
+        });
+        }
+    </script>
+</body>
+<html>

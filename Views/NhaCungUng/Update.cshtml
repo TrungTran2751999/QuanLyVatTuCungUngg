@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+  @Html.Partial("layout/TopBar")
+  @Html.Partial("layout/LeftBar")
+  <style>
+    #table-data tr th {
+      background-color: #34b7eb;
+      color: black;
+      font-size: 16px;
+    }
+
+    #table-data tr td {
+      color: black
+    }
+  </style>
+  <div class="page-wrapper" style="overflow: scroll;">
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    @* <div class="page-breadcrumb">
+    <div class="row">
+    <div class="col-12 d-flex no-block align-items-center">
+    <h4 class="page-title">Tables</h4>
+    <div class="ms-auto text-end">
+    <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+    Library
+    </li>
+    </ol>
+    </nav>
+    </div>
+    </div>
+    </div>
+    </div> *@
+    <div class="container-fluid">
+      <!-- ============================================================== -->
+      <!-- Start Page Content -->
+      <!-- ============================================================== -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <form class="form-horizontal">
+              <div class="card-body">
+                <h4 class="card-title">Cập nhật thông tin nhà cung ứng</h4>
+                <div class="form-group row">
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-ten-nha-cung-ung">Tên nhà cung ứng</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="@ViewBag.result.Name" type="text" class="form-control" id="input-ten-nha-cung-ung" placeholder="Tên nhà cung ứng" oninput="changeData('ten-nha-cung-ung')" />
+                      <div class="invalid-feedback" id="err-ten-nha-cung-ung">
+                        
+                      </div>
+                    </div>
+                  </div>
+                  <div class="border-top">
+                    <div class="card-body">
+                      <button id="update-nha-cung-ung" type="button" class="btn btn-primary" onclick="update()">
+                        Cập nhật
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+      {
+        const spinner = `<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>`
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        let formatError = {
+          "required": [
+            { "ten-nha-cung-ung": "Tên nhà cung ứng không được để trống" }
+          ]
+        }
+        let listError = {
+          "ten-nha-cung-ung": "TenNhaCungUng"
+        }
+        function update() {
+          let tenNhaCungUng = $("#input-ten-nha-cung-ung").val().trim();
+          let updateBy = 0;
+          let createdBy = 0;
+          let datas = {
+            "UpdateBy": updateBy,
+            "Name": tenNhaCungUng,
+            "Id": id
+          };
+          if(getErrorFromFe()) return;
+          $("#update-nha-cung-ung").attr("disabled",true)
+          $("#update-nha-cung-ung").html(spinner);
+          $.ajax({
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            url: host + `/api/nha-cung-ung`,
+            method: "PUT",
+            data: JSON.stringify(datas)
+          })
+            .done(res => {
+              Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Cập nhật nhà cung ứng thành công',
+                showConfirmButton: false,
+                timer: 1500
+              });
+              $("#update-nha-cung-ung").attr("disabled",false)
+              $("#update-nha-cung-ung").html("Cập nhật");
+            })
+            .fail(err => {
+                getErrorFromDB(err.responseText, listError)
+                $("#update-nha-cung-ung").attr("disabled",false)
+                $("#update-nha-cung-ung").html("Cập nhật");
+            })
+        }
+        //hien thi loi tai front-end
+        function getErrorFromFe(){
+          let isErr = false;
+          for(let key of Object.keys(formatError)){
+            if(key=="required"){
+              for(let i=0; i<formatError[key].length; i++){
+                  let val = $(`#input-${Object.keys(formatError[key][i])[0]}`).val().trim();
+                  if(val==""){
+                    $(`#input-${Object.keys(formatError[key][i])[0]}`).addClass("is-invalid");
+                    $(`#label-${Object.keys(formatError[key][i])[0]}`).addClass("text-danger");
+                    $(`#err-${Object.keys(formatError[key][i])[0]}`).text(`${Object.values(formatError[key][i])[0]}`);
+                    isErr = true;
+                  }
+              }
+            }
+          }
+          return isErr;
+        }
+        //hien thi loi duoc tra tu back-end
+        function getErrorFromDB(err, listError){
+          let keyErr = err.split(":")[0];
+          let contentErr = err.split(":")[1];
+          for(let key of Object.keys(listError)){
+            if(keyErr==listError[key]){
+              $(`#err-${key}`).text(contentErr);
+              $(`#input-${key}`).addClass("is-invalid");
+              $(`#label-${key}`).addClass("text-danger");
+              break;
+            }
+          }
+        }
+        
+        //remove hien thi loi khi cap nhat lai du lieu
+        function changeData(param){
+          $(`#err-${param}`).text("");
+          $(`#input-${param}`).removeClass("is-invalid");
+          $(`#label-${param}`).removeClass("text-danger");
+        }
+      }
+    </script>
+</body>
+<html>

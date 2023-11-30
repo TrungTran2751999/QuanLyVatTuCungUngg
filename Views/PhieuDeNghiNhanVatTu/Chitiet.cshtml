@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        #table-data tr th{
+            background-color: #34b7eb;
+            color: black;
+            font-size: 16px;
+        }
+        #table-data tr td{
+            color: black
+        }
+    </style>
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        <div style="overflow: scroll;">
+            <div style="float: right;"><button onclick="exportExcel()" class="btn btn-primary" style="background-color: green; border-color: green;">XUẤT FILE EXCEL</button></div>
+            <table class="table" id="table-data" data-show-columns="true">
+                <thead>
+                    <th>STT</th>
+                    <th>TÊN VẬT TƯ</th>
+                    <th>MÃ VT, HH</th>
+                    <th>ĐVT</th>
+                    <th>XIN NHẬN</th>
+                    <th>SỐ LƯỢNG PHÊ DUYỆT</th>
+                    <th>ĐƠN GIÁ</th>
+                    <th>THÀNH TIỀN</th>
+                    <th>GHI CHÚ</th>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-primary" style="width: 100%;" onclick="pheDuyet()">XÁC NHẬN</button>
+        <form action="/api/phieu-nhan-vat-tu/excel" method="POST" style="display: none;">
+            <input id="data-excel" name="data">
+            <input type="submit" id="submit-excel">
+        </form>
+        @* <ul id="pagination" class="pagination"></ul> *@
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+        {
+        toastr.options = {
+            positionClass: 'toast-top-center',
+            timeOut: 2000,
+            closeButton: true,
+            progressBar: true
+        };
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Get the value of a specific parameter
+        const maPhieu = urlParams.get('code');
+        const codeYear = urlParams.get('codeYear');
+        const nguoiDeNghi = urlParams.get('nguoiDeNghi');
+        const dateDeNghi = urlParams.get('dateDeNghi');
+        let info = JSON.parse(localStorage.getItem("info"));
+        if(localStorage.getItem("info")!=null){
+            if(!(info.code == maPhieu && info.codeYear == codeYear && info.nguoiDeNghi == nguoiDeNghi)){
+                alert("Truy cập trang không đúng cách. Vui lòng quay lại")
+                window.location.href = "/";
+            }
+        }
+
+        const listVatTu = [];
+        let data = {
+            "MaPhieu":maPhieu,
+            "TenNguoiDeNghi": nguoiDeNghi || 'null',
+            "CodeYear": codeYear,
+            "CreatedAt":0,
+            "UpdateAt":0,
+            "TenBoPhan":info.tenBp,
+            "DienGiai": info.dienGiai,
+            "DateDeNghi":dateDeNghi,
+            "ListVatTu":[]
+        };
+        let listData = [];
+        let listExcelParam = [];
+        $.ajax({
+            url: host+ `/api/phieu-nhan-vat-tu/chi-tiet?code=${maPhieu}&codeYear=${codeYear}`,
+            method: "GET"
+        })
+        .done(res=>{
+            function importTable(param){
+                let rows = "";
+                $("#table-data tbody").html("");
+                for(let i=0; i<param.length; i++){
+                    let x = i;
+                    row = `
+                    <tr>
+                        <td>${++x}</td>
+                        <td class="row-ten-vat-tu">${param[i]["ten_vt"]}</td>
+                        <td class="row-ma-vt">${param[i]["ma_vt"]}</td>
+                        <td class="row-dvt">${param[i]["dvt"]}</td>
+                        <td class="row-so-luong">${param[i]["so_luong"]}</td>
+                        <td>
+                            <input oninput="onChangeSoLuongPheDuyet(this,${param[i]["so_luong"]})" type="number" class="form-control input-so-luong-phe-duyet" placeholder="Số lượng" value='${+param[i]["so_luong"]}'/>
+                            <div class="show-error"></div>
+                        </td>
+                        <td class="row-don-gia">${param[i]["gia"]!=0?param[i]["gia"]:""}</td>
+                        <td class="row-thanh-tien">${param[i]["gia"]!=0?param[i]["gia"]*param[i]["so_luong"]:""}</td>
+                        <td class="row-ghi-chu">${param[i]["gc_td1"]}</td>
+                    </tr>`;
+                    rows+=row;
+                };
+                $("#table-data tbody").html(rows);
+            }
+
+            importTable(res);
+            for(let i=0; i<res.length; i++){
+                for(let j=0; j<res.length; j++){
+                    if(i!=j && res[i]["ma_vt"].trim()==res[j]["ma_vt"]){
+                        res[i]["so_luong"] += res[j]["so_luong"];
+                    }else if(j==res.length-1){
+                        listData.push(res[i])
+                    }
+                }
+            }
+        })
+        .fail(err=>{
+            console.log(err);
+        });
+        //thuc hien export file excel
+        function exportExcel(){
+            let rows = $("#table-data tbody tr");
+            let listData = [];
+            for(let i=0; i<rows.length; i++){
+                let objExcel = {
+                    TenVatTu: $($("#table-data tbody tr .row-ten-vat-tu")[i]).text(),
+                    MaVatTu: $($("#table-data tbody tr .row-ma-vt")[i]).text(),
+                    DonViTinh: $($("#table-data tbody tr .row-dvt")[i]).text(),
+                    SoLuongPheDuyet: $($("#table-data tbody tr .input-so-luong-phe-duyet")[i]).val(),
+                    DonGia: $($("#table-data tbody tr .row-don-gia")[i]).text(),
+                    ThanhTien: $($("#table-data tbody tr .row-thanh-tien")[i]).text(),
+                    GhiChu: $($("#table-data tbody tr .row-ghi-chu")[i]).text(),
+                };
+                listData.push(objExcel);
+            }
+            let str = JSON.stringify(listData);
+            $("#data-excel").val(str);
+            $("#submit-excel").click();
+        }
+        // thuc hien chuc nang phe duyet
+        function pheDuyet(){
+            Swal.fire({
+                title: 'Alert?',
+                text: `Bạn chắc chắn phiếu có mã ${maPhieu} do ${nguoiDeNghi} đề nghị đã được phê duyệt!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy'
+                }).then((result) => {
+                
+
+                if (result.isConfirmed) {
+                    data.ListVatTu = [];
+                    let listSoLuongPheDuyet = $(".input-so-luong-phe-duyet");
+                    let listMaVatTu = $(".row-ma-vt");
+                    let listChuThich = $(".row-ghi-chu");
+                    let listData = [];
+                    for(let i=0; i<listMaVatTu.length; i++){
+                        let vatTu = {
+                            "MaVatTu": $(listMaVatTu[i]).text(),
+                            "SoLuongPheDuyet": +$(listSoLuongPheDuyet[i]).val(),
+                            "GhiChu": $(listChuThich[i]).text()
+                        }
+                        listData.push(vatTu);
+                    }
+
+                    @* for(let i=0; i<listData.length; i++){
+                        for(let j=0; j<listData.length; j++){
+                            if(listData[i]["MaVatTu"] == listData[j]["MaVatTu"] && i!=j){
+                                listData[i]["SoLuongPheDuyet"]+=listData[j]["SoLuongPheDuyet"];
+                                listData.splice(j,1);
+                                j=0;
+                            }
+                        }
+                    } *@
+                    data.ListVatTu = listData;
+                    console.log(listData)
+                    savePheDuyet();
+                }
+            })
+        }
+        //click phai chuot nham muc dich phe duyet
+        $("#table-data").on("contextmenu",(e)=>{
+            e.preventDefault();
+            pheDuyet();
+        });
+
+        //luu tru toan bo phieu da duoc phe duyet vao database
+        function savePheDuyet(){
+            $.ajax({
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                url: host + "/api/phieu-nhan-vat-tu-da-duyet",
+                method: "POST",
+                data: JSON.stringify(data)
+            })
+            .done(res=>{
+                @* toastr.success('Phê duyệt thành công', '', {timeOut: 2000}); *@
+                Swal.fire(
+                    'Thành công!',
+                    `Phê duyệt phiếu ${maPhieu} thành công`,
+                    'success'
+                )
+            })
+            .fail(err=>{
+                let message = "";
+                switch (err.status){
+                    case 400:{
+                        message = err.responseText;
+                        break;
+                    }
+                    case 500:{
+                        message = `Lỗi server`;
+                        break;
+                    }
+                    default:{
+                        message = `Phê duyệt phiếu ${maPhieu} thất bại. Vui lòng xem lại`;
+                        break;
+                    }
+                }
+                Swal.fire(
+                    'Lỗi!',
+                    `${message}`,
+                    'error'
+                )
+            })
+        }
+        //onchange validate so luong phe duyet
+        function onChangeSoLuongPheDuyet(param, soLuongXin){
+            let val = $(param).val();
+            if(val > soLuongXin || val < 0){
+                $(param).val(soLuongXin);
+            }
+        }
+        }
+    </script>
+</body>
+<html>

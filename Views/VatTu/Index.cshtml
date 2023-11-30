@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        #table-data tr th{
+            background-color: #34b7eb;
+            color: black;
+            font-size: 16px;
+        }
+        #table-data tr td{
+            color: black
+        }
+    </style>
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        @* <div class="page-breadcrumb">
+            <div class="row">
+                <div class="col-12 d-flex no-block align-items-center">
+                    <h4 class="page-title">Tables</h4>
+                    <div class="ms-auto text-end">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Library
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div style="overflow: scroll;">
+            <div><input oninput="search(this)" type="search" id="input-search" class="form-control" placeholder="Tìm kiếm vật tư theo tên, theo mã vật tư" style="width: 100%;"/></div>
+            <table class="table" id="table-data" data-show-columns="true">
+                <thead>
+                    <th>STT</th>
+                    <th>TÊN VẬT TƯ</th>
+                    <th>MÃ VẬT TƯ</th>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+        <ul id="pagination" class="pagination"></ul>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+        {
+            let count = @ViewBag.count;
+
+            function saveTenVatTu(tenVatTu, id){
+                localStorage.setItem("tenVatTu",tenVatTu);
+                window.location.href = `/vat-tu/nha-cung-ung?idVatTu=${id}`
+            }
+            // Áp dụng twbsPagination vào phần tử phân trang
+
+            @* $('#pagination').twbsPagination(options); *@
+            let deboucing;
+            
+            function search(param){
+                let hint = $(param).val();
+                clearTimeout(deboucing);
+                deboucing = setTimeout(()=>{
+                    $.ajax({
+                        url: host + `${hint ? `/api/vat-tu/search?hint=${hint}&index=0` : `/api/vat-tu?index=0`}`
+                    })
+                    .done(res=>{
+                        hint ? res = res.listVatTu : "";
+                        let rows = "";
+                            for(let i=0; i<res.length; i++){
+                                let j = i;
+                                let row = `
+                                    <tr>
+                                        <td>${++j}</td>
+                                        <td><a href="#" onclick="saveTenVatTu('${res[i].tenVatTu}', ${res[i].id})">${res[i].tenVatTu}</a></td>
+                                        <td>${res[i].maVatTu}</td>
+                                    </tr>`;
+                                rows+=row;
+                            }
+                        $("#table-data tbody").html(rows);
+                        if(hint){
+                            $('#pagination').css("display","none");
+                        }else{
+                            $('#pagination').css("display","flex");
+                            $($(".page-item")[0]).click();
+                        }
+                    })
+                    .fail(err=>{
+                        console.log(err);
+                    });
+                },500)
+            }
+
+            function importTotalPage(count, hint){
+                totalPages = (count/10) % 2==0 ? Math.floor(count/10) : Math.floor(count/10)+1;
+                // Cấu hình twbsPagination
+                var options = {
+                    totalPages: totalPages, // Tổng số trang
+                    visiblePages: 5, // Số trang hiển thị trên thanh phân trang
+                    onPageClick: function (event, page) {
+                        let paginate = +(page - 1)*10; 
+                        $.ajax({
+                            url: host + `${hint ? `/api/vat-tu/search?index=${paginate}&hint=${hint}`:`/api/vat-tu?index=${paginate}`}`
+                        })
+                        .done(res=>{
+                            let rows = "";
+                            for(let i=0; i<res.length; i++){
+                                let j = i;
+                                let row = `
+                                    <tr>
+                                        <td>${++j}</td>
+                                        <td><a href="#" onclick="saveTenVatTu('${res[i].tenVatTu}', ${res[i].id})">${res[i].tenVatTu}</a></td>
+                                        <td>${res[i].maVatTu}</td>
+                                    </tr>`;
+                                rows+=row;
+                            }
+                            $("#table-data tbody").html(rows);
+                        })
+                        .fail(err => {
+                            console.log(err);
+                        })
+                    }
+                };
+                $('#pagination').twbsPagination(options);
+            }
+
+            importTotalPage(count, undefined)
+
+        }
+    </script>
+</body>
+<html>

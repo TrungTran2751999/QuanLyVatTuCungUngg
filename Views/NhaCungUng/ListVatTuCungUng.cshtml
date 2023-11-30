@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        #table-data tr th{
+            background-color: #34b7eb;
+            color: black;
+            font-size: 16px;
+        }
+        #table-data tr td{
+            color: black
+        }
+    </style>
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        @* <div class="page-breadcrumb">
+            <div class="row">
+                <div class="col-12 d-flex no-block align-items-center">
+                    <h4 class="page-title">Tables</h4>
+                    <div class="ms-auto text-end">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Library
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div style="overflow: scroll;">
+            <table class="table" id="table-data" data-show-columns="true">
+                <thead>
+                    <th>STT</th>
+                    <th>TÊN VẬT TƯ</th>
+                    <th>MÃ VẬT TƯ</th>
+                </thead>
+                <tbody>
+                    @{int id=1;}
+                    @foreach(var item in ViewBag.listNhaCungUng){
+                        <tr>
+                            <td>@id</td>
+                            <td>@item.VatTu.TenVatTu</td>
+                            <td>@item.VatTu.MaVatTu</td>
+                        </tr>
+                        id++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+        
+    </script>
+</body>
+<html>

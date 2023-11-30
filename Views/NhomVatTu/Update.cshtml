@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Html.Partial("Header")
+    <title>Document</title>
+</head>
+
+<body>
+    <div style="display:flex">
+        <label>Name</label>
+        <input id="name" value="@ViewBag.result.IdSystem"/>
+    </div>
+    <div style="display:flex">
+        <label>Age</label>
+        <input id="age" value="@ViewBag.result.Age"/>
+    </div>
+    <div style="display:flex">
+        <label>Email</label>
+        <input id="email" value="@ViewBag.result.Email"/>
+    </div>
+    <div style="display:flex">
+        <label>PhoneNumber</label>
+        <input id="phonenumber" value="@ViewBag.result.PhoneNumber"/>
+    </div>
+    <div style="display:flex">
+        <label>StudentCode</label>
+        <input id="studentcode" value="@ViewBag.result.StudentCode"/>
+    </div>
+    <div style="display:flex">
+        <label>StudentGrade</label>
+        <input id="studentgrade" value="@ViewBag.result.StudentGrade"/>
+    </div>
+    <button onclick="submit()">UPDATE</button>
+</body>
+<script>
+    const queryString = window.location.search;
+    let idSystem = new URLSearchParams(queryString).get("id");
+    function submit() {
+        let name = $("#name").val();
+        let age = $("#age").val();
+        let email = $("#email").val();
+        let phoneNumber = $("#phonenumber").val();
+        let studentCode = $("#studentcode").val();
+        let studentGrade = $("#studentgrade").val();
+        let obj = {IdSystem:+idSystem, Name: name, Age: age, PhoneNumber: phoneNumber, studentCode: studentCode, studentGrade: studentGrade, Email: email}
+        console.log(obj);
+        $.ajax({
+            "url": "http://localhost:5221/api/student",
+            "method": "PUT",
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            data: JSON.stringify(obj)
+        }).done(function () {
+            location.reload();
+        }).fail(function(){
+            alert("SAICMNR")
+        })
+
+    }
+</script>
+
+</html>

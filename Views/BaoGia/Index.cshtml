@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        #table-data tr th{
+            background-color: #34b7eb;
+            color: black;
+            font-size: 16px;
+        }
+        #table-data tr td{
+            color: black
+        }
+    </style>
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        @* <div class="page-breadcrumb">
+            <div class="row">
+                <div class="col-12 d-flex no-block align-items-center">
+                    <h4 class="page-title">Tables</h4>
+                    <div class="ms-auto text-end">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Library
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div style="overflow: scroll;">
+            <table class="table" id="table-data" data-show-columns="true">
+                <thead>
+                    <th>STT</th>
+                    <th>MÃ BÁO GIÁ</th>
+                    <th style="min-width: 250px;">NGƯỜI TẠO</th>
+                    <th style="min-width: 250px;">NGÀY TẠO</th>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+        function directChitiet(code, codeYear, nguoiDeNghi, index, param, dateDeNghi){
+            let idRowSelected = $(param).parent().parent().attr("id");
+            let dienGiai = $(`#table-data #${idRowSelected} .row-dien-giai`).text().trim();
+            let info = {
+                dienGiai,
+                tenBp: $($(".row-ten-bp")[index-1]).text(),
+                code, 
+                codeYear, 
+                nguoiDeNghi,
+            }
+            localStorage.setItem("info",JSON.stringify(info));
+            window.location.href = `phieu-de-nghi/chi-tiet?code=${code}&codeYear=${codeYear}&nguoiDeNghi=${nguoiDeNghi}&dateDeNghi=${dateDeNghi}`;
+        }
+        
+        //======INIT DATA==========
+        $.ajax({
+            url: host + "/api/bao-gia?isDeleted=false"
+        })
+        .done(res=>{
+            let rows = ""
+            for(let i=0; i<res.length; i++){
+                let row = `
+                <tr class="${res[i].id}">
+                    <td>${i+1}</td>
+                    <td><a href="/bao-gia/chi-tiet?id=${res[i].id}">${res[i].maBaoGia}</a></td>
+                    <td data-id="${res[i].userId}">${res[i].userBaoGia}</td>  
+                    <td>${convertDateTime(res[i].createdTime, "true")}</td>     
+                </tr>`;
+                rows+=row;
+            }
+            $("#table-data tbody").append(rows);
+        })
+        .fail(err=>{
+            console.log(err);
+        })
+    </script>
+</body>
+<html>

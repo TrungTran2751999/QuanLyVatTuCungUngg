@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        #table-data tr th{
+            background-color: #34b7eb;
+            color: black;
+            font-size: 16px;
+        }
+        #table-data tr td{
+            color: black
+        }
+        #container-table{
+            overflow: scroll;
+        }
+        #table-filter tbody tr td{
+            padding: 10px 5px;
+        }
+    </style>
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        @* <div class="page-breadcrumb">
+            <div class="row">
+                <div class="col-12 d-flex no-block align-items-center">
+                    <h4 class="page-title">Tables</h4>
+                    <div class="ms-auto text-end">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Library
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div id="container-filter" style="width: 100%; display: flex;">
+            <input oninput="search(this)" placeholder="Tìm kiếm theo mã phiếu, thời gian lập phiếu, tên bộ phận, diễn giải, người yêu cầu" type="search" id="search" class="form-control"/>
+            <div class="filter" style="display: flex;">
+                <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status">CHƯA DUYỆT X</button>
+                <button onclick="xoaFilter('time-phieu',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-time">24/11/2023 X</button>
+            </div>
+            <button class="btn btn-primary" style="width: 10%;" data-bs-toggle="modal" data-bs-target="#filter">BỘ LỌC</button>
+        </div>
+        <div>
+            <table class="table" id="table-data" data-show-columns="true">
+                <thead>
+                    <th>STT</th>
+                    <th>MÃ PHIẾU</th>
+                    <th style="min-width: 250px;">TÊN BỘ PHẬN</th>
+                    <th>DIỄN GIẢI</th>
+                    <th style="min-width: 200px;">NGƯỜI YÊU CẦU</th>
+                    <th style="min-width: 200px;">TRẠNG THÁI</th>
+                </thead>
+                <tbody>
+                    @{var id=1;}
+                        @foreach(var phieuFast in ViewBag.listPhieuFast){
+                            @if(ViewBag.listPhieuDaDuyet.Count == 0){
+                                <tr search="true" show="true" id="rows-@id">
+                                    <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
+                                    <td class="row-stt">@id</td>
+                                    <td>
+                                        <a class="ma-phieu" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', '@id', this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</a>
+                                    </td>
+                                    <td class="row-ten-bp">@phieuFast.ten_bp</td>
+                                    <td class="row-dien-giai">
+                                        <a class="dien-giai" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', @id, this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.dien_giai</a>
+                                    </td>
+                                    <td class="nguoi-yeu-cau">@phieuFast.u1</td>
+                                    <td class="row-status">CHƯA DUYỆT</td>
+                                </tr>
+                                id++;
+                            }else{
+                                var isDupplicate = false;
+                                foreach(var phieuDaDuyet in ViewBag.listPhieuDaDuyet){
+                                    @if(phieuFast.stt_rec==phieuDaDuyet.MaPhieu){
+                                        isDupplicate = true;
+                                        <tr search="true" show="true" id="rows-@id" style="background-color: #80808036;">
+                                            <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
+                                            <td class="row-stt">@id</td>
+                                            <td>
+                                                <span class="ma-phieu">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</span>
+                                            </td>
+                                            <td class="row-ten-bp">@phieuFast.ten_bp</td>
+                                            <td class="row-dien-giai">
+                                                <span class="dien-giai">@phieuFast.dien_giai</span>
+                                            </td>
+                                            <td class="nguoi-yeu-cau">@phieuFast.u1</td>
+                                            <td class="row-status" style="color: green">ĐÃ DUYỆT</td>
+                                        </tr>
+                                        id++;
+                                    }
+                                }
+                                @if(isDupplicate==false){
+                                    <tr id="rows-@id" show="true" search="true">
+                                        <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
+                                        <td class="row-stt">@id</td>
+                                        <td>
+                                            <a class="ma-phieu" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', '@id', this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</a>
+                                        </td>
+                                        <td class="row-ten-bp">@phieuFast.ten_bp</td>
+                                        <td class="row-dien-giai">
+                                            <a class="dien-giai" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', '@id', this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.dien_giai</a>
+                                        </td>
+                                        <td class="nguoi-yeu-cau">@phieuFast.u1</td>
+                                        <td class="row-status" style="color: red">CHƯA DUYỆT</td>
+                                    </tr>
+                                    id++;
+                                }
+                            }
+                            
+                        }
+                </tbody>
+            </table>
+        </div>
+        <!-- Filter -->
+        <div class="modal fade" id="filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="static`BackdropLabel">BỘ LỌC</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table style="margin: 0 auto;" id="table-filter">
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: bold;">THỜI GIAN: </td>
+                            <td>
+                                <input style="width: 100%;" type="date" id="time-phieu" class="form-control"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">TRẠNG THÁI: </td>
+                            <td>
+                                <select style="width: 100%;" class="form-select" id="status">
+                                    <option value="" disabled selected>---CHỌN TRẠNG THÁI---</option>
+                                    <option value="ĐÃ DUYỆT">ĐÃ DUYỆT</option>
+                                    <option value="CHƯA DUYỆT">CHƯA DUYỆT</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ĐÓNG</button>
+                <button type="button" class="btn btn-primary" onclick="filter()">XÁC NHẬN</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+        function directChitiet(code, codeYear, nguoiDeNghi, index, param, dateDeNghi){
+            let idRowSelected = $(param).parent().parent().attr("id");
+            let dienGiai = $(`#table-data #${idRowSelected} .row-dien-giai`).text().trim();
+            let info = {
+                dienGiai,
+                tenBp: $($(".row-ten-bp")[index-1]).text(),
+                code, 
+                codeYear, 
+                nguoiDeNghi,
+            }
+            localStorage.setItem("info",JSON.stringify(info));
+            window.location.href = `phieu-de-nghi/chi-tiet?code=${code}&codeYear=${codeYear}&nguoiDeNghi=${nguoiDeNghi}&dateDeNghi=${dateDeNghi}`;
+        }
+        //dung de search tai o search
+        let isTimeOut = false;
+        function search(param){
+            if(isTimeOut==false){
+                isTimeOut = true;
+                setTimeout(()=>{
+                    filter();
+                    isTimeOut = false;
+                },900);  
+            }
+        }
+        
+        let filterVal = {time:"", status:"", search:""};
+        // ham loc
+        let listFilter = [];
+        let rows = $("#table-data tbody tr");
+        for(let i=0; i<rows.length; i++){
+            let filter = {};
+            filter.Id = i+1;
+            filter.Time = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
+            filter.MaPhieu = $($("#table-data tbody tr .ma-phieu")[i]).text().trim().split(" ")[0];
+            filter.TenBoPhan = $($("#table-data tbody tr .row-ten-bp")[i]).text().trim();
+            filter.DienGiai = $($("#table-data tbody tr .dien-giai")[i]).text().trim();
+            filter.NguoiYeuCau = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
+            filter.Status = $($("#table-data tbody tr .row-status")[i]).text().trim();
+
+            listFilter.push(filter);
+        }
+        
+        function filter(){
+            filterVal.time = $("#time-phieu").val()?.split("-").reverse().join("/")||null;
+            filterVal.status = $("#status").val()||null;
+            filterVal.search = $("#search").val()?.trim()||null;
+            for(let key of Object.keys(filterVal)){
+                if(key!="search" && filterVal[key]){
+                    let str = filterVal[key]+" "+"X";
+                    $(`#show-${key}`).text(str);
+                    $(`#show-${key}`).css("display","");
+                }
+            }
+            
+            let paramFilter = {
+                Search: $("#search").val(),
+                Time: filterVal.time,
+                Status: filterVal.status,
+                ListFilters: listFilter,
+            }
+            console.log(paramFilter)
+            //loc
+            $.ajax({
+                url: host + "/api/phieu-nhan-vat-tu/filter",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                method: "POST",
+                data: JSON.stringify(paramFilter)
+            })
+            .done(res=>{
+                console.log(res);
+                let rows = $("#table-data tbody tr");
+                let stt = $("#table-data tbody tr .row-stt")
+                let x = 1;
+                for(let i=0; i<rows.length; i++){
+                    if(res.length==0){
+                        $(rows[i]).css("display","none")
+                    }else{
+                        for(let j=0; j<res.length; j++){
+                            let id = $(rows[i]).attr("id").split("-")[1];
+                            if(res[j]["id"]==id){
+                                $(rows[i]).css("display","");
+                                $(stt[i]).text(x);
+                                x++;
+                                break;
+                            }else if(j==res.length-1){
+                                $(rows[i]).css("display","none")
+                            }
+                        }
+                    }
+                }
+            })
+            $(`#filter .btn-close`).click();
+        }
+        function xoaFilter(value, element){
+            filterVal[value] = "";
+            $(element).css("display","none");
+            //reset input loc
+            $(`#${value}`).val("");
+            filter();
+            resetStt();
+        }
+        //render data theo truong loc
+        let arrFilter = [];
+        function renderDataTheoFilter(){
+            let rowTime = $("#table-data tbody tr .row-time-ma-phieu");
+            let rowStatus = $("#table-data tbody tr .row-status");
+            let rows = $("#table-data tbody tr");
+
+            arrFilter = [];
+
+            for(let key of Object.keys(filterVal)){
+                if(filterVal[key]){
+                    arrFilter.push(key);
+                }
+            }
+
+            resetRow();
+            for(let i=0; i<rows.length; i++){
+                let obj = {
+                    time : $(rowTime[i]).text().split("-").reverse().join("/"),
+                    status : $(rowStatus[i]).text()
+                }
+                if($(rows[i]).attr("search")=="true"){
+                    for(let j=0; j<arrFilter.length; j++){
+                        let keyFilter = arrFilter[j];
+                        if($(rows[i]).css("display")!="none"){
+                            if(obj[keyFilter] && filterVal[keyFilter] == obj[keyFilter]){
+                                $(rows[i]).css("display","");
+                                $(rows[i]).attr("show","true");
+                            }else{
+                                $(rows[i]).css("display","none");
+                                $(rows[i]).attr("show","false");
+                            }
+                        }
+                    }
+                }
+            }
+            //hien het toan bo thong tin khi khong co gia tri can loc
+            if(arrFilter.length==0){
+                for(let i=0; i<rows.length; i++){
+                    $(rows[i]).css("display","");
+                    $(rows[i]).attr("show","true");
+                }
+            }
+            
+        }
+        function resetRow(){
+            let rows = $("#table-data tbody tr");
+            for(let i=0; i<rows.length; i++){
+                $(rows[i]).css("display","");
+            }
+            
+        }
+        function resetStt(){
+            let stt = $("#table-data tbody tr .row-stt");
+            let rows = $("#table-data tbody tr");
+            let t = 1;
+            for(let i=0; i<rows.length; i++){
+                if($(rows[i]).css("display")!="none"){
+                    $(stt[i]).text(t);
+                    t++;
+                }
+            }
+        }
+    </script>
+</body>
+<html>

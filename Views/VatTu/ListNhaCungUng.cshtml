@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        #table-data tr th{
+            background-color: #34b7eb;
+            color: black;
+            font-size: 16px;
+        }
+        #table-data tr td{
+            color: black
+        }
+        .show-error{
+            color: red
+        }
+    </style>
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        @* <div class="page-breadcrumb">
+            <div class="row">
+                <div class="col-12 d-flex no-block align-items-center">
+                    <h4 class="page-title">Tables</h4>
+                    <div class="ms-auto text-end">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Library
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div style="overflow: scroll;">
+            <div style="background-color: #34b7eb; width:100%; text-align: center; font-size: 12pt;" id="title-table-data" ></div>
+            <table class="table" id="table-data" data-show-columns="true">
+                <thead>
+                    <th>STT</th>
+                    <th style="min-width: 700px;">NHÀ CUNG ỨNG</th>
+                    <th>ACTION</th>
+                </thead>
+                <tbody>
+                    @{int id = 1;}
+                    @foreach(var item in ViewBag.listVatTu){
+                        <tr>
+                            <td class="check-data" style="display: none;">true</td>
+                            <td class="stt-row">@id</td>
+                            <td>
+                                <select data-id="@item.Id" class="select2 form-select shadow-none updated" style="width: 100%; height: 36px" onchange="handleSelectOption(this, @id)">
+                                    <option value="" disabled>------</option>
+                                    @foreach(var nhaCungUng in ViewBag.listNhaCungUng){
+                                        <option value="@nhaCungUng.Id" selected="@(nhaCungUng.Id==item.NhaCungUngId)">
+                                            @nhaCungUng.TenNhaCungUng
+                                        </option>
+                                    }
+                                </select>
+                                <div id="show-error-@id" class="show-error"></div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="removeNhaCungUng(this,@item.Id,'@item.TenNhaCungUng')">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        id++;
+                    }
+                    <tr>
+                        <td class="stt-row"class="stt-row">@id</td>
+                        <td>
+                            <select class="select2 form-select shadow-none" style="width: 100%; height: 36px" onchange="handleSelectOption(this, @id)">
+                                <option value="" disabled selected>------</option>
+                                @foreach(var item in ViewBag.listNhaCungUng){
+                                    <option value="@item.Id">@item.TenNhaCungUng</option>
+                                }
+                            </select>
+                            <div id="show-error-@id" class="show-error"></div>
+                        </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+        {
+            toastr.options = {
+                positionClass: 'toast-top-center',
+                timeOut: 2000,
+                closeButton: true,
+                progressBar: true
+            };
+            @* let listNhaCungUng = @Html.Raw(Json.Serialize(ViewBag.listNhaCungUng));
+            let listVatTu = @Html.Raw(Json.Serialize(ViewBag.listVatTu)); *@
+            const urlParams = new URLSearchParams(window.location.search);
+            const idVatTu = urlParams.get('idVatTu');
+            let tenVatTu = "";
+            if(localStorage.getItem("tenVatTu")!=null){
+                tenVatTu = localStorage.getItem("tenVatTu");
+                $("#title-table-data").text(`Danh sách nhà cung ứng vật tư ${tenVatTu}`)
+            }else{
+                window.location.href = "/vat-tu";
+            }
+
+            //xu ly khi nguoi dung click vao droplist
+
+            function handleSelectOption(param, index){                
+                let idNhaCungUng = $(param).find(":selected").val().trim();
+                let tenNhaCungUng = $(param).find(":selected").text().trim();
+                let id = $(param).data("id");
+                let datas = {
+                    Id: id,
+                    NhaCungUng: tenNhaCungUng,
+                    NhaCungUngId: idNhaCungUng,
+                    MaVatTu: idVatTu,
+                    TenVatTu: tenVatTu,
+                    CreatedBy: 0,
+                    UpdateBy: 0
+                };
+                
+                //validate truoc khi call api
+                let validate = validateSelectOption(idNhaCungUng, index);
+                if(validate){
+                    toastr.error(`${validate}`, '', {timeOut: 5000});
+                    //show error
+                    $(`#show-error-${index}`).text("Nhà cung ứng này đã tồn tại");
+                    return 
+                }
+
+                //call api
+                id !== undefined ? updateNhaCungUng(datas,index, param, tenNhaCungUng) : addNhaCungUng(datas,index, param, tenNhaCungUng);
+
+                let lengthRow = $("#table-data tbody tr").length;
+                
+                if(index == lengthRow){
+                    let listOption = 
+                    `<tr>
+                        <td class="check-data" style="display: none;"></td>
+                        <td class="stt-row">${lengthRow+1}</td>
+                        <td>
+                            <select class="select2 form-select shadow-none" style="width: 100%; height: 36px" onchange="handleSelectOption(this, ${lengthRow+1})">
+                                <option value="" disabled selected>------</option>
+                                @foreach(var item in ViewBag.listNhaCungUng){
+                                    <option value="@item.Id">@item.TenNhaCungUng</option>
+                                }
+                            </select>
+                            <div id="show-error-${index+1}" class="show-error"></div>
+                        </td>
+                    </tr>`;
+                    if($(param).find(":selected").val()!==""){
+                        $("#table-data tbody").append(listOption);
+                    }
+                }
+                lengthRow = $("#table-data tbody tr").length;
+                $("#table-data tbody tr .select2").select2();
+            }
+
+            //add nha cung ung tuong ung voi vat tu vao database
+
+            function addNhaCungUng(datas, index, element, tenNhaCungUng){
+                $.ajax({
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    url: host + "/api/vat-tu-nha-cung-ung",
+                    method: "POST",
+                    data: JSON.stringify(datas)
+                })
+                .done(res=>{
+                    let id = $(element).data("id");
+                    if(!id){
+                        $(element).attr("data-id",`${res.idMax}`);
+                        $($(element).parent()).after(`
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeNhaCungUng(this, ${res.idMax}, '${tenNhaCungUng}')">
+                                <i class='fa fa-trash'></i>
+                            </button>
+                        </td>`);
+                    }
+                    $(element).select2();
+                    toastr.success('Bổ sung nhà cung ứng thành công', '', {timeOut: 2000});
+                    $(`#show-error-${index}`).text("");
+                })
+                .fail((error)=>{
+                    toastr.error(`${error.responseText?.split(":")[1]}`, '', {timeOut: 5000})
+                })
+            }
+
+            //update nha cung ung vat tu vao database
+            function updateNhaCungUng(datas, index, param, tenNhaCungUng){
+                $.ajax({
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    url: host + "/api/vat-tu-nha-cung-ung",
+                    method: "PUT",
+                    data: JSON.stringify(datas)
+                })
+                .done((res)=>{
+                    $(param).attr("data-id",res.idMax);
+                    toastr.success('Cập nhật nhà cung ứng thành công');
+                    $(`#show-error-${index}`).text("");
+                })
+                .fail((error)=>{
+                    console.log(error);
+                    toastr.error(`${error.responseText?.split(":")[2]}`, '', {timeOut: 5000})
+                })
+            }
+            //remove nha cung ung khoi quan ly vat tu
+            function removeNhaCungUng(param, id, nhaCungUng){
+                let tenVatTu = $("#title-table-data").text();
+                Swal.fire({
+                    title: 'ALERT?',
+                    text: `Bạn có chắc chắn muốn xóa ${nhaCungUng} khỏi ${tenVatTu}`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Xác nhận',
+                    cancelButtonText: 'Hủy bỏ'
+                })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: host + `/api/vat-tu-nha-cung-ung?id=${id}`,
+                            method: "DELETE"
+                        })
+                        .done(()=>{
+                            toastr.success(`Xóa nhà cung ứng ${nhaCungUng} thành công`);
+                            $(param).parent().parent().remove();
+                            let listDropList = $("#table-data tbody select");
+                            for(let i=0; i<listDropList.length; i++){
+                                $(listDropList[i]).attr("onchange",`handleSelectOption(this, ${i+1})`);
+                                $($(".stt-row")[i]).text(i+1);
+                            }
+                            $(".select2").select2();
+                        })
+                        .fail((error)=>{
+                            toastr.error(`Nhà cung ứng ${nhaCungUng} cùng với ${tenVatTu} không tồn tại hoặc đã bị xóa`);
+                        })
+                    }
+                });
+            }
+            //bay loi khi chon select option
+            function validateSelectOption(value, index){
+                let listDropList = $("#table-data tbody select");
+                for(let i=0; i<listDropList.length; i++){
+                    let compareVal = $(listDropList[i]).find(":selected").val();
+                    let compareText = $(listDropList[i]).find(":selected").text();
+                    if(value==compareVal && i!==index-1){
+                        return `Nhà cung ứng ${compareText} đang cung ứng ${tenVatTu}`;
+                    }
+                }
+                for(let i=0; i<listDropList.length; i++){
+                    $(listDropList[i]).attr("onchange",`handleSelectOption(this, ${i+1})`);
+                }
+                $(".select2").select2();
+                return false;
+            }
+            
+        }
+        $(".select2").select2();
+    </script>
+</body>
+<html>
