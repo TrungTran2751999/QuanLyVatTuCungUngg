@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuCungUng\\QuanLyVatTuV2\\app.csproj": {}
+    "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuV2\\app.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuCungUng\\QuanLyVatTuV2\\app.csproj": {
+    "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuV2\\app.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuCungUng\\QuanLyVatTuV2\\app.csproj",
+        "projectUniqueName": "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuV2\\app.csproj",
         "projectName": "app",
-        "projectPath": "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuCungUng\\QuanLyVatTuV2\\app.csproj",
+        "projectPath": "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuV2\\app.csproj",
         "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuCungUng\\QuanLyVatTuV2\\obj\\",
+        "outputPath": "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuV2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config"

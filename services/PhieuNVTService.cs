@@ -142,8 +142,8 @@ public class PhieuNVTService : IPhieuNVTService
     
     public async Task<List<VatTuNhaCungUngResultTongHop>> TongHopPhieu(List<Guid> listId)
     {
-        List<VatTuNhaCungUngResultTongHop> listPhieuNhanVatTu = new();
-            var listResultTH = await 
+            List<VatTuNhaCungUngResultTongHop> listPhieuNhanVatTu = new();
+            var listResult = await 
                             (from PhieuDeNghiNhanVatTuChiTietDaDuyet in dbContext1.PhieuDeNghiNhanVatTuChiTietDaDuyet
                                join PhieuDeNghi in dbContext1.PhieuDeNghiNhanVatTuDaDuyet 
                                on PhieuDeNghiNhanVatTuChiTietDaDuyet.PhieuId equals PhieuDeNghi.Id 
@@ -170,7 +170,8 @@ public class PhieuNVTService : IPhieuNVTService
                                                               .Select(x=>x.NhaCungUngId)
                                                               .ToList()
                                }).ToListAsync();
-            listPhieuNhanVatTu = listResultTH;
+
+            listPhieuNhanVatTu = listResult;
         return listPhieuNhanVatTu;
     }
     public List<Filter> Filter(FilterParam filter)

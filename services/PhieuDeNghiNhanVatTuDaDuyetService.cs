@@ -43,7 +43,6 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
                 var listVatTu = phieuDeNghiPheDuyet.ListVatTu;
                 List<PhieuDeNghiNhanVatTuChiTietDaDuyet> listPhieuChiTiet = new();
 
-                
 
                 // add phieu de nghi phe duyet vao table
                 await dbContext.PhieuDeNghiNhanVatTuDaDuyet.AddAsync(phieuDeNghiPheDuyet.ToModel());
