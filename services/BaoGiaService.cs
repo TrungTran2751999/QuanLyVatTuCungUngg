@@ -180,6 +180,7 @@ public class BaoGiaService : IBaogiaService
             return memoryStream.ToArray();
         }
     }
+    //export ra file excel
     private async Task<MemoryStream> ExportBaoGiaToExcel(List<VatTuInBaoGia> listVatTu){
          using(var excelPackage = new EXCEL.ExcelPackage()){
             EXCEL.ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("Sheet1");
