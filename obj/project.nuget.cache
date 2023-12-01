@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "FkwVrR7Q9ZhFReIyPl4KgiSIr8k0qPR3Qnm9Eb7syyBuPb9bNrLV/46qHrI+iRseYclzEH1IYUu/oLXqFY7dSA==",
+  "dgSpecHash": "e2NJp1XhEaaYnd3k5v9x5qJsFYfz74gUAOc0hSv1OAt+vxd8GlvTuVvL95gd3DOVdVUR6QyPoFNEwFlcHpl0Ow==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuCungUng\\QuanLyVatTuV2\\app.csproj",
+  "projectFilePath": "C:\\Users\\ADMIN\\Desktop\\QuanLyVatTuV2\\app.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ADMIN\\.nuget\\packages\\bouncycastle.cryptography\\2.2.1\\bouncycastle.cryptography.2.2.1.nupkg.sha512",
     "C:\\Users\\ADMIN\\.nuget\\packages\\documentformat.openxml\\3.0.0\\documentformat.openxml.3.0.0.nupkg.sha512",

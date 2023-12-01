@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContextUsers>(options =>
 builder.Services.AddDbContext<ApplicationDbContextPhieuNVT>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("connectStringPhieuNhanVatTu")));
 
+
 // builder.Services.AddDbContext<ApplicationDbContextMySQl>(options =>
 //     options.builder.Configuration.GetConnectionString("connectStringMySql")));
 builder.Services.AddSignalR();
