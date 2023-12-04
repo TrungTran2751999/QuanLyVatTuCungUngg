@@ -11,6 +11,8 @@ public class PhieuDeNghiNhanVatTuChiTietDaDuyet{
     public Guid PhieuId{get;set;}
     [ForeignKey("PhieuId")]
     public PhieuDeNghiNhanVatTuDaDuyet? PhieuDeNghi{get;set;}
+    [Column("MaPhieu")]
+    public string?  MaPhieu{get;set;}
     [Column("MaVatTu")]
     public string?  MaVatTu{get;set;}
     [Column("SoLuong")]

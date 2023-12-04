@@ -131,7 +131,9 @@ public class BaoGiaService : IBaogiaService
                     //add du lieu vao BaoGia_ChiTiet_NhacungUng
                     await dbContext.BaoGiaChitietNhaCung.AddRangeAsync(listBaoGiaChiTietNhaCungUng);
                     
-                    
+                    for(int j=0; j<listBaoGiaChiTietNhaCungUng.Count; j++){
+                        
+                    }
                     dbContext.SaveChanges();
                 }
                 

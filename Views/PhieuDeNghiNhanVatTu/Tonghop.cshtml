@@ -10,13 +10,35 @@
             background-color: #34b7eb;
             color: black;
             font-size: 16px;
+            text-align: center;
+            padding: 10px 0px;
         }
         .table tr td{
-            color: black
+            color: black;
+            padding: 0;
+            text-align: center;
         }
-        
+        .table tr td input{
+            margin: 0 auto;
+        }
         #table-tong-hop th, #table-tong-hop td{
             border: 1px solid black;
+            padding: 5px;
+        }
+        #table-data .ghi-chu{
+            width: 300px;
+        }
+        #table-data .ten-vat-tu{
+            width: 10px;
+        }
+        #table-data .row-yeu-cau-ki-thuat{
+            width: 10px;
+        }
+        #table-data .so-luong-bao-gia, #table-data .so-luong-bao-gia-input{
+            width: 120px;
+        }
+        #table-data .don-vi-tinh{
+            width: 50px;
         }
     </style>
     <div class="page-wrapper">
@@ -43,18 +65,18 @@
         <div style="width: 100%;" id="container-filter">
             <input oninput="search(this)" class="form-control" type="search" id="search" style="width: 100%;" placeholder="Tìm kiếm theo tên vật tư, ghi chú, yêu cầu kĩ thuật"/>
         </div>
-        <div style="overflow: scroll;" id="container-table-data">
+        <div style="overflow: scroll; width: 100%;" id="container-table-data">
             <table class="table" id="table-data" data-show-columns="true">
                 <thead>
                     <th>STT</th>
                     <th>TÊN VẬT TƯ</th>
                     <th>GHI CHÚ</th>
                     <th>YÊU CẦU KĨ THUẬT</th>
-                    <th>SỐ LƯỢNG YÊU CẦU</th>
-                    <th>SỐ LƯỢNG BÁO GIÁ</th>
+                    <th>SL YÊU CẦU</th>
+                    <th>SL BÁO GIÁ</th>
                     <th>ĐVT</th>
-                    <th>MÃ PHIẾU</th>
-                    <th>XUẤT XỨ</th>
+                    <th style="display:none">MÃ PHIẾU</th>
+                    <th style="display:none">XUẤT XỨ</th>
                     <th>NHÀ CUNG ỨNG</th>
                 </thead>
                 <tbody>
@@ -71,8 +93,8 @@
                     <th>SỐ LƯỢNG YÊU CẦU</th>
                     <th>SỐ LƯỢNG BÁO GIÁ</th>
                     <th>ĐVT</th>
-                    <th>MÃ PHIẾU</th>
-                    <th>XUẤT XỨ</th>
+                    <th style="display:none">MÃ PHIẾU</th>
+                    <th style="display:none">XUẤT XỨ</th>
                     <th>NHÀ CUNG ỨNG</th>
                 </thead>
                 <tbody>
@@ -102,8 +124,8 @@
                 <th>CHÚ THÍCH</th>
                 <th>SỐ LƯỢNG BÁO GIÁ</th>
                 <th>ĐƠN VỊ TÍNH</th>
-                <th>MÃ PHIẾU</th>
-                <th>XUẤT XỨ</th>
+                <th style="display:none">MÃ PHIẾU</th>
+                <th style="display:none">XUẤT XỨ</th>
                 <th>GHI CHÚ</th>
             </thead>
             <tbody>
@@ -223,15 +245,15 @@
                         <td class=row-stt>${++x}</td>
                         <td class="ten-vat-tu"><textarea class="ten-vat-tu-area">${param[i]["tenVatTu"]}</textarea></td>
                         <td class="ghi-chu">${param[i]["ghiChu"]}</td>
-                        <td><textarea class="yeu-cau-ki-thuat"></textarea></td>
+                        <td class="row-yeu-cau-ki-thuat"><textarea class="yeu-cau-ki-thuat"></textarea></td>
                         <td class="so-luong-bao-gia">${param[i]["soluong"]}</td>
-                        <td>
+                        <td class="so-luong-bao-gia-input">
                             <input oninput="onChangeSoLuongLapBaoGia(this, ${param[i]["soluong"]})" class="form-control input-so-luong" type="number" style="width:100px" placeholder="Số lượng" value="${param[i]["soluong"]}"/>
                             <div class="error-so-luong-show" style="color:red; display:none">Số lượng không được để trống</div>
                         </td>
                         <td class="don-vi-tinh">${param[i]["donViTinh"]?.trim()}</td>
-                        <td class="row-ma-phieu">${param[i]["maPhieu"]?.trim()}</td>
-                        <td><textarea class="xuat-xu"></textarea></td>
+                        <td class="row-ma-phieu" style="display:none">${param[i]["maPhieu"]?.trim()}</td>
+                        <td style="display:none"><textarea class="xuat-xu"></textarea></td>
                         <td>
                             <select multiple class="form-select shadow-none droplist-nha-cung-ung" onchange="selectDropList(this)">
                                 ${listNhaCungUng.map(item=>{
@@ -427,8 +449,8 @@
                                 <td>${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
                                 <td>${arrResult[i]["listVatTu"][j]["soLuong"]}</td> 
                                 <td>${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
+                                <td style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
+                                <td style="display:none">${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
                                 <td><textarea class="ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
                             </tr>`;
                         }else{
@@ -439,8 +461,8 @@
                                 <td>${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
                                 <td>${arrResult[i]["listVatTu"][j]["soLuong"]}</td> 
                                 <td>${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
+                                <td style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
+                                <td style="display:none">${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
                                 <td><textarea class="ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
                             </tr>`;
                         }
@@ -481,7 +503,7 @@
                     window.location.href = "/";
                     return;
                 }else{
-                    listPhieu = JSON.parse(listPhieu)?.listId;
+                    listPhieu = JSON.parse(listPhieu)?.listGuid;
                 }
 
                 objResult.ListPhieuPheDuyet = listPhieu;

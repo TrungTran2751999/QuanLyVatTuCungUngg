@@ -61,4 +61,13 @@ public class PhieuNhanVatTuChiTietFast{
     // public string? stt_rec0px{get;set;}
     public string? gc_td1{get;set;}
     public Decimal? gia{get;set;}
+    public PhieuDeNghiNhanVatTuChiTietDaDuyet toPhieuDeNghiChiTiet(){
+        return new PhieuDeNghiNhanVatTuChiTietDaDuyet(){
+            MaVatTu = ma_vt,
+            SoLuong = so_luong,
+            GhiChu = gc_td1,
+            MaPhieu = stt_rec
+        };
+    }
+    
 }

@@ -10,6 +10,7 @@
             background-color: #34b7eb;
             color: black;
             font-size: 16px;
+            
         }
         #table-data tr td{
             color: black
@@ -25,6 +26,7 @@
         #table-tong-hop tr{
             border-left: 1px solid #cbcbcb;
         }
+        
     </style>
     <div class="page-wrapper">
         <!-- ============================================================== -->
@@ -344,13 +346,14 @@
                                 text: 'Không có phiếu nào để tổng hợp!'
                             })
                         }else{
-                            let listId = {"listId":[]};
+                            let listId = {"listId":[], "listGuid":[]};
                             for(let i=0; i<listVatTu.length; i++){
                                 let classRow = $($(listVatTu)[i]).parent().parent().attr("class").split(" ")[0];
-                                @* let maPhieu = $(`#table-tong-hop .${classRow} .ma-phieu`).text().trim();
-                                let codeYear = $(`#table-tong-hop .${classRow} .decode-year`).text().trim(); *@
-                                let id = classRow;
-                                listId.listId.push(id);
+                                let maPhieu = $(`#table-tong-hop .${classRow} .ma-phieu`).text().trim();
+                                let codeYear = $(`#table-tong-hop .${classRow} .decode-year`).text().trim();
+                                let id = classRow.split(" ")[0];
+                                listId.listId.push({maPhieu, codeYear});
+                                listId.listGuid.push(id)
                             }
                             localStorage.setItem("listPhieuTongHop", JSON.stringify(listId));
                             window.location.href = "/phieu-de-nghi/tong-hop"

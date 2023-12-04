@@ -140,18 +140,63 @@ public class PhieuNVTService : IPhieuNVTService
         return listVatTu;
     }
     
-    public async Task<List<VatTuNhaCungUngResultTongHop>> TongHopPhieu(List<Guid> listId)
-    {
-            List<VatTuNhaCungUngResultTongHop> listPhieuNhanVatTu = new();
-            var listResult = await 
-                            (from PhieuDeNghiNhanVatTuChiTietDaDuyet in dbContext1.PhieuDeNghiNhanVatTuChiTietDaDuyet
-                               join PhieuDeNghi in dbContext1.PhieuDeNghiNhanVatTuDaDuyet 
-                               on PhieuDeNghiNhanVatTuChiTietDaDuyet.PhieuId equals PhieuDeNghi.Id 
+    // public async Task<List<VatTuNhaCungUngResultTongHop>> TongHopPhieu(List<Guid> listId)
+    // {
+    //         List<VatTuNhaCungUngResultTongHop> listPhieuNhanVatTu = new();
+    //         var listResult = await 
+    //                         (from PhieuDeNghiNhanVatTuChiTietDaDuyet in dbContext1.PhieuDeNghiNhanVatTuChiTietDaDuyet
+    //                            join PhieuDeNghi in dbContext1.PhieuDeNghiNhanVatTuDaDuyet 
+    //                            on PhieuDeNghiNhanVatTuChiTietDaDuyet.PhieuId equals PhieuDeNghi.Id 
 
-                               join VatTu in dbContext1.VatTu 
+    //                            join VatTu in dbContext1.VatTu 
+    //                            on PhieuDeNghiNhanVatTuChiTietDaDuyet.MaVatTu equals VatTu.MaVatTu 
+
+    //                            where listId.Contains(PhieuDeNghi.Id) orderby PhieuDeNghiNhanVatTuChiTietDaDuyet.Id, PhieuDeNghi.Id
+    //                            select new VatTuNhaCungUngResultTongHop{
+    //                              Id = PhieuDeNghiNhanVatTuChiTietDaDuyet.Id,
+    //                              IdVatTu = VatTu.Id,
+    //                              IdPhieu = PhieuDeNghiNhanVatTuChiTietDaDuyet.PhieuId,
+    //                              MaPhieu = PhieuDeNghi.MaPhieu,
+    //                              CodeYear = PhieuDeNghi.CodeYear,
+    //                              TenNguoiDeNghi = PhieuDeNghi.TenNguoiDeNghi,
+    //                              TenBoPhan = PhieuDeNghi.TenBoPhan,
+    //                              TenVatTu = VatTu.TenVatTu,
+    //                              MaVatTu = PhieuDeNghiNhanVatTuChiTietDaDuyet.MaVatTu,
+    //                              Soluong = PhieuDeNghiNhanVatTuChiTietDaDuyet.SoLuong,
+    //                              DonViTinh = VatTu.DonViTinh,
+    //                              GhiChu = PhieuDeNghiNhanVatTuChiTietDaDuyet.GhiChu,
+    //                              ListNhaCungUngId = dbContext1.VatTuNhaCungUngRelation
+    //                                                           .Where(x => x.MaVatTu == VatTu.Id && x.IsDeleted==false)
+    //                                                           .Select(x=>x.NhaCungUngId)
+    //                                                           .ToList()
+    //                            }).ToListAsync();
+
+    //         listPhieuNhanVatTu = listResult;
+    //     return listPhieuNhanVatTu;
+    // }
+
+    public async Task<List<VatTuNhaCungUngResultTongHop>> TongHopPhieu(List<TongHopParam> listTongHop){
+        var listPhieuChiTiet = new List<PhieuDeNghiNhanVatTuChiTietDaDuyet>();
+        for(int i=0; i<listTongHop.Count; i++){
+            var listPhieuChiTietFast = await GetByMaPhieu(listTongHop[i].maPhieu, listTongHop[i].codeYear);
+            var listPhieuDeNghiNhanVatTu = listPhieuChiTietFast.Select(x=>new PhieuDeNghiNhanVatTuChiTietDaDuyet{
+                                                                            MaVatTu = x.ma_vt,
+                                                                            SoLuong = x.so_luong,
+                                                                            GhiChu = x.gc_td1,
+                                                                            MaPhieu = x.stt_rec
+                                                                      });
+            listPhieuChiTiet.AddRange(listPhieuDeNghiNhanVatTu);
+        }
+
+        List<VatTuNhaCungUngResultTongHop> listPhieuNhanVatTu = new();
+        var listResult = (from PhieuDeNghiNhanVatTuChiTietDaDuyet in listPhieuChiTiet
+        
+                               join PhieuDeNghi in dbContext1.PhieuDeNghiNhanVatTuDaDuyet 
+                               on PhieuDeNghiNhanVatTuChiTietDaDuyet.MaPhieu equals PhieuDeNghi.MaPhieu 
+
+                               join VatTu in dbContext1.VatTu
                                on PhieuDeNghiNhanVatTuChiTietDaDuyet.MaVatTu equals VatTu.MaVatTu 
 
-                               where listId.Contains(PhieuDeNghi.Id) orderby PhieuDeNghiNhanVatTuChiTietDaDuyet.Id, PhieuDeNghi.Id
                                select new VatTuNhaCungUngResultTongHop{
                                  Id = PhieuDeNghiNhanVatTuChiTietDaDuyet.Id,
                                  IdVatTu = VatTu.Id,
@@ -169,11 +214,9 @@ public class PhieuNVTService : IPhieuNVTService
                                                               .Where(x => x.MaVatTu == VatTu.Id && x.IsDeleted==false)
                                                               .Select(x=>x.NhaCungUngId)
                                                               .ToList()
-                               }).ToListAsync();
-
-            listPhieuNhanVatTu = listResult;
-        return listPhieuNhanVatTu;
-    }
+                               }).ToList();
+        return listResult;
+    }   
     public List<Filter> Filter(FilterParam filter)
     {
         List<Filter> listResult = new List<Filter>();

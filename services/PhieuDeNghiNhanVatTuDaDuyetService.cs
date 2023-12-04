@@ -38,7 +38,7 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
             try{
                 //check ma phieu da ton tai trong table
                 var checkExistMaPhieu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.MaPhieu==phieuDeNghiPheDuyet.MaPhieu).FirstOrDefaultAsync();
-                if(checkExistMaPhieu!=null) return "Phiếu này đã được phe duyệt";
+                if(checkExistMaPhieu!=null) return "Phiếu này đã được phê duyệt";
 
                 var listVatTu = phieuDeNghiPheDuyet.ListVatTu;
                 List<PhieuDeNghiNhanVatTuChiTietDaDuyet> listPhieuChiTiet = new();
@@ -54,24 +54,24 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
                                                     x.Id
                                                   }).FirstOrDefaultAsync();
 
-                //check xem co thieu thong tin danh sch vat tu khong
-                listPhieuChiTiet.AddRange(phieuDeNghiPheDuyet.ToListPhieuChiTiet(lastRecordPhieuDeNghi.Id)); 
+                // //check xem co thieu thong tin danh sch vat tu khong
+                // listPhieuChiTiet.AddRange(phieuDeNghiPheDuyet.ToListPhieuChiTiet(lastRecordPhieuDeNghi.Id)); 
 
                 
-                if(listPhieuChiTiet.Count==0) return "Thiếu thông tin danh sách vật tư";
+                // if(listPhieuChiTiet.Count==0) return "Thiếu thông tin danh sách vật tư";
 
                 
-                var listMaVatTu = new List<string>();
-                for(int i=0; i<listVatTu.Count; i++){
-                    listMaVatTu.Add(listVatTu[i].MaVatTu);
-                }
+                // var listMaVatTu = new List<string>();
+                // for(int i=0; i<listVatTu.Count; i++){
+                //     listMaVatTu.Add(listVatTu[i].MaVatTu);
+                // }
 
                 // var countListMaVatTu = await dbContext.VatTu.CountAsync(x=>listMaVatTu.Contains(x.MaVatTu));
 
                 // if(phieuDeNghiPheDuyet.ListVatTu.Count!=countListMaVatTu) return "Tồn tại mã vật tư ngoài danh sách";
 
-                //add phieu de nghi nhan vat tu chi tiet da duyet tuong ung voi id phieu nhan vat tu
-                await dbContext.PhieuDeNghiNhanVatTuChiTietDaDuyet.AddRangeAsync(listPhieuChiTiet);
+                // //add phieu de nghi nhan vat tu chi tiet da duyet tuong ung voi id phieu nhan vat tu
+                // await dbContext.PhieuDeNghiNhanVatTuChiTietDaDuyet.AddRangeAsync(listPhieuChiTiet);
                 dbContext.SaveChanges();
 
                 transaction.Commit();
