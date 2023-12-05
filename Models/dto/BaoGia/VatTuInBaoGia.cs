@@ -5,6 +5,7 @@ using app.Models;
 namespace app.DTOs;
 
 public class VatTuInBaoGia{
+    public long VatTuId{get;set;}
     public string? TenVatTu{set;get;}
     public string? DonViTinh{get;set;}
     public string? YeuCauKiThuat{get;set;}

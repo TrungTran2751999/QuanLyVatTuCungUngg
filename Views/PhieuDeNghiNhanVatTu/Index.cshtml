@@ -10,10 +10,9 @@
             background-color: #34b7eb;
             color: black;
             font-size: 16px;
-            
         }
         #table-data tr td{
-            color: black
+            color: black;
         }
         #table-tong-hop tr th{
             background-color: #75aac1;
@@ -21,7 +20,7 @@
             font-size: 16px;
         }
         #table-tong-hop tr td{
-            color: black
+            color: black;
         }
         #table-tong-hop tr{
             border-left: 1px solid #cbcbcb;
@@ -213,9 +212,9 @@
                     <thead>
                         <th style="display:none"></th>
                         <th>STT</th>
-                        <th>MÃ PHIẾU</th>
+                        <th style="min-width: 150px;">MÃ PHIẾU</th>
                         <th style="min-width: 250px;">TÊN BỘ PHẬN</th>
-                        <th>DIỄN GIẢI</th>
+                        <th style="min-width: 250px;">DIỄN GIẢI</th>
                         <th style="min-width: 200px;">NGƯỜI YÊU CẦU</th>
                     </thead>
                     <tbody style="overflow: scroll">
@@ -313,6 +312,8 @@
                                         <a class="show-more-${indexRowSelected} show-more" style="display:none" onclick="showMoreOrDirect('${indexRowSelected}', this, '${maPhieu}', '${decodeYear}', '${tenNguoiDeNghi}','${dateDeNghi}', '${table2}')" href="#">
                                             ${dienGiai}
                                         </a>
+
+                                        <div class="date-de-nghi" style="display:none">${dateDeNghi}</div>
                                     </span>
                                 </td>
                                 <td class="nguoi-de-nghi">${tenNguoiDeNghi}</td>
@@ -426,6 +427,12 @@
                 $("#table-data tbody").html("");
                 if(!listPhieuNVTFast){
                     //view da duyet
+                    //thay doi kich co cua header tai cua bang #table-data
+                    let headersTableData = $("#table-data thead th");
+                    let listSize = ["","",150,250,250,200];
+                    for(let i=0; i<headersTableData.length; i++){
+                        $(headersTableData[i]).css("min-width",`${listSize[i]}px`);
+                    }
                     $("#container-filter").css("display","none")
                     for(let i=0; i<listPhieuNVTDaDuyet.length; i++){
                         let decodeYear = decodeDatetime(listPhieuNVTDaDuyet[i]["dateDeNghi"]);

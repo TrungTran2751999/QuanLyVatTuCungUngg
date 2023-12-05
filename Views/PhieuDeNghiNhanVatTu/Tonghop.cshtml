@@ -70,32 +70,33 @@
                 <thead>
                     <th>STT</th>
                     <th>TÊN VẬT TƯ</th>
-                    <th>GHI CHÚ</th>
+                    <th style="min-width: 300px;">GHI CHÚ</th>
                     <th>YÊU CẦU KĨ THUẬT</th>
-                    <th>SL YÊU CẦU</th>
-                    <th>SL BÁO GIÁ</th>
+                    <th style="min-width: 300px;">NHÀ CUNG ỨNG</th>
+                    <th style="min-width: 150px;">SL YÊU CẦU</th>
+                    <th style="min-width: 150px;">SL BÁO GIÁ</th>
                     <th>ĐVT</th>
                     <th style="display:none">MÃ PHIẾU</th>
                     <th style="display:none">XUẤT XỨ</th>
-                    <th>NHÀ CUNG ỨNG</th>
                 </thead>
                 <tbody>
                                            
                 </tbody>
             </table>
-            @* TABLE LOADINg nen la NONE *@
+            <button id="btn-lap-bao-gia" class="btn btn-primary" onclick="lapBaoGia()" style="width: 100%;">LẬP BÁO GIÁ</button>
+            @* TABLE LOADING nen la NONE *@
             <table style="display: none;" class="table" id="table-loading" data-show-columns="true">
                 <thead>
                     <th>STT</th>
                     <th>TÊN VẬT TƯ</th>
                     <th>GHI CHÚ</th>
                     <th>YÊU CẦU KĨ THUẬT</th>
+                    <th style="min-width: 300px;">NHÀ CUNG ỨNG</th>
                     <th>SỐ LƯỢNG YÊU CẦU</th>
                     <th>SỐ LƯỢNG BÁO GIÁ</th>
                     <th>ĐVT</th>
                     <th style="display:none">MÃ PHIẾU</th>
                     <th style="display:none">XUẤT XỨ</th>
-                    <th>NHÀ CUNG ỨNG</th>
                 </thead>
                 <tbody>
                     <tr>
@@ -116,22 +117,30 @@
         </div>
     
         @* <div id="caption-tong-hop" style="display:none; width: 100%;">BÁO GIÁ</div> *@
-        <table class="table" id="table-tong-hop" style="display:none; width: 100%;">
-            <thead>
-                <th>NHÀ CUNG ỨNG</th>
-                <th>TÊN VẬT TƯ</th>
-                <th>YÊU CẦU KĨ THUẬT</th>
-                <th>CHÚ THÍCH</th>
-                <th>SỐ LƯỢNG BÁO GIÁ</th>
-                <th>ĐƠN VỊ TÍNH</th>
-                <th style="display:none">MÃ PHIẾU</th>
-                <th style="display:none">XUẤT XỨ</th>
-                <th>GHI CHÚ</th>
-            </thead>
-            <tbody>
+            <button onclick="quayLai()" id="btn-quay-lai" class="btn btn-danger" style="display: none;">QUAY LẠI</button>
+            <table class="table" id="table-tong-hop" style="display:none; width: 100%;">
+                <thead>
+                    <th>NHÀ CUNG ỨNG</th>
+                    <th>TÊN VẬT TƯ</th>
+                    <th>YÊU CẦU KĨ THUẬT</th>
+                    <th style="display: none;">GHI CHÚ</th>
+                    <th>SL BÁO GIÁ</th>
+                    <th>ĐƠN VỊ TÍNH</th>
+                    <th>CHÚ THÍCH</th>
 
-            </tbody>
-        </table>
+                    <th style="display:none">MÃ PHIẾU</th>
+                    <th style="display:none">XUẤT XỨ</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+                <thead>
+                    <th colspan="7" style="background: none; border: none;">
+                        <button onclick="tongHopBaoGia()" id="btn-tong-hop" class="btn btn-primary"  style="width: 100%;display: none;">TỔNG HỢP</button>
+                    </th>
+                </thead>
+            </table>
+        </div>
         <form action="/api/bao-gia/lap-bao-gia" method="POST" style="display:none">
             <input name="data" type="text" id="input-bao-gia-param"/>
             <input type="submit" id="submit-bao-gia"/>
@@ -183,44 +192,42 @@
                 Search: search,
                 ListFilters: listDataFilter
             }
-            
             $("#table-loading").css("display","");
             $("#table-data").css("display","none");
-            if(deLay==false){
-                deLay=true;
-                setTimeout(()=>{
-                    $.ajax({
-                        url: host + "/api/phieu-nhan-vat-tu/filter-tong-hop",
-                        "headers": {
-                            "Content-Type": "application/json"
-                        },
-                        method: "POST",
-                        data: JSON.stringify(dataFilter)
-                    })
-                    .done(res=>{
-                        deLay = false;
-                        $("#table-data").css("display","")
-                        $("#table-loading").css("display","none");
-                        let rows = $("#table-data tbody tr");
-                        let stt = $("#table-data tbody tr .row-stt");
-                        let x = 1;
-                        for(let i=0; i<rows.length; i++){
-                            let id = $(rows[i]).data("id");
-                            if(res.includes(id)){
-                                $(rows[i]).css("display","");
-                                $(stt[i]).text(x++);
-                            }else{
-                                $(rows[i]).css("display","none");
-                            }
+            $("#btn-lap-bao-gia").css("display","none");
+            let delay;
+            clearTimeout(deLay);
+            deLay = setTimeout(()=>{
+                $.ajax({
+                    url: host + "/api/phieu-nhan-vat-tu/filter-tong-hop",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    data: JSON.stringify(dataFilter)
+                })
+                .done(res=>{
+                    if(res.length > 0) $("#btn-lap-bao-gia").css("display","");
+                    $("#table-data").css("display","")
+                    $("#table-loading").css("display","none");
+                    let rows = $("#table-data tbody tr");
+                    let stt = $("#table-data tbody tr .row-stt");
+                    let x = 1;
+                    for(let i=0; i<rows.length; i++){
+                        let id = $(rows[i]).data("id");
+                        if(res.includes(id)){
+                            $(rows[i]).css("display","");
+                            $(stt[i]).text(x++);
+                        }else{
+                            $(rows[i]).css("display","none");
                         }
-                    })
-                    .fail(err=>{
-                        deLay = false;
-                        $("#table-data").css("display","")
-                        $("#table-loading").css("display","none")
-                    })
-                },100)
-            }
+                    }
+                })
+                .fail(err=>{
+                    $("#table-data").css("display","")
+                    $("#table-loading").css("display","none")
+                })
+            },800)
         }
         //===================================INIT DATA================================
         $.ajax({
@@ -244,8 +251,15 @@
                         <td class="row-code-year" style="display:none">${param[i]["codeYear"]}</td>
                         <td class=row-stt>${++x}</td>
                         <td class="ten-vat-tu"><textarea class="ten-vat-tu-area">${param[i]["tenVatTu"]}</textarea></td>
-                        <td class="ghi-chu">${param[i]["ghiChu"]}</td>
+                        <td class="ghi-chu" style="padding: 0px 10px">${param[i]["ghiChu"]}</td>
                         <td class="row-yeu-cau-ki-thuat"><textarea class="yeu-cau-ki-thuat"></textarea></td>
+                        <td style="padding: 0px 10px 10px 10px">
+                            <select multiple class="form-select shadow-none droplist-nha-cung-ung" onchange="selectDropList(this)">
+                                ${listNhaCungUng.map(item=>{
+                                    return `<option value=${item.id} ${param[i]["listNhaCungUngId"].includes(item.id) ? "selected" : ""}>${item.tenNhaCungUng}</option>`;
+                                })}
+                            </select>
+                        </td>
                         <td class="so-luong-bao-gia">${param[i]["soluong"]}</td>
                         <td class="so-luong-bao-gia-input">
                             <input oninput="onChangeSoLuongLapBaoGia(this, ${param[i]["soluong"]})" class="form-control input-so-luong" type="number" style="width:100px" placeholder="Số lượng" value="${param[i]["soluong"]}"/>
@@ -254,13 +268,6 @@
                         <td class="don-vi-tinh">${param[i]["donViTinh"]?.trim()}</td>
                         <td class="row-ma-phieu" style="display:none">${param[i]["maPhieu"]?.trim()}</td>
                         <td style="display:none"><textarea class="xuat-xu"></textarea></td>
-                        <td>
-                            <select multiple class="form-select shadow-none droplist-nha-cung-ung" onchange="selectDropList(this)">
-                                ${listNhaCungUng.map(item=>{
-                                    return `<option value=${item.id} ${param[i]["listNhaCungUngId"].includes(item.id) ? "selected" : ""}>${item.tenNhaCungUng}</option>`;
-                                })}
-                            </select>
-                        </td>
                         @* <td><textarea class="ghi-chu-tong-hop"></textarea></td> *@
                     </tr>`;
                     rows+=row;
@@ -296,6 +303,23 @@
         }
 
         //click phai chuot de tong hop
+        //function de lap bao gia
+        function lapBaoGia(){
+            $("#table-data").triggerHandler('contextmenu');
+        }
+        //function de tong hop bao gia tuong ung voi nha cung ung
+        function tongHopBaoGia(){
+            $("#table-tong-hop").triggerHandler("contextmenu");
+        }
+        //funtion thuc hien khi nhan vao nut quay lai
+        function quayLai(){
+            $("#table-tong-hop tbody").html("");
+            $("#caption-tong-hop").css("display","block");
+            $("#container-table-data").css("display","block");
+            $("#table-tong-hop").css("display","none");
+            $("#container-filter").css("display","");
+            $("#btn-quay-lai").css("display","none");
+        }
         $("#table-data").on("contextmenu",(e)=>{
             e.preventDefault();
             Swal.fire({
@@ -345,6 +369,7 @@
             }
             });
             //lay du lieu tu table tong hop xuat file excel va luu du lieu vao database
+
             $("#table-tong-hop").on("contextmenu",(e)=>{
                 e.preventDefault();
                 Swal.fire({
@@ -364,6 +389,7 @@
                     $("#container-table-data").css("display","block");
                     $("#table-tong-hop").css("display","none");
                     $("#container-filter").css("display","");
+                    $("#btn-quay-lai").css("display","none");
                 }
                 });
             })
@@ -393,6 +419,7 @@
                         },
                         listVatTu :[],
                     }
+                    
                     //lap qua tung row lay cac vat tu co nha cung ung trung voi cac id nha cung ung trong arrAfterFilterNhaCungUng
                     for(let j=0; j<listRowTableData.length; j++){
 
@@ -400,16 +427,18 @@
 
                         if(listSelectedNhaCungUng.includes(arrAfterFilterNhaCungUng[i])){
                             let idRowSelected = $(listRowTableData[j]).attr("id");
-                            let tenVatTu = $($(`#table-data tbody tr .ten-vat-tu-area`)[j]).val();
+                            let vatTuId = +idRowSelected.split("-")[0];
+                            let tenVatTu = $($(`#table-data tbody tr .ten-vat-tu-area`)[j]).val().trim();
                             let ghiChu = $($(`#table-data tbody tr .ghi-chu`)[j]).text();
                             let soLuong = +$($(`#table-data tbody tr .input-so-luong`)[j]).val();
-                            let yeuCauKiThuat = $($(`#table-data tbody tr .yeu-cau-ki-thuat`)[j]).val();
+                            let yeuCauKiThuat = $($(`#table-data tbody tr .yeu-cau-ki-thuat`)[j]).val().trim();
                             let donViTinh = $($(`#table-data tbody tr .don-vi-tinh`)[j]).text();
                             let xuatXu = $($(`#table-data tbody tr .xuat-xu`)[j]).val();
                             let maPhieu = $($(`#table-data tbody tr .row-ma-phieu`)[j]).text();
                             let codeYear = $($(`#table-data tbody tr .row-code-year`)[j]).text();
                             
                             let objVatTu = {
+                                vatTuId,
                                 tenVatTu,
                                 ghiChu,
                                 soLuong,
@@ -419,14 +448,34 @@
                                 maPhieu,
                                 codeYear
                             }
-
                             objNhaCungUng.listVatTu.push(objVatTu);
                         }
                     }
                     arrResult.push(objNhaCungUng);
-                    $("#container-filter").css("display","none");
                 }
-            
+                
+                //lay vat tu co pham chat trung nhau va cong don so luong tai array listVatTu trong tung object la element cua arrResult
+                for(let i=0; i<arrResult.length; i++){
+                    let listVatTu = arrResult[i].listVatTu;
+
+                    for(let j=0; j<listVatTu.length; j++){
+                        let tenVatTu = listVatTu[j].tenVatTu;
+                        let yeuCauKiThuat = listVatTu[j].yeuCauKiThuat;
+
+                        for(let k=0; k<listVatTu.length; k++){
+                            let tenVatTuCompare = listVatTu[k].tenVatTu;
+                            let yeuCauKiThuatCompare = listVatTu[k].yeuCauKiThuat;
+                            if(tenVatTu==tenVatTuCompare && yeuCauKiThuat==yeuCauKiThuatCompare && j!=k){
+                                listVatTu[j].soLuong+=listVatTu[k].soLuong;
+                                listVatTu.splice(k,1);
+                                k=0;
+                            }
+                        }
+                    }
+                }
+                $("#container-filter").css("display","none");
+                $("#btn-tong-hop").css("display","");
+                $("#btn-quay-lai").css("display","");
                 //xuat html tu mang arrResult
                 let tbody = "";
 
@@ -446,7 +495,7 @@
                                 <td rowspan=${arrResult[i]["listVatTu"].length} id="row-${arrResult[i]["nhaCungUng"]["id"]}">${arrResult[i]["nhaCungUng"]["ten"]}</td>
                                 <td>${arrResult[i]["listVatTu"][j]["tenVatTu"]}</td>
                                 <td>${arrResult[i]["listVatTu"][j]["yeuCauKiThuat"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
+                                <td style="display:none">${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
                                 <td>${arrResult[i]["listVatTu"][j]["soLuong"]}</td> 
                                 <td>${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
                                 <td style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
@@ -458,7 +507,7 @@
                             <tr>
                                 <td>${arrResult[i]["listVatTu"][j]["tenVatTu"]}</td>
                                 <td>${arrResult[i]["listVatTu"][j]["yeuCauKiThuat"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
+                                <td style="display:none">${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
                                 <td>${arrResult[i]["listVatTu"][j]["soLuong"]}</td> 
                                 <td>${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
                                 <td style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
@@ -474,6 +523,7 @@
                         objVatTu.SoLuong = +arrResult[i]["listVatTu"][j]["soLuong"];
                         objVatTu.CodeYear = +arrResult[i]["listVatTu"][j]["codeYear"];
                         objVatTu.MaPhieu = +arrResult[i]["listVatTu"][j]["maPhieu"];
+                        objVatTu.VatTuId = +arrResult[i]["listVatTu"][j]["vatTuId"];
                         objVatTu.GhiChu = "";
 
                         objNhaCungUngListVatTu.ListVatTu.push(objVatTu);
@@ -549,7 +599,7 @@
                 }
                 console.log(objResult);
 
-                let objResultstr = JSON.stringify(objResult);
+                @* let objResultstr = JSON.stringify(objResult);
                 //call api
                 $.ajax({
                     url: host + "/api/bao-gia/save-bao-gia",
@@ -570,7 +620,7 @@
                         title: "Oops...",
                         text: "Xảy ra lỗi!",
                     });
-                })
+                }) *@
 
             }
         })

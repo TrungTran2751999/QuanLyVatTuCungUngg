@@ -73,7 +73,29 @@ public class BaoGiaService : IBaogiaService
         long createdBy = baoGiaCreate.CreatedBy;
         long updatedBy = baoGiaCreate.UpdateBy;
         List<VatTuListNhaCungUng> listVatTuNhaCungUng = baoGiaCreate.ListVatTuNhaCungUng;
+        List<NhaCungUngListVatTu> listNhaCungUngListVatTu = baoGiaCreate.ListNhaCungUngListVatTu;
 
+        for(int i=0; i<listNhaCungUngListVatTu.Count; i++){
+            var listVatTu = listNhaCungUngListVatTu[i].ListVatTu;
+            var IdNhaCungUng = listNhaCungUngListVatTu[i].IdNhaCungUng;
+            for(int j=0; j<listVatTu.Count; j++){
+                var vatTuNhaCungUng = from vatTu in listVatTu
+                                      join vatTuNhaCungUngParam in listVatTuNhaCungUng
+                                      on vatTu.VatTuId equals vatTuNhaCungUngParam.VatTuId
+                                      where vatTuNhaCungUngParam.ListNhaCungUng.Contains(IdNhaCungUng)
+                                      select new VatTuListNhaCungUng{
+                                         VatTuId = vatTuNhaCungUngParam.VatTuId,
+                                         CodeYear = vatTuNhaCungUngParam.CodeYear,
+                                         ListNhaCungUng = vatTuNhaCungUngParam.ListNhaCungUng,
+                                         MaPhieu = vatTuNhaCungUngParam.MaPhieu,
+                                         SoLuongBaoGia = vatTuNhaCungUngParam.SoLuongBaoGia,
+                                         YeuCauKiThuat = vatTuNhaCungUngParam.YeuCauKiThuat,
+                                         GhiChu = vatTu.GhiChu
+                                      };
+
+                                      
+            }
+        }
         for(int i=0; i<listVatTuNhaCungUng.Count; i++){
             listVatTuId.Add(listVatTuNhaCungUng[i].VatTuId);
             listNhaCungUng.AddRange(listVatTuNhaCungUng[i].ListNhaCungUng);
@@ -131,9 +153,6 @@ public class BaoGiaService : IBaogiaService
                     //add du lieu vao BaoGia_ChiTiet_NhacungUng
                     await dbContext.BaoGiaChitietNhaCung.AddRangeAsync(listBaoGiaChiTietNhaCungUng);
                     
-                    for(int j=0; j<listBaoGiaChiTietNhaCungUng.Count; j++){
-                        
-                    }
                     dbContext.SaveChanges();
                 }
                 
