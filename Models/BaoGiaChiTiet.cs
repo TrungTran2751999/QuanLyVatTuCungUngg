@@ -10,6 +10,8 @@ public class BaoGiaChiTiet{
     public Guid Id{get;set;}
     [Column("VatTuId")]
     public long VatTuId{get;set;}
+    [Column("TenVatTu")]
+    public string? TenVatTu{get;set;}
     [ForeignKey("VatTuId")]
     public VatTu? VatTu{get;set;}
     [Column("SoLuongBaoGia")]

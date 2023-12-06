@@ -10,8 +10,9 @@ public class BaoGiaChitietNhaCungUng{
     public Guid Id{get;set;}
     [Column("BaoGiaChiTietId")]
     public Guid BaoGiaChiTietId{get;set;}
-    [Column("NhaCungUngId")]
     public long NhaCungUngId{get;set;}
+    [Column("VatTuId")]
+    public long VatTuId{get;set;}
     [Column("GhiChu")]
     public string? GhiChu{get;set;}
     [Column("CreatedBy")]

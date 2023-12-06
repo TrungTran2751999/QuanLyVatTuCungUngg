@@ -5,6 +5,7 @@ using app.Models;
 namespace app.DTOs;
 
 public class VatTuListNhaCungUng{
+    public string? TenVatTu{get;set;}
     public long VatTuId{get;set;}
     public string? MaPhieu{get;set;}
     public string? CodeYear{get;set;}
@@ -15,6 +16,7 @@ public class VatTuListNhaCungUng{
     public BaoGiaChiTiet ToModelBaoGiaChiTiet(long createdAt, long updatedAt, Guid baoGiaId){
         BaoGiaChiTiet baoGiaChiTiet = new()
         {
+            TenVatTu = TenVatTu,
             BaoGiaId = baoGiaId,
             VatTuId = VatTuId,
             SoLuongBaoGia = SoLuongBaoGia,
@@ -34,6 +36,7 @@ public class VatTuListNhaCungUng{
         for(int i=0; i<ListNhaCungUng.Count; i++){
             BaoGiaChitietNhaCungUng baoGiaChitietNhaCungUng = new()
             {
+                VatTuId = VatTuId,
                 BaoGiaChiTietId = baoGiaChiTietId,
                 NhaCungUngId = ListNhaCungUng[i],
                 CreatedTime = DateTime.Now,

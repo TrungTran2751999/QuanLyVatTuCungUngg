@@ -122,10 +122,10 @@
                 <thead>
                     <th>NHÀ CUNG ỨNG</th>
                     <th>TÊN VẬT TƯ</th>
-                    <th>YÊU CẦU KĨ THUẬT</th>
+                    <th style="min-width: 200px;">YÊU CẦU KĨ THUẬT</th>
                     <th style="display: none;">GHI CHÚ</th>
-                    <th>SL BÁO GIÁ</th>
-                    <th>ĐƠN VỊ TÍNH</th>
+                    <th style="width:120px ;">SL BÁO GIÁ</th>
+                    <th>DVT</th>
                     <th>CHÚ THÍCH</th>
 
                     <th style="display:none">MÃ PHIẾU</th>
@@ -320,6 +320,22 @@
             $("#container-filter").css("display","");
             $("#btn-quay-lai").css("display","none");
         }
+        //onchange so luong bao gia tai bang tong hop
+        function onchangeBaoGiaSoLuong(param, soLuongXin){
+            let val = $(param).val();
+            let idRowOnChange = $(param).parent().parent().attr("id");
+            $(param).removeClass("is-invalid");
+            $(`#table-tong-hop #${idRowOnChange} .error-input-bao-gia-so-luong`).removeClass("invalid-feedback");
+            $(`#table-tong-hop #${idRowOnChange} .error-input-bao-gia-so-luong`).css("display","none");
+
+            if(val < 0){
+                $(param).val(soLuongXin);
+            }else if(!val || val==0){
+                $(param).addClass("is-invalid");
+                $(`#table-tong-hop #${idRowOnChange} .error-input-bao-gia-so-luong`).addClass("invalid-feedback");
+                $(`#table-tong-hop #${idRowOnChange} .error-input-bao-gia-so-luong`).css("display","block");
+            }
+        }
         $("#table-data").on("contextmenu",(e)=>{
             e.preventDefault();
             Swal.fire({
@@ -369,7 +385,7 @@
             }
             });
             //lay du lieu tu table tong hop xuat file excel va luu du lieu vao database
-
+            let arrResult = [];
             $("#table-tong-hop").on("contextmenu",(e)=>{
                 e.preventDefault();
                 Swal.fire({
@@ -407,7 +423,6 @@
                 }
 
                 arrAfterFilterNhaCungUng = Array.from(new Set(arrAfterFilterNhaCungUng));
-                let arrResult = [];
 
                 for(let i=0; i<arrAfterFilterNhaCungUng.length; i++){
                     let objNhaCungUng = {
@@ -446,7 +461,7 @@
                                 donViTinh,
                                 xuatXu,
                                 maPhieu,
-                                codeYear
+                                codeYear,
                             }
                             objNhaCungUng.listVatTu.push(objVatTu);
                         }
@@ -478,7 +493,8 @@
                 $("#btn-quay-lai").css("display","");
                 //xuat html tu mang arrResult
                 let tbody = "";
-
+                let stt = 1;
+                
                 for(let i=0; i<arrResult.length; i++){
                     let tr = "";
                     let objNhaCungUngListVatTu = {
@@ -489,33 +505,54 @@
                     for(let j=0; j<arrResult[i]["listVatTu"].length; j++){
                         let td = "";
                         let objVatTu = {};
+                        let soLuongXin = arrResult[i]["listVatTu"][j]["soLuong"];
                         if(j==0){
                             td = `
-                            <tr>
+                            <tr id="row-tong-hop-${stt}">
+                                <td class="row-id-nha-cung-ung" style="display:none">${objNhaCungUngListVatTu.IdNhaCungUng}</td>
+                                <td class="row-nha-cung-ung" style="display:none">${objNhaCungUngListVatTu.TenNhaCungUng}</td>
+                                <td class="row-code-year" style="display:none">${arrResult[i]["listVatTu"][j]["codeYear"]}</td>
+                                <td class="row-vat-tu-id" style="display:none">${arrResult[i]["listVatTu"][j]["vatTuId"]}</td>
+                                
                                 <td rowspan=${arrResult[i]["listVatTu"].length} id="row-${arrResult[i]["nhaCungUng"]["id"]}">${arrResult[i]["nhaCungUng"]["ten"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["tenVatTu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["yeuCauKiThuat"]}</td>
+                                <td class="row-ten-vat-tu">${arrResult[i]["listVatTu"][j]["tenVatTu"]}</td>
+                                <td class="row-yeu-cau-ki-thuat">${arrResult[i]["listVatTu"][j]["yeuCauKiThuat"]}</td>
                                 <td style="display:none">${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["soLuong"]}</td> 
+                                <td>
+                                    <input oninput="onchangeBaoGiaSoLuong(this, ${soLuongXin})" class="input-bao-gia-so-luong form-control" type="number" value="${soLuongXin}" />
+                                    <div class="error-input-bao-gia-so-luong" style="display:none; font-size:small; color:red">Không được để trống số lượng</div>
+                                </td> 
                                 <td>${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
-                                <td style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
+                                <td class="row-ma-phieu" style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
                                 <td style="display:none">${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
-                                <td><textarea class="ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
+                                <td><textarea class="row-ghi-chu ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
                             </tr>`;
                         }else{
                             td = `
-                            <tr>
-                                <td>${arrResult[i]["listVatTu"][j]["tenVatTu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["yeuCauKiThuat"]}</td>
+                            <tr id="row-tong-hop-${stt}">
+                                <td class="row-id-nha-cung-ung" style="display:none">${objNhaCungUngListVatTu.IdNhaCungUng}</td>
+                                <td class="row-nha-cung-ung" style="display:none">${objNhaCungUngListVatTu.TenNhaCungUng}</td>
+                                <td class="row-code-year" style="display:none">${arrResult[i]["listVatTu"][j]["codeYear"]}</td>
+                                <td class="row-vat-tu-id" style="display:none">${arrResult[i]["listVatTu"][j]["vatTuId"]}</td>
+
+                                <td class="row-ten-vat-tu">${arrResult[i]["listVatTu"][j]["tenVatTu"]}</td>
+                                <td class="row-yeu-cau-ki-thuat">${arrResult[i]["listVatTu"][j]["yeuCauKiThuat"]}</td>
                                 <td style="display:none">${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["soLuong"]}</td> 
+                                <td>
+                                    <input oninput="onchangeBaoGiaSoLuong(this, ${soLuongXin})" class="input-bao-gia-so-luong form-control" type="number" value="${soLuongXin}" />
+                                    <div class="error-input-bao-gia-so-luong" style="display:none; font-size:small; color:red">Không được để trống số lượng</div>
+                                </td> 
                                 <td>${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
-                                <td style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
+                                <td class="row-ma-phieu" style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
                                 <td style="display:none">${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
-                                <td><textarea class="ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
+                                <td><textarea class="row-ghi-chu ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
                             </tr>`;
                         }
+                        stt++;
                         tr+=td;
+
+                        
+
                         objVatTu.TenVatTu = arrResult[i]["listVatTu"][j]["tenVatTu"];
                         objVatTu.DonViTinh = arrResult[i]["listVatTu"][j]["donViTinh"];
                         objVatTu.YeuCauKiThuat = arrResult[i]["listVatTu"][j]["yeuCauKiThuat"];
@@ -524,6 +561,7 @@
                         objVatTu.CodeYear = +arrResult[i]["listVatTu"][j]["codeYear"];
                         objVatTu.MaPhieu = +arrResult[i]["listVatTu"][j]["maPhieu"];
                         objVatTu.VatTuId = +arrResult[i]["listVatTu"][j]["vatTuId"];
+                        objVatTu.IdNhaCungUng = objNhaCungUngListVatTu.IdNhaCungUng;
                         objVatTu.GhiChu = "";
 
                         objNhaCungUngListVatTu.ListVatTu.push(objVatTu);
@@ -545,7 +583,7 @@
                     CreatedBy: id,
                     UpdateBy: id,
                     ListVatTuNhaCungUng:[],
-                    ListNhaCungUngListVatTu: listNhaCungUngListVatTu,
+                    ListNhaCungUngListVatTu: [],
                 };
                 let listPhieu = localStorage.getItem("listPhieuTongHop");
                 if(listPhieu==null){
@@ -558,47 +596,113 @@
 
                 objResult.ListPhieuPheDuyet = listPhieu;
 
-                //lay du lieu so luong bao gia, danh sach nha cung ung, ghi chu 
-                let rowData = $("#table-data tbody tr");
-                for(let i=0; i<rowData.length; i++){
+                //lay du lieu so luong bao gia, danh sach nha cung ung, ghi chu tai 
+                let rowTongHops = $("#table-tong-hop tbody tr");
+                let arrNhaCungUngVaVatTu = [];
+                let arrNhaCungUng = [];
+                let arrVatTu = [];
+                //lay du lieu tu #table-tong-hop chen vao array rowTongHops
+                for(let i=0; i<rowTongHops.length; i++){
                     let obj = {
-                        VatTuId: 0,
-                        SoLuongBaoGia: 0,
-                        ListNhaCungUng:[]
+                        idNhaCungUng: +$($("#table-tong-hop .row-id-nha-cung-ung")[i]).text().trim(),
+                        tenNhaCungUng: $($("#table-tong-hop .row-nha-cung-ung")[i]).text().trim(),
+                        codeYear: $($("#table-tong-hop .row-code-year")[i]).text().trim(),
+                        vatTuId: +$($("#table-tong-hop .row-vat-tu-id")[i]).text().trim(),
+                        tenVatTu: $($("#table-tong-hop .row-ten-vat-tu")[i]).text().trim(),
+                        yeuCauKiThuat: $($("#table-tong-hop .row-yeu-cau-ki-thuat")[i]).text().trim(),
+                        soLuongBaoGia: +$($("#table-tong-hop .input-bao-gia-so-luong")[i]).val(),
+                        ghiChu: $($("#table-tong-hop .row-ghi-chu")[i]).val().trim(),
+                        maPhieu: $($("#table-tong-hop .row-ma-phieu")[i]).val().trim()
                     };
-                    let nhaCungUng = {
-                        Id:"",
-                        GhiChu: ""
+                    arrNhaCungUngVaVatTu.push(obj);
+                    //them thong tin nha cung ung vao arrNhaCungUng
+                    let objNhacungUng = {
+                        idNhaCungUng: obj.idNhaCungUng,
+                        tenNhaCungUng: obj.tenNhaCungUng
                     }
-                    //lay list nha cung ung bao gom id va ghi chu
-                    obj.ListNhaCungUng = $($(`#table-data tbody tr .droplist-nha-cung-ung`)[i]).val();
-                    //parse int list nha cung ung
-                    for(let j=0; j<obj.ListNhaCungUng.length; j++){
-                        obj.ListNhaCungUng[j] = parseInt(obj.ListNhaCungUng[j]);
+                    if(arrNhaCungUng.length == 0){
+                        arrNhaCungUng.push(objNhacungUng);
+                    }else{
+                        for(let j=0; j<arrNhaCungUng.length; j++){
+                            if(arrNhaCungUng[j].idNhaCungUng == objNhacungUng.idNhaCungUng){
+                                break;
+                            }else if(j==arrNhaCungUng.length-1){
+                                arrNhaCungUng.push(objNhacungUng);
+                            }
+                        }
                     }
-
-                    if(obj.ListNhaCungUng.length > 0){
-                        let idSelected = $(rowData[i]).attr("id");
-                        obj.VatTuId = +idSelected.split("-")[0];
-                        obj.SoLuongBaoGia = +$($(`#table-data tbody tr .input-so-luong`)[i]).val();
-                        obj.GhiChu = $($(`#table-data tbody tr .ghi-chu-tong-hop`)[i]).val();
-                        obj.CodeYear = $($(`#table-data tbody tr .row-code-year`)[i]).text();
-                        obj.MaPhieu = $($(`#table-data tbody tr .row-ma-phieu`)[i]).text();
-                        obj.YeuCauKiThuat = $($(`#table-data tbody tr .yeu-cau-ki-thuat`)[i]).val();
-                        objResult.ListVatTuNhaCungUng.push(obj);
+                    //them thong tin vat tu vao arrVatTu
+                    let objVatTu = {
+                        tenVatTu: obj.tenVatTu,
+                        yeuCauKiThuat: obj.yeuCauKiThuat,
+                        maPhieu: obj.maPhieu,
+                        codeYear: obj.codeYear,
+                        yeuCauKiThuat: obj.yeuCauKiThuat,
+                        soLuongBaoGia: obj.soLuongBaoGia,
+                        ghiChu: obj.ghiChu
+                    }
+                    if(arrVatTu.length == 0){
+                        arrVatTu.push(objVatTu);
+                    }else{
+                        for(let j=0; j<arrVatTu.length; j++){
+                            if(arrVatTu[j].tenVatTu == objVatTu.tenVatTu && arrVatTu[j].yeuCauKiThuat==objVatTu.yeuCauKiThuat){
+                                break;
+                            }else if(j == arrVatTu.length-1){
+                                arrVatTu.push(objVatTu);
+                            }
+                        }
                     }
                 }
-                //lay ghi chu tai table tong hop
-                let rowTableTongHop = $("#table-tong-hop tbody tr");
-                let listNhaCungUngVatTus = objResult.ListNhaCungUngListVatTu;
-                for(let i=0; i<listNhaCungUngVatTus.length; i++){
-                    let listVatTu = $(`#table-tong-hop tbody tr .ghi-chu-${listNhaCungUngVatTus[i]["IdNhaCungUng"]}`);
-                    for(let j=0; j<listVatTu.length; j++){
-                        listNhaCungUngVatTus[i]["ListVatTu"][j]["GhiChu"] = $(listVatTu[j]).val();
+                
+                //tao du lieu cho objResult.ListNhaCungUngListVatTu
+                for(let i=0; i<arrNhaCungUng.length; i++){
+                    let obj = {
+                        IdNhaCungUng: arrNhaCungUng[i].idNhaCungUng,
+                        TenNhaCungUng: arrNhaCungUng[i].tenNhaCungUng,
+                        ListVatTu: []
                     }
+                    //add du lieu vao ListVatTu
+                    for(let j=0; j<arrNhaCungUngVaVatTu.length; j++){  
+                        let idNhaCungUng = arrNhaCungUngVaVatTu[j].idNhaCungUng;
+                        let tenNhaCungUng = arrNhaCungUngVaVatTu[j].tenNhaCungUng;
+                        if(obj.IdNhaCungUng == idNhaCungUng && obj.tenNhaCungUng == tenNhaCungUng){
+                            let elementListVatTu = {
+                                IdNhaCungUng: idNhaCungUng,
+                                VatTuId: arrNhaCungUngVaVatTu[j].vatTuId,
+                                TenVatTu: arrNhaCungUngVaVatTu[j].tenVatTu,
+                                DonViTinh: arrNhaCungUngVaVatTu[j].donViTinh,
+                                YeuCauKiThuat: arrNhaCungUngVaVatTu[j].yeuCauKiThuat,
+                                XuatXu: "",
+                                SoLuong: arrNhaCungUngVaVatTu[j].soLuongBaoGia,
+                                ghiChu: arrNhaCungUngVaVatTu[j].ghiChu
+                            };
+                            obj.ListVatTu.push(elementListVatTu);
+                        }
+                    }
+                    objResult.ListNhaCungUngListVatTu.push(obj);
+
+                }
+
+                //tao du lieu cho objResult.ListVatTuNhaCungUng
+                for(let i=0; i<arrVatTu.length; i++){
+                    let obj = {
+                        TenVatTu: arrVatTu[i].tenVatTu,
+                        VatTuId: arrVatTu[i].yeuCauKiThuat,
+                        MaPhieu: arrVatTu[i].maPhieu,
+                        CodeYear: arrVatTu[i].codeYear,
+                        YeuCauKiThuat: arrVatTu[i].yeuCauKiThuat,
+                        SoLuongBaoGia: arrVatTu[i].soLuongBaoGia,
+                        GhiChu: arrVatTu[i].ghiChu,
+                        ListNhaCungUng: []
+                    }
+                    for(let j=0; j<arrNhaCungUngVaVatTu.length; j++){
+                        if(obj.TenVatTu == arrNhaCungUngVaVatTu[j].tenVatTu && obj.YeuCauKiThuat == arrNhaCungUngVaVatTu[j].yeuCauKiThuat){
+                            obj.ListNhaCungUng.push(arrNhaCungUngVaVatTu[j].idNhaCungUng);
+                        }
+                    }
+                    objResult.ListVatTuNhaCungUng.push(obj);
                 }
                 console.log(objResult);
-
                 @* let objResultstr = JSON.stringify(objResult);
                 //call api
                 $.ajax({
