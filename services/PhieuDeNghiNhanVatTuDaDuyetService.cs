@@ -40,7 +40,7 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
                 var checkExistMaPhieu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.MaPhieu==phieuDeNghiPheDuyet.MaPhieu).FirstOrDefaultAsync();
                 if(checkExistMaPhieu!=null) return "Phiếu này đã được phê duyệt";
 
-                var listVatTu = phieuDeNghiPheDuyet.ListVatTuChangeSoLuong;
+                var listVatTu = phieuDeNghiPheDuyet.ListVatTu;
                 List<PhieuDeNghiNhanVatTuChiTietDaDuyet> listPhieuChiTiet = new();
 
 
@@ -55,7 +55,7 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
                                                   }).FirstOrDefaultAsync();
 
                 // //check xem co thieu thong tin danh sch vat tu khong
-                listPhieuChiTiet.AddRange(phieuDeNghiPheDuyet.ToListPhieuChiTiet(lastRecordPhieuDeNghi.Id)); 
+                // listPhieuChiTiet.AddRange(phieuDeNghiPheDuyet.ToListPhieuChiTiet(lastRecordPhieuDeNghi.Id)); 
 
                 
                 // if(listPhieuChiTiet.Count==0) return "Thiếu thông tin danh sách vật tư";
@@ -71,10 +71,8 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
                 // if(phieuDeNghiPheDuyet.ListVatTu.Count!=countListMaVatTu) return "Tồn tại mã vật tư ngoài danh sách";
 
                 // //add phieu de nghi nhan vat tu chi tiet da duyet tuong ung voi id phieu nhan vat tu
-                if(listPhieuChiTiet.Count > 0){
-                    await dbContext.PhieuDeNghiNhanVatTuChiTietDaDuyet.AddRangeAsync(listPhieuChiTiet);
-                    dbContext.SaveChanges();
-                }
+                // await dbContext.PhieuDeNghiNhanVatTuChiTietDaDuyet.AddRangeAsync(listPhieuChiTiet);
+                dbContext.SaveChanges();
 
                 transaction.Commit();
                 return "OK";
