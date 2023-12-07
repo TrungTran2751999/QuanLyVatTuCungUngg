@@ -6,7 +6,7 @@ namespace app.Services;
 
 public interface IBaogiaService{
     Task<List<BaoGiaResponse>?> GetAll(bool isDeleted);
-    Task<BaoGia?> GetById(Guid id, bool isDeleted);
+    Task<List<NhaCungUngListVatTu>> GetById(Guid id);
     Task<byte[]> LapBaoGia(string data);
     Task<string> SaveBaoGia(BaoGiaCreateDTO baoGiaCreate);
 }

@@ -43,63 +43,14 @@
         <div style="width: 100%;" id="container-filter">
             <input oninput="search(this)" class="form-control" type="search" id="search" style="width: 100%;" placeholder="Tìm kiếm theo tên vật tư, ghi chú, yêu cầu kĩ thuật"/>
         </div>
-        <div style="overflow: scroll;" id="container-table-data">
-            <table class="table" id="table-data" data-show-columns="true">
-                <thead>
-                    <th>STT</th>
-                    <th>TÊN VẬT TƯ</th>
-                    <th>GHI CHÚ</th>
-                    <th>YÊU CẦU KĨ THUẬT</th>
-                    <th>SỐ LƯỢNG YÊU CẦU</th>
-                    <th>SỐ LƯỢNG BÁO GIÁ</th>
-                    <th>ĐVT</th>
-                    <th>XUẤT XỨ</th>
-                    <th>NHÀ CUNG ỨNG</th>
-                </thead>
-                <tbody>
-                                           
-                </tbody>
-            </table>
-            <table style="display: none;" class="table" id="table-loading" data-show-columns="true">
-                <thead>
-                    <th>STT</th>
-                    <th>TÊN VẬT TƯ</th>
-                    <th>GHI CHÚ</th>
-                    <th>YÊU CẦU KĨ THUẬT</th>
-                    <th>SỐ LƯỢNG YÊU CẦU</th>
-                    <th>SỐ LƯỢNG BÁO GIÁ</th>
-                    <th>ĐVT</th>
-                    <th>XUẤT XỨ</th>
-                    <th>NHÀ CUNG ỨNG</th>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="9" style="text-align: center;">
-                            <div class="spinner-grow text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div class="spinner-grow text-secondary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div class="spinner-grow text-success" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </td>
-                    </tr>                    
-                </tbody>
-            </table>
-        </div>
-    
         @* <div id="caption-tong-hop" style="display:none; width: 100%;">BÁO GIÁ</div> *@
-        <table class="table" id="table-tong-hop" style="display:none; width: 100%;">
+        <table class="table" id="table-tong-hop" style="width: 100%;">
             <thead>
                 <th>NHÀ CUNG ỨNG</th>
                 <th>TÊN VẬT TƯ</th>
                 <th>YÊU CẦU KĨ THUẬT</th>
-                <th>CHÚ THÍCH</th>
                 <th>SỐ LƯỢNG BÁO GIÁ</th>
                 <th>ĐƠN VỊ TÍNH</th>
-                <th>XUẤT XỨ</th>
                 <th>GHI CHÚ</th>
             </thead>
             <tbody>
@@ -122,405 +73,54 @@
     @Html.Partial("layout/Footer")
     <script>
         {
-        const urlParams = new URLSearchParams(window.location.search);
-
-        let listNhaCungUng = @Html.Raw(Json.Serialize(ViewBag.listNhaCungUng));
-
-        //onchange validate so luong lap bao gia
-        function onChangeSoLuongLapBaoGia(param, soLuongXin){
-            let val = $(param).val();
-            let idRowOnChange = $(param).parent().parent().attr("id");
-            $(param).removeClass("is-invalid");
-            $(`#table-data #${idRowOnChange} .error-so-luong-show`).removeClass("invalid-feedback");
-            $(`#table-data #${idRowOnChange} .error-so-luong-show`).css("display","none");
-
-            if(val < 0){
-                $(param).val(soLuongXin);
-            }else if(!val || val==0){
-                $(param).addClass("is-invalid");
-                $(`#table-data #${idRowOnChange} .error-so-luong-show`).addClass("invalid-feedback");
-                $(`#table-data #${idRowOnChange} .error-so-luong-show`).css("display","block");
-            }
-        }
-        //search
-        let listDataFilter = [];
-        let deLay = false;
-        function search(param){
-            let search = $(param).val().trim();
-            let dataFilter = {
-                Search: search,
-                ListFilters: listDataFilter
-            }
-            
-            $("#table-loading").css("display","");
-            $("#table-data").css("display","none");
-            if(deLay==false){
-                deLay=true;
-                setTimeout(()=>{
-                    $.ajax({
-                        url: host + "/api/phieu-nhan-vat-tu/filter-tong-hop",
-                        "headers": {
-                            "Content-Type": "application/json"
-                        },
-                        method: "POST",
-                        data: JSON.stringify(dataFilter)
-                    })
-                    .done(res=>{
-                        deLay = false;
-                        $("#table-data").css("display","")
-                        $("#table-loading").css("display","none");
-                        let rows = $("#table-data tbody tr");
-                        let stt = $("#table-data tbody tr .row-stt");
-                        let x = 1;
-                        for(let i=0; i<rows.length; i++){
-                            let id = $(rows[i]).data("id");
-                            if(res.includes(id)){
-                                $(rows[i]).css("display","");
-                                $(stt[i]).text(x++);
-                            }else{
-                                $(rows[i]).css("display","none");
-                            }
-                        }
-                    })
-                    .fail(err=>{
-                        deLay = false;
-                        $("#table-data").css("display","")
-                        $("#table-loading").css("display","none")
-                    })
-                },100)
-            }
-        }
-        @* ==========================INIT DATA========================= *@
-        let id = urlParams.get("id");
+        const searchParams = new URLSearchParams(window.location.search);
+        const id = searchParams.get("id");
+        //===========================INIT DATA==============================
         $.ajax({
-            url: host+ `/api/bao-gia/detailid=${id}`,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            url: host+ `/api/bao-gia/detail?id=${id}`,
             method: "GET",
-            data: JSON.stringify(listData)
         })
         .done(res=>{
-            let arrResult = res;
-            
-            function importTable(param){
-                let rows = "";
-                $("#table-data tbody").html("");
-                for(let i=0; i<param.length; i++){
-                    let x = i;
-                    row = `
-                    <tr data-id=${i+1} id="${param[i]["idVatTu"]}-id-vat-tu-${`${Math.random()}`.split(".")[1]}">
-                        <td class=row-stt>${++x}</td>
-                        <td class="ten-vat-tu"><textarea class="ten-vat-tu-area">${param[i]["tenVatTu"]}</textarea></td>
-                        <td class="ghi-chu">${param[i]["ghiChu"]}</td>
-                        <td><textarea class="yeu-cau-ki-thuat"></textarea></td>
-                        <td class="so-luong-bao-gia">${param[i]["soluong"]}</td>
-                        <td>
-                            <input oninput="onChangeSoLuongLapBaoGia(this, ${param[i]["soluong"]})" class="form-control input-so-luong" type="number" style="width:100px" placeholder="Số lượng" value="${param[i]["soluong"]}"/>
-                            <div class="error-so-luong-show" style="color:red; display:none">Số lượng không được để trống</div>
-                        </td>
-                        <td class="don-vi-tinh">${param[i]["donViTinh"]?.trim()}</td>
-                        <td><textarea class="xuat-xu"></textarea></td>
-                        <td>
-                            <select multiple class="form-select shadow-none droplist-nha-cung-ung" onchange="selectDropList(this)">
-                                ${listNhaCungUng.map(item=>{
-                                    return `<option value=${item.id} ${param[i]["listNhaCungUngId"].includes(item.id) ? "selected" : ""}>${item.tenNhaCungUng}</option>`;
-                                })}
-                            </select>
-                        </td>
-                        @* <td><textarea class="ghi-chu-tong-hop"></textarea></td> *@
-                    </tr>`;
-                    rows+=row;
-                    //dua du lieu vao de loc
-                    let obj = {
-                        Id: i+1,
-                        TenVatTu: param[i]["tenVatTu"]?.trim(),
-                        GhiChu: param[i]["ghiChu"]?.trim(),
+            let tr = ""
+            for(let i=0; i<res.length; i++){
+                let baoGiaId = res[i].baoGiaId;
+                let id = res[i].id;
+                let idNhaCungUng = res[i].idNhaCungUng;
+                let tenNhaCungUng = res[i].tenNhaCungUng;
+                let listVatTu = res[i].listVatTu;
+                for(let j=0; j<listVatTu.length; j++){
+                    let td = "";
+                    if(j==0){
+                        td = `
+                        <tr>
+                            <td rowspan=${listVatTu.length}>${tenNhaCungUng}</td>
+                            <td>${listVatTu[j].tenVatTu}</td>
+                            <td>${listVatTu[j].yeuCauKiThuat}</td>
+                            <td>${listVatTu[j].soLuong}</td>
+                            <td>${listVatTu[j].donViTinh}</td>
+                            <td>${listVatTu[j].ghiChu}</td>
+                        </tr>`
+                    }else{
+                        td = `
+                        <tr>
+                            <td>${listVatTu[j].tenVatTu}</td>
+                            <td>${listVatTu[j].yeuCauKiThuat}</td>
+                            <td>${listVatTu[j].soLuong}</td>
+                            <td>${listVatTu[j].donViTinh}</td>
+                            <td>${listVatTu[j].ghiChu}</td>
+                        </tr>`
                     }
-                    listDataFilter.push(obj);
-                };
-                $("#table-data tbody").html(rows);
-                $(".droplist-nha-cung-ung").chosen({
-                    no_results_text: "Không tìm thấy kết quả"
-                });
+                    tr+=td
+                }
             }
-
-            importTable(arrResult);
-
-
-            
-            $(".chosen-container").css("width","100%");
-
-            $(".search-choice-close").text("x");
-            $(".search-choice-close").css("font-size","medium");
+            console.log(tr)
+            $("#table-tong-hop tbody").html(tr);
         })
         .fail(err=>{
             console.log(err);
-        });
-        function selectDropList(){
-            $(".search-choice-close").text("x");
-            $(".search-choice-close").css("font-size","medium");
-        }
-
-        //click phai chuot de tong hop
-        $("#table-data").on("contextmenu",(e)=>{
-            e.preventDefault();
-            Swal.fire({
-                title: "Bạn muốn lập báo giá?",
-                showDenyButton: false,
-                showCancelButton: true,
-                confirmButtonText: "Tổng hợp",
-                denyButtonText: ``,
-                cancelButtonText: "Hủy"
-            }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                //validate du lieu truoc khi tong hop
-                let listSelectedNhaCungUng = $("#table-data .droplist-nha-cung-ung");
-                let isExistNhaCungUng = false;
-                let isValidVal = true;
-                let message = "Chưa có vật tư nào được chọn nhà cung ứng";
-                for(let i=0; i<listSelectedNhaCungUng.length; i++){
-                    if($($(listSelectedNhaCungUng)[i]).val().length > 0){
-                        isExistNhaCungUng = true;
-                        break;
-                    }
-                }
-
-                for(let i=0; i<listSelectedNhaCungUng.length; i++){
-                    if($($(listSelectedNhaCungUng)[i]).val().length > 0){
-                        let rowId = $($(listSelectedNhaCungUng)[i]).parent().parent().attr("id");
-                        let valueSoLuong = $(`#table-data #${rowId} .input-so-luong`).val();
-                        if(!valueSoLuong || valueSoLuong==0){
-                            isValidVal = false;
-                            message = "Tồn tại số lượng báo giá không đúng định dạng"
-                            break;
-                        }
-                    }
-                }
-                if(isExistNhaCungUng && isValidVal){
-                    exportToHTMLDemoNhaCungUng();
-                }else{
-                    Swal.fire({
-                        icon: "error",
-                        title: "Alert",
-                        text: `${message}`,
-                    });
-                }
-            } else if (result.isDenied) {
-                @* exportToExcel() *@
-            }
-            });
-            //lay du lieu tu table tong hop xuat file excel va luu du lieu vao database
-            $("#table-tong-hop").on("contextmenu",(e)=>{
-                e.preventDefault();
-                Swal.fire({
-                    title: "Bạn muốn lập báo giá hay quay lại?",
-                    showDenyButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: "Xuất báo giá",
-                    denyButtonText: `Quay lại`,
-                    cancelButtonText: "Hủy"
-                }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
-                    callApiLapBaoGia();
-                } else if (result.isDenied) {
-                    $("#table-tong-hop tbody").html("");
-                    $("#caption-tong-hop").css("display","block");
-                    $("#container-table-data").css("display","block");
-                    $("#table-tong-hop").css("display","none");
-                    $("#container-filter").css("display","");
-                }
-                });
-            })
-            
-            //xuat du lieu duoi dang html
-            let listNhaCungUngListVatTu = [];
-            function exportToHTMLDemoNhaCungUng(){
-                let listRowNhaCungUng = $("#table-data tbody tr td .droplist-nha-cung-ung");
-                let listRowTableData = $("#table-data tbody tr");
-
-                //array chua id cua nha cung ung khong trung lap
-                let arrAfterFilterNhaCungUng = [];
-                for(let i=0; i<listRowNhaCungUng.length; i++){
-                    arrAfterFilterNhaCungUng = arrAfterFilterNhaCungUng.concat($(listRowNhaCungUng[i]).val());
-                }
-
-                arrAfterFilterNhaCungUng = Array.from(new Set(arrAfterFilterNhaCungUng));
-                let arrResult = [];
-
-                for(let i=0; i<arrAfterFilterNhaCungUng.length; i++){
-                    let objNhaCungUng = {
-                        nhaCungUng: {
-                            id: arrAfterFilterNhaCungUng[i],
-                            ten: listNhaCungUng.filter((e)=>{
-                                return e.id == arrAfterFilterNhaCungUng[i];
-                            })[0]?.["tenNhaCungUng"]
-                        },
-                        listVatTu :[],
-                    }
-                    //lap qua tung row lay cac vat tu co nha cung ung trung voi cac id nha cung ung trong arrAfterFilterNhaCungUng
-                    for(let j=0; j<listRowTableData.length; j++){
-                        let idRowSelected = $(listRowTableData[j]).attr("id");
-                        let tenVatTu = $($(`#table-data tbody tr .ten-vat-tu-area`)[j]).val();
-                        let ghiChu = $($(`#table-data tbody tr .ghi-chu`)[j]).text();
-                        let soLuong = +$($(`#table-data tbody tr .input-so-luong`)[j]).val();
-                        let yeuCauKiThuat = $($(`#table-data tbody tr .yeu-cau-ki-thuat`)[j]).val();
-                        let listSelectedNhaCungUng = $($(`#table-data tbody tr .droplist-nha-cung-ung`)[j]).val();
-                        let donViTinh = $($(`#table-data tbody tr .don-vi-tinh`)[j]).text();
-                        let xuatXu = $($(`#table-data tbody tr .xuat-xu`)[j]).val();
-                        
-                        let objVatTu = {
-                            tenVatTu,
-                            ghiChu,
-                            soLuong,
-                            yeuCauKiThuat,
-                            donViTinh,
-                            xuatXu
-                        }
-
-                        if(listSelectedNhaCungUng.includes(arrAfterFilterNhaCungUng[i])){
-                            objNhaCungUng.listVatTu.push(objVatTu);
-                        }
-                    }
-                    arrResult.push(objNhaCungUng);
-                    $("#container-filter").css("display","none");
-                }
-            
-                //xuat html tu mang arrResult
-                let tbody = "";
-
-                for(let i=0; i<arrResult.length; i++){
-                    let tr = "";
-                    let objNhaCungUngListVatTu = {
-                        IdNhaCungUng: +arrResult[i]["nhaCungUng"]["id"],
-                        TenNhaCungUng: arrResult[i]["nhaCungUng"]["ten"],
-                        ListVatTu: [],
-                    }
-                    for(let j=0; j<arrResult[i]["listVatTu"].length; j++){
-                        let td = "";
-                        let objVatTu = {};
-                        if(j==0){
-                            td = `
-                            <tr>
-                                <td rowspan=${arrResult[i]["listVatTu"].length} id="row-${arrResult[i]["nhaCungUng"]["id"]}">${arrResult[i]["nhaCungUng"]["ten"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["tenVatTu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["yeuCauKiThuat"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["soLuong"]}</td> 
-                                <td>${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
-                                <td><textarea class="ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
-                            </tr>`;
-                        }else{
-                            td = `
-                            <tr>
-                                <td>${arrResult[i]["listVatTu"][j]["tenVatTu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["yeuCauKiThuat"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["ghiChu"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["soLuong"]}</td> 
-                                <td>${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
-                                <td>${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
-                                <td><textarea class="ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
-                            </tr>`;
-                        }
-                        tr+=td;
-                        objVatTu.TenVatTu = arrResult[i]["listVatTu"][j]["tenVatTu"];
-                        objVatTu.DonViTinh = arrResult[i]["listVatTu"][j]["donViTinh"];
-                        objVatTu.YeuCauKiThuat = arrResult[i]["listVatTu"][j]["yeuCauKiThuat"];
-                        objVatTu.XuatXu = arrResult[i]["listVatTu"][j]["xuatXu"];
-                        objVatTu.SoLuong = +arrResult[i]["listVatTu"][j]["soLuong"];
-                        objVatTu.GhiChu = "";
-
-                        objNhaCungUngListVatTu.ListVatTu.push(objVatTu);
-                    }
-                    listNhaCungUngListVatTu.push(objNhaCungUngListVatTu);
-                    $("#table-tong-hop tbody").append(tr);
-                }
-                $("#table-tong-hop").css("display","block");
-                $("#container-table-data").css("display","none");
-
-            }
-
-            //luu du lieu bao gia vao trong database
-            function callApiLapBaoGia(){
-                //lay du lieu so phieu tong hop
-                let id = +getCookie("id");
-                let objResult = {
-                    ListPhieuPheDuyet:[],
-                    CreatedBy: id,
-                    UpdateBy: id,
-                    ListVatTuNhaCungUng:[],
-                    ListNhaCungUngListVatTu: listNhaCungUngListVatTu,
-                };
-                let listPhieu = localStorage.getItem("listPhieuTongHop");
-                if(listPhieu==null){
-                    alert("Thiếu dữ liệu danh sách phiếu tổng hợp");
-                    window.location.href = "/";
-                    return;
-                }else{
-                    listPhieu = JSON.parse(listPhieu)?.listId;
-                }
-
-                objResult.ListPhieuPheDuyet = listPhieu;
-
-                //lay du lieu so luong bao gia, danh sach nha cung ung, ghi chu 
-                let rowData = $("#table-data tbody tr");
-                for(let i=0; i<rowData.length; i++){
-                    let obj = {
-                        VatTuId: 0,
-                        SoLuongBaoGia: 0,
-                        ListNhaCungUng:[]
-                    };
-                    //lay list nha cung ung
-                    obj.ListNhaCungUng = $($(`#table-data tbody tr .droplist-nha-cung-ung`)[i]).val();
-                    //parse int list nha cung ung
-                    for(let j=0; j<obj.ListNhaCungUng.length; j++){
-                        obj.ListNhaCungUng[j] = parseInt(obj.ListNhaCungUng[j]);
-                    }
-
-                    if(obj.ListNhaCungUng.length > 0){
-                        let idSelected = $(rowData[i]).attr("id");
-                        obj.VatTuId = +idSelected.split("-")[0];
-                        obj.SoLuongBaoGia = +$($(`#table-data tbody tr .input-so-luong`)[i]).val();
-                        obj.GhiChu = $($(`#table-data tbody tr .ghi-chu-tong-hop`)[i]).val();
-                        objResult.ListVatTuNhaCungUng.push(obj);
-                    }
-                }
-                //lay ghi chu tai table tong hop
-                let rowTableTongHop = $("#table-tong-hop tbody tr");
-                let listNhaCungUngVatTus = objResult.ListNhaCungUngListVatTu;
-                for(let i=0; i<listNhaCungUngVatTus.length; i++){
-                    let listVatTu = $(`#table-tong-hop tbody tr .ghi-chu-${listNhaCungUngVatTus[i]["IdNhaCungUng"]}`);
-                    for(let j=0; j<listVatTu.length; j++){
-                        listNhaCungUngVatTus[i]["ListVatTu"][j]["GhiChu"] = $(listVatTu[j]).val();
-                    }
-                }
-                
-                let objResultstr = JSON.stringify(objResult);
-                console.log(objResult);
-                //call api
-                @* $.ajax({
-                    url: host + "/api/bao-gia/save-bao-gia",
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    method: "POST",
-                    data: JSON.stringify(objResult)
-                })
-                .done(res=>{
-                    //xuat file excel
-                    $("#input-bao-gia-param").val(objResultstr);
-                    $("#submit-bao-gia").click();
-                    localStorage.removeItem("listPhieuTongHop");
-                })
-                .fail(err=>{
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Xảy ra lỗi!",
-                    });
-                }) *@
-
-            }
         })
         }
     </script>

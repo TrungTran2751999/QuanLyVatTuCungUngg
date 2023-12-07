@@ -67,7 +67,7 @@ public class NhaCungUngController : Controller
     [Route("danh-sach-vat-tu")]
     public ActionResult ListVatTuCungUng(long id){
         var listNhaCungUng = dbContext.VatTuNhaCungUngRelation
-                                    .Where(x=>x.NhaCungUngId == id)
+                                    .Where(x=>x.NhaCungUngId == id && x.IsDeleted==false)
                                     .Include(x=>x.NhaCungUng)
                                     .Include(x=>x.VatTu)
                                     .Select(x=>new {
