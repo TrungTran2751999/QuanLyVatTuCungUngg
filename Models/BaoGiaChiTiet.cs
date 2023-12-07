@@ -8,20 +8,12 @@ public class BaoGiaChiTiet{
     [Key]
     [Column("Id")]
     public Guid Id{get;set;}
-    [Column("VatTuId")]
-    public long VatTuId{get;set;}
-    [Column("TenVatTu")]
-    public string? TenVatTu{get;set;}
-    [ForeignKey("VatTuId")]
-    public VatTu? VatTu{get;set;}
-    [Column("SoLuongBaoGia")]
-    public Decimal? SoLuongBaoGia{get;set;}
-    [Column("MaPhieu")]
-    public string? MaPhieu{get;set;}
-    [Column("YeuCauKiThuat")]
-    public string? YeuCauKiThuat{get;set;}
-    [Column("codeYear")]
-    public string? CodeYear{get;set;}
+    [Column("NhaCungUngId")]
+    public long NhaCungUngId{get;set;}
+    [Column("TenNhaCungUng")]
+    public string? TenNhaCungUng{get;set;}
+    [ForeignKey("NhaCungUngId")]
+    public NhaCungUngVatTu? NhaCungUng{get;set;}
     [Column("BaoGiaId")]
     public Guid BaoGiaId{get;set;}
     [ForeignKey("BaoGiaId")]

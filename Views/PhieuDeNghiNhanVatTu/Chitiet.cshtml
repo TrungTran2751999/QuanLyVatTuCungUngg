@@ -14,24 +14,50 @@
         #table-data tr td{
             color: black
         }
+        #table-data tr th{
+            padding: 10px 0px;
+            text-align: center;
+            border: 1px solid #d7d7d7
+        }
+        #table-data tr td{
+            padding: 0px 10px;
+            border: 1px solid #d7d7d7
+        }
+        #table-data .row-so-luong{
+            text-align: center;
+        }
+        #table-data .row-dvt{
+            text-align: center;
+        }
+        #table-data .row-don-gia{
+            text-align: center;
+        }
+        #table-data .row-thanh-tien{
+            text-align: center;
+        }
+        #table-data .row-ma-vt{
+            text-align: center;
+        }
     </style>
     <div class="page-wrapper">
         <!-- ============================================================== -->
         <!-- Bread crumb and right sidebar toggle -->
         <!-- ============================================================== -->
+        <div>
+            <button onclick="exportExcel()" class="btn btn-primary" style="background-color: green; border-color: green;">XUẤT FILE EXCEL</button>
+        </div>
         <div style="overflow: scroll;">
-            <div style="float: right;"><button onclick="exportExcel()" class="btn btn-primary" style="background-color: green; border-color: green;">XUẤT FILE EXCEL</button></div>
             <table class="table" id="table-data" data-show-columns="true">
                 <thead>
-                    <th>STT</th>
-                    <th>TÊN VẬT TƯ</th>
+                    <th style="min-width: 40px;">STT</th>
+                    <th style="min-width: 200px;">TÊN VẬT TƯ</th>
                     <th>MÃ VT, HH</th>
                     <th>ĐVT</th>
-                    <th>XIN NHẬN</th>
-                    <th>SỐ LƯỢNG PHÊ DUYỆT</th>
-                    <th>ĐƠN GIÁ</th>
-                    <th>THÀNH TIỀN</th>
-                    <th>GHI CHÚ</th>
+                    <th style="min-width: 115px;">SL XIN NHẬN</th>
+                    <th style="min-width: 130px;">SL PHÊ DUYỆT</th>
+                    <th style="min-width: 100px;">ĐƠN GIÁ</th>
+                    <th style="min-width: 120px;">THÀNH TIỀN</th>
+                    <th style="min-width: 200px;">GHI CHÚ</th>
                 </thead>
                 <tbody>
                     
@@ -85,7 +111,7 @@
             "TenBoPhan":info.tenBp,
             "DienGiai": info.dienGiai,
             "DateDeNghi":dateDeNghi,
-            "ListVatTu":[]
+            "ListVatTuChangeSoLuong":[]
         };
         let listData = [];
         let listExcelParam = [];
@@ -111,7 +137,7 @@
                             <div class="show-error"></div>
                         </td>
                         <td class="row-don-gia">${param[i]["gia"]!=0?param[i]["gia"]:""}</td>
-                        <td class="row-thanh-tien">${param[i]["gia"]!=0?param[i]["gia"]*param[i]["so_luong"]:""}</td>
+                        <td class="row-thanh-tien">${Math.round(param[i]["gia"]!=0?param[i]["gia"]*param[i]["so_luong"]:"")}</td>
                         <td class="row-ghi-chu">${param[i]["gc_td1"]}</td>
                     </tr>`;
                     rows+=row;
@@ -120,7 +146,7 @@
             }
 
             importTable(res);
-            for(let i=0; i<res.length; i++){
+            @* for(let i=0; i<res.length; i++){
                 for(let j=0; j<res.length; j++){
                     if(i!=j && res[i]["ma_vt"].trim()==res[j]["ma_vt"]){
                         res[i]["so_luong"] += res[j]["so_luong"];
@@ -128,7 +154,7 @@
                         listData.push(res[i])
                     }
                 }
-            }
+            } *@
         })
         .fail(err=>{
             console.log(err);
@@ -168,18 +194,24 @@
                 
 
                 if (result.isConfirmed) {
-                    data.ListVatTu = [];
+                    data.ListVatTuChangeSoLuong = [];
                     let listSoLuongPheDuyet = $(".input-so-luong-phe-duyet");
                     let listMaVatTu = $(".row-ma-vt");
                     let listChuThich = $(".row-ghi-chu");
+                    let listSoLuong = $(".row-so-luong");
                     let listData = [];
                     for(let i=0; i<listMaVatTu.length; i++){
+                        let soLuong = +$(listSoLuong[i]).text();
                         let vatTu = {
                             "MaVatTu": $(listMaVatTu[i]).text(),
                             "SoLuongPheDuyet": +$(listSoLuongPheDuyet[i]).val(),
-                            "GhiChu": $(listChuThich[i]).text()
+                            "SoLuongDeNghi": soLuong,
+                            "GhiChu": $(listChuThich[i]).text(),
+                            "Stt": i
                         }
-                        listData.push(vatTu);
+                        if(vatTu.SoLuongPheDuyet != soLuong){
+                            listData.push(vatTu);
+                        }
                     }
 
                     @* for(let i=0; i<listData.length; i++){
@@ -191,8 +223,8 @@
                             }
                         }
                     } *@
-                    data.ListVatTu = listData;
-                    console.log(listData)
+                    data.ListVatTuChangeSoLuong = listData;
+                    
                     savePheDuyet();
                 }
             })
@@ -205,6 +237,7 @@
 
         //luu tru toan bo phieu da duoc phe duyet vao database
         function savePheDuyet(){
+            @* console.log(data) *@
             $.ajax({
                 "headers": {
                     "Content-Type": "application/json"
@@ -214,7 +247,6 @@
                 data: JSON.stringify(data)
             })
             .done(res=>{
-                @* toastr.success('Phê duyệt thành công', '', {timeOut: 2000}); *@
                 Swal.fire(
                     'Thành công!',
                     `Phê duyệt phiếu ${maPhieu} thành công`,

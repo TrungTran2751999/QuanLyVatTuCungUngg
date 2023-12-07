@@ -17,7 +17,7 @@ public class PhieuDeNghiPheDuyetCreateDTO{
     [Required]
     public string? CodeYear{get;set;}
     [Required]
-    public List<VatTuDTO>? ListVatTu{get;set;}
+    public List<VatTuDTO>? ListVatTuChangeSoLuong{get;set;}
     [Required]
     public long CreatedAt{get;set;}
     [Required]
@@ -42,8 +42,8 @@ public class PhieuDeNghiPheDuyetCreateDTO{
     }
     public List<PhieuDeNghiNhanVatTuChiTietDaDuyet> ToListPhieuChiTiet(Guid idPhieuDeNghiMax){
         List<PhieuDeNghiNhanVatTuChiTietDaDuyet> listPhieuDeNghiNhanVatTu = new();
-        for(int i=0; i<ListVatTu.Count; i++){
-            listPhieuDeNghiNhanVatTu.Add(ListVatTu[i].ToModel(CreatedAt, UpdateAt, idPhieuDeNghiMax));
+        for(int i=0; i<ListVatTuChangeSoLuong.Count; i++){
+            listPhieuDeNghiNhanVatTu.Add(ListVatTuChangeSoLuong[i].ToModel(CreatedAt, UpdateAt, idPhieuDeNghiMax));
         }
         return listPhieuDeNghiNhanVatTu;
     }
