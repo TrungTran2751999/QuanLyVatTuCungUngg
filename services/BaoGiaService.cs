@@ -48,17 +48,31 @@ public class BaoGiaService : IBaogiaService
         return listResult;
     }
 
-    public async Task<BaoGia?> GetById(Guid id, bool isDeleted)
+    public async Task<List<NhaCungUngListVatTu>> GetById(Guid BaoGiaId)
     {
-        var result = await dbContext.BaoGia
-                                    .Where(x=>x.IsDeleted==isDeleted && x.Id==id)
-                                    .Select(x=>new BaoGia{
-                                        Id = x.Id,
-                                        MaBaoGia = x.MaBaoGia,
-                                        CreatedAt = x.CreatedAt,
-                                        CreatedTime = x.CreatedTime
+        var result = await dbContext.BaoGiaChiTiet
+                                    .Select(x=>new NhaCungUngListVatTu{
+                                        BaoGiaChiTietId = x.Id,
+                                        TenNhaCungUng = x.TenNhaCungUng,
+                                        IdNhaCungUng = x.NhaCungUngId,
+                                        BaoGiaId = x.BaoGiaId,
+                                        ListVatTu = dbContext.BaoGiaChitietVatTu.Select(y=>new VatTuInBaoGia{
+                                            VatTuId = y.VatTuId,
+                                            TenVatTu = y.TenVatTu,
+                                            MaPhieu = y.MaPhieu,
+                                            DonViTinh = y.DonViTinh,
+                                            YeuCauKiThuat = y.YeucauKiThuat,
+                                            CodeYear = y.CodeYear,
+                                            SoLuong = y.SoLuongBaoGia,
+                                            GhiChu = y.GhiChu,
+                                            BaoGiaChiTietId = y.BaoGiaChiTietId
+                                        })
+                                        .Where(z=>x.Id==z.BaoGiaChiTietId)
+                                        .ToList()
                                     })
-                                    .FirstOrDefaultAsync();
+                                    .Where(x=>x.BaoGiaId == BaoGiaId)
+                                    .ToListAsync();
+    
         return result;
     }
 
@@ -66,23 +80,20 @@ public class BaoGiaService : IBaogiaService
     {
         List<long> listVatTuId = new();
         List<long> listNhaCungUng = new();
-        List<Guid> listResult = new();
         List<long> listNhaCungUngId = new();
 
         List<Guid> listPhieuDaDuyetId = baoGiaCreate.ListPhieuPheDuyet;
         long createdBy = baoGiaCreate.CreatedBy;
         long updatedBy = baoGiaCreate.UpdateBy;
         
-        List<VatTuListNhaCungUng> listVatTuNhaCungUng = baoGiaCreate.ListVatTuNhaCungUng;
         List<NhaCungUngListVatTu> listNhaCungUngListVatTu = baoGiaCreate.ListNhaCungUngListVatTu;
         List<VatTuInBaoGia> listVatTuAndIdNhaCungUng = new();
         for(int i=0; i<listNhaCungUngListVatTu.Count; i++){
             listVatTuAndIdNhaCungUng.AddRange(listNhaCungUngListVatTu[i].ListVatTu);
         }
 
-        for(int i=0; i<listVatTuNhaCungUng.Count; i++){
-            listVatTuId.Add(listVatTuNhaCungUng[i].VatTuId);
-            listNhaCungUng.AddRange(listVatTuNhaCungUng[i].ListNhaCungUng);
+        for(int i=0; i<listNhaCungUngListVatTu.Count; i++){
+            listNhaCungUng.Add(listNhaCungUngListVatTu[i].IdNhaCungUng);
             // listNhaCungUngId.AddRange(listNhaCungUng.Select(x=>x.Id).ToList());
         }
         listVatTuId = listVatTuId.Distinct().ToList();
@@ -95,8 +106,16 @@ public class BaoGiaService : IBaogiaService
                                             .Where(x=>listVatTuId.Contains(x.Id))
                                             .ToListAsync();
         if(listNhaCungUngId.Count != checkListNhaCungUng.Count) return "NhaCungUng:Tồn tại nhà cung ứng không thuộc danh sách";
-
-        if(listVatTuId.Count != checkListVatTu.Count) return "VatTu:Tồn tại vật tư không thuộc danh sách";
+        
+        //check xem phieu de nghi da duoc lap bao gia chua
+        var listBaoGiaId = baoGiaCreate.ListPhieuPheDuyet;
+        foreach(var baoGiaId in listBaoGiaId){
+            var idBaoGia = await dbContext.PhieuDeNghiNhanVatTuDaDuyet
+                                        .Where(x=>x.BaoGiaId==baoGiaId)
+                                        .Select(x=>x.Id)
+                                        .FirstOrDefaultAsync();
+            XoaBaoGia(idBaoGia);
+        }
 
         using(var transaction = dbContext.Database.BeginTransaction()){
             try{
@@ -110,54 +129,26 @@ public class BaoGiaService : IBaogiaService
                                                  .Select(x=>new{
                                                     x.Id
                                                  }).FirstOrDefaultAsync(); 
+            
+                for(int i=0; i<listBaoGiaId.Count; i++){
+                    var phieuPheDuyet = await dbContext.PhieuDeNghiNhanVatTuDaDuyet
+                                                       .Where(x=>x.Id==listBaoGiaId[i])
+                                                       .FirstOrDefaultAsync();
+                    phieuPheDuyet.BaoGiaId = lastRecordBaoGia.Id;
+                    dbContext.SaveChanges();
+                }
                 
-                //update BaoGiaId tai bang phieuVatTu_PheDuyet
-                // var listPhieuChonTH = await dbContext.PhieuDeNghiNhanVatTuDaDuyet
-                //                                      .Where(x=>listPhieuDaDuyetId.Contains(x.Id))
-                //                                      .ToListAsync();
-                // for(int i=0; i<listPhieuChonTH.Count; i++){
-                //     listPhieuChonTH[i].BaoGiaId = lastRecordBaoGia.Id;
-                // }
-                // dbContext.SaveChanges();
-
-                
-                for(int i=0; i<listVatTuNhaCungUng.Count; i++){
+                for(int i=0; i<listNhaCungUngListVatTu.Count; i++){
                     //add du lieu vao bang BaoGia_ChiTiet
-                    var vatTuNhaCungUngParam = listVatTuNhaCungUng[i].ToModelBaoGiaChiTiet(createdBy, updatedBy, lastRecordBaoGia.Id);
+                    var vatTuNhaCungUngParam = listNhaCungUngListVatTu[i].ToBaoGiaChiTiet(lastRecordBaoGia.Id, createdBy, updatedBy);
                     await dbContext.BaoGiaChiTiet.AddAsync(vatTuNhaCungUngParam);
                     dbContext.SaveChanges();
-                    // //BaoGia_ChiTiet_Max_Id
-                    // var lastRecordBaoGiaChiTiet = await dbContext.BaoGiaChiTiet
-                    //                                              .OrderByDescending(x=>x.CreatedTime)
-                    //                                              .Select(x=>new{
-                    //                                                 x.Id
-                    //                                              }).FirstOrDefaultAsync();
 
-                    var listBaoGiaChiTietNhaCungUng = listVatTuNhaCungUng[i].ToModelBaoGiaChiTietNhaCungUng(createdBy, updatedBy, vatTuNhaCungUngParam.Id);
 
-                    listBaoGiaChiTietNhaCungUng = listBaoGiaChiTietNhaCungUng.Join(listVatTuAndIdNhaCungUng, 
-                    
-                                                     baogiaChiTietNhaCungUng=>baogiaChiTietNhaCungUng.NhaCungUngId,
-                                                     vatTuIdNhaCungUng=>vatTuIdNhaCungUng.IdNhaCungUng,
-
-                                                     (baogiaChiTietNhaCungUng, vatTuIdNhaCungUng)=>new{
-                                                        baogiaChiTietNhaCungUng,vatTuIdNhaCungUng
-                                                     })
-                                                     .Where(x=>x.baogiaChiTietNhaCungUng.VatTuId == x.vatTuIdNhaCungUng.VatTuId)
-                                                     .Select(x=>new BaoGiaChitietNhaCungUng{
-                                                        BaoGiaChiTietId = x.baogiaChiTietNhaCungUng.BaoGiaChiTietId,
-                                                        VatTuId = x.baogiaChiTietNhaCungUng.VatTuId,
-                                                        NhaCungUngId = x.baogiaChiTietNhaCungUng.NhaCungUngId,
-                                                        CreatedAt = x.baogiaChiTietNhaCungUng.CreatedAt,
-                                                        UpdatedAt = x.baogiaChiTietNhaCungUng.UpdatedAt,
-                                                        CreatedTime = x.baogiaChiTietNhaCungUng.CreatedTime,
-                                                        UpdatedTime = x.baogiaChiTietNhaCungUng.UpdatedTime,
-                                                        GhiChu = x.vatTuIdNhaCungUng.GhiChu
-                                                     })
-                                                     .ToList();
+                    var listBaoGiaChiTietVatTu = listNhaCungUngListVatTu[i].ToListBaoGiaChiTietVatTu(vatTuNhaCungUngParam.Id, createdBy, updatedBy);
 
                     //add du lieu vao BaoGia_ChiTiet_NhacungUng
-                    await dbContext.BaoGiaChitietNhaCung.AddRangeAsync(listBaoGiaChiTietNhaCungUng);
+                    await dbContext.BaoGiaChitietVatTu.AddRangeAsync(listBaoGiaChiTietVatTu);
                     
                     dbContext.SaveChanges();
                 }
@@ -171,7 +162,25 @@ public class BaoGiaService : IBaogiaService
             }
         }
     }
-
+    public async Task<string> XoaBaoGia(Guid id){
+        var baoGia = await dbContext.BaoGia.Where(x=>x.Id==id).FirstOrDefaultAsync();
+        var listBaoGiaChiTiet = await dbContext.BaoGiaChiTiet.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+        using(var transaction = dbContext.Database.BeginTransaction()){
+            try{
+                foreach(var baoGiachiTiet in listBaoGiaChiTiet){
+                    var baoGiaChiTietVatTu = await dbContext.BaoGiaChitietVatTu.Where(x=>x.BaoGiaChiTietId==baoGiachiTiet.Id).ToListAsync();
+                    dbContext.BaoGiaChitietVatTu.RemoveRange(baoGiaChiTietVatTu);
+                    dbContext.SaveChanges();
+                }
+                transaction.Commit();
+                return "OK";
+            }catch(Exception e){
+                Console.WriteLine(e);
+                transaction.Rollback();
+                return "NOT OK";
+            }
+        }
+    }
     public async Task<byte[]> LapBaoGia(string data){
         BaoGiaCreateDTO baoGias = JsonSerializer.Deserialize<BaoGiaCreateDTO>(data);
         var listVatTu = baoGias.ListNhaCungUngListVatTu;
@@ -699,6 +708,7 @@ public class BaoGiaService : IBaogiaService
 
         return cell;
     }
+
 }
 class ExportFile{
     public List<MemoryStream>? files;

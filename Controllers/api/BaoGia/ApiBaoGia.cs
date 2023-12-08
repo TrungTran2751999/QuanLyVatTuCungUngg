@@ -9,7 +9,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 namespace app.Controllers;
 
 [ApiController]
-[Authorize]
+// [Authorize]
 [Route("api/bao-gia")]
 public class ApiBaoGia:Controller{
     private IBaogiaService baogiaService;
@@ -21,8 +21,8 @@ public class ApiBaoGia:Controller{
         return Ok(listResult);
     }
     [Route("detail")]
-    public async Task<IActionResult> GetById(Guid id, bool isDeleted){
-        var result = await baogiaService.GetById(id, isDeleted);
+    public async Task<IActionResult> GetById(Guid id){
+        var result = await baogiaService.GetById(id);
         return Ok(result); 
     }
     [HttpPost]

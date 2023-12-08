@@ -20,7 +20,7 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<PhieuDeNghiNhanVatTuChiTietDaDuyet> PhieuDeNghiNhanVatTuChiTietDaDuyet{get;set;}
     public virtual DbSet<BaoGia> BaoGia{get;set;}
     public virtual DbSet<BaoGiaChiTiet> BaoGiaChiTiet{get;set;}
-    public virtual DbSet<BaoGiaChitietNhaCungUng> BaoGiaChitietNhaCung{get;set;}
+    public virtual DbSet<BaoGiaChitietVatTu> BaoGiaChitietVatTu{get;set;}
 
     public virtual DbSet<UserVatTu> UserVatTus{get;set;}
 

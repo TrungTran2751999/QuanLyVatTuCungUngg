@@ -17,8 +17,12 @@ public class PhieuDeNghiNhanVatTuChiTietDaDuyet{
     public string?  MaVatTu{get;set;}
     [Column("SoLuong")]
     public Decimal? SoLuong{get;set;}
+    [Column("SoLuongDeNghi")]
+    public Decimal? SoLuongDeNghi{get;set;}
     [Column("GhiChu")]
     public string? GhiChu{get;set;}
+    [Column("Stt")]
+    public int Stt{get;set;}
     [Column("CreatedTime")]
     public DateTime CreatedTime{get;set;}
     [Column("CreatedAt")]

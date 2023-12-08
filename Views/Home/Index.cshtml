@@ -10,9 +10,32 @@
             background-color: #34b7eb;
             color: black;
             font-size: 16px;
+            border: 1px solid #d7d7d7;
+            padding: 0px 10px;
+            text-align: center;
         }
         #table-data tr td{
-            color: black
+            color: black;
+            border: 1px solid #d7d7d7;
+            padding: 10px 0px;
+        }
+        #table-data .row-stt{
+            text-align: center;
+        }
+        #table-data .row-ma-phieu{
+            padding: 2.5px 10px;
+        }
+        #table-data .row-ten-bp{
+            text-align: center;
+        }
+         #table-data .row-dien-giai{
+            padding: 2.5px 10px;
+        }
+        #table-data .nguoi-yeu-cau{
+            text-align: center;
+        }
+        #table-data .row-status{
+            text-align: center;
         }
         #container-table{
             overflow: scroll;
@@ -53,9 +76,9 @@
         <div>
             <table class="table" id="table-data" data-show-columns="true">
                 <thead>
-                    <th>STT</th>
+                    <th style="padding: 0px 10px;">STT</th>
                     <th>MÃ PHIẾU</th>
-                    <th style="min-width: 250px;">TÊN BỘ PHẬN</th>
+                    <th style="min-width: 280px;">TÊN BỘ PHẬN</th>
                     <th>DIỄN GIẢI</th>
                     <th style="min-width: 200px;">NGƯỜI YÊU CẦU</th>
                     <th style="min-width: 200px;">TRẠNG THÁI</th>
@@ -67,7 +90,7 @@
                                 <tr search="true" show="true" id="rows-@id">
                                     <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
                                     <td class="row-stt">@id</td>
-                                    <td>
+                                    <td class="row-ma-phieu">
                                         <a class="ma-phieu" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', '@id', this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</a>
                                     </td>
                                     <td class="row-ten-bp">@phieuFast.ten_bp</td>
@@ -86,7 +109,7 @@
                                         <tr search="true" show="true" id="rows-@id" style="background-color: #80808036;">
                                             <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
                                             <td class="row-stt">@id</td>
-                                            <td>
+                                            <td class="row-ma-phieu">
                                                 <span class="ma-phieu">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</span>
                                             </td>
                                             <td class="row-ten-bp">@phieuFast.ten_bp</td>
@@ -103,7 +126,7 @@
                                     <tr id="rows-@id" show="true" search="true">
                                         <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
                                         <td class="row-stt">@id</td>
-                                        <td>
+                                        <td class="row-ma-phieu">
                                             <a class="ma-phieu" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', '@id', this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</a>
                                         </td>
                                         <td class="row-ten-bp">@phieuFast.ten_bp</td>

@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace app.Models;
 
 public class PhieuNhanVatTuChiTietFast{
+    [NotMapped]
+    public int stt{get;set;}
     public string? ma_vt{get;set;}
     public string? ten_vt{get;set;}
     public string? dvt{get;set;}

@@ -6,13 +6,18 @@
     @Html.Partial("layout/TopBar")
     @Html.Partial("layout/LeftBar")
     <style>
-        #table-data tr th{
+        #table-data tr th, #table-tong-hop tr th{
             background-color: #34b7eb;
             color: black;
             font-size: 16px;
+            border: 1px solid #d7d7d7;
+            padding: 0px 10px;
+            text-align: center;
         }
-        #table-data tr td{
+        #table-data tr td,  #table-tong-hop tr td{
             color: black;
+            border :1px solid #d7d7d7; 
+            padding: 10px 0px;
         }
         #table-tong-hop tr th{
             background-color: #75aac1;
@@ -21,9 +26,30 @@
         }
         #table-tong-hop tr td{
             color: black;
+            border: 1px solid #d7d7d7;
+            padding: 10px 0px;
         }
         #table-tong-hop tr{
             border-left: 1px solid #cbcbcb;
+        }
+        
+        #table-data .row-stt, #table-tong-hop .row-stt{
+            text-align: center;
+        }
+        #table-data .row-ma-phieu, #table-tong-hop .row-ma-phieu{
+            padding: 2.5px 10px;
+        }
+        #table-data .row-ten-bp, #table-tong-hop .row-ten-bp{
+            text-align: center;
+        }
+        #table-data .row-dien-giai, #table-tong-hop .row-dien-giai{
+            padding: 2.5px 10px;
+        }
+        #table-data .nguoi-yeu-cau, #table-tong-hop .nguoi-yeu-cau{
+            text-align: center;
+        }
+        #table-data .row-status, #table-tong-hop .row-status{
+            text-align: center;
         }
         
     </style>
@@ -62,7 +88,7 @@
                     <th style="display:none" class="check-box-column"></th>
                     <th>STT</th>
                     <th>MÃ PHIẾU</th>
-                    <th style="min-width: 250px;">TÊN BỘ PHẬN</th>
+                    <th style="min-width: 280px;">TÊN BỘ PHẬN</th>
                     <th>DIỄN GIẢI</th>
                     <th style="min-width: 200px;">NGƯỜI YÊU CẦU</th>
                 </thead>
@@ -223,7 +249,11 @@
                 </table>`
             $(tableTongHop).insertAfter("#table-data");
         }else if(status=='true'){
+            @* chinh sua css khi hien thi danh sach phieu chua duyet *@
              $("#table-data").css("width","100%");
+             $("#table-data tr th").css("border","1px solid #d7d7d7");
+             $("#table-data tr th").css("padding","0px 10px");
+             $("#table-data tr th").css("text-align","center");
         }
 
         if(localStorage.getItem("listData")!=null){
@@ -298,13 +328,13 @@
                                 <td class="decode-year" style="display:none">${decodeYear}</td>
                                 <td style="display:none"><input class="check-box-export-${indexRowSelected} check-box-export" type="checkbox"/></td>
                                 <td class="row-stt"></td>
-                                <td>
+                                <td class="row-ma-phieu">
                                     <a href="#" onclick="directChitiet('${maPhieu}', '${decodeYear}', '${tenNguoiDeNghi}', ${i}, this, '${convertDateTimeDB(dateDeNghi)}')">
                                         <span class="ma-phieu">${maPhieu}</span> <span class="phieu-datetime">${phieuDateTime}</span>
                                     </a>
                                 </td>
-                                <td class=ten-bp>${tenBp}</td>
-                                <td style="min-width: 105px">
+                                <td class="ten-bp row-ten-bp">${tenBp}</td>
+                                <td style="min-width: 105px" class="row-dien-giai">
                                     <span onclick="showMore('${indexRowSelected}', this, '${table2}')" class="show-brief-${indexRowSelected} show-brief">
                                         <a href="#">...</a>
                                     </span>
@@ -316,7 +346,7 @@
                                         <div class="date-de-nghi" style="display:none">${dateDeNghi}</div>
                                     </span>
                                 </td>
-                                <td class="nguoi-de-nghi">${tenNguoiDeNghi}</td>
+                                <td class="nguoi-de-nghi nguoi-yeu-cau">${tenNguoiDeNghi}</td>
                             </tr>`;
                             rowSelected+=row;
                         }
@@ -441,13 +471,13 @@
                         <tr onclick="clickRow('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="${listPhieuNVTDaDuyet[i]["id"]}" id="rows-${i}">
                             <td style="display:none"><input class="check-box-export-${listPhieuNVTDaDuyet[i]["id"]} check-box-export" type="checkbox"/></td>
                             <td class=row-stt>${++x}</td>
-                            <td>
+                            <td class="row-ma-phieu">
                                 <a href="#" onclick="directChitiet('${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTDaDuyet[i]["dateDeNghi"])}')">
                                     <span class="ma-phieu">${listPhieuNVTDaDuyet[i]["maPhieu"]}</span> <span class="phieu-datetime">${convertDateTime(listPhieuNVTDaDuyet[i]["dateDeNghi"])}</span>
                                 </a>
                             </td>
-                            <td class=ten-bp>${listPhieuNVTDaDuyet[i]["tenBoPhan"]}</td>
-                            <td style="min-width: 105px">
+                            <td class="ten-bp row-ten-bp">${listPhieuNVTDaDuyet[i]["tenBoPhan"]}</td>
+                            <td style="min-width: 105px" class="row-dien-giai">
                                 <span onclick="showMore('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="show-brief-${listPhieuNVTDaDuyet[i]["id"]} show-brief">
                                     <a href="#">...</a>
                                 </span>
@@ -458,7 +488,7 @@
                                     <div class="date-de-nghi" style="display:none">${listPhieuNVTDaDuyet[i]["dateDeNghi"]}</div>
                                 </span>
                             </td>
-                            <td class="nguoi-de-nghi">${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}</td>
+                            <td class="nguoi-de-nghi nguoi-yeu-cau">${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}</td>
                         </tr>`;
                         rows+=row;
                     };
@@ -477,7 +507,7 @@
                                         <td class="row-time-ma-phieu" style="display:none">${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}</td>
                                         <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
                                         <td class="row-stt">${++x}</td>
-                                        <td>
+                                        <td class="row-ma-phieu">
                                             <a class="ma-phieu" href="#" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')">
                                                 ${listPhieuNVTFast[i]["stt_rec"]} ${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}
                                             </a>
@@ -534,7 +564,6 @@
                     listFilter.push(filter);
                 }
             }
-            
             let count = res.length;
             let totalPage = 0;
             if(count%10 != 0){

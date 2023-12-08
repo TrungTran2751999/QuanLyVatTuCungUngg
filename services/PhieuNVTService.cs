@@ -136,7 +136,21 @@ public class PhieuNVTService : IPhieuNVTService
         "end"+" "+
         "DROP TABLE #d"
 
-        ,code).ToListAsync();
+        ,code)
+        .ToListAsync();
+        listVatTu = listVatTu.Select((x,index)=>new PhieuNhanVatTuChiTietFast{
+                    ma_vt = x.ma_vt,
+                    stt = index,
+                    ten_vt = x.ten_vt,
+                    dvt = x.dvt,
+                    ten_dvt = x.ten_dvt,
+                    ma_kho = x.ma_kho,
+                    so_luong = x.so_luong,
+                    stt_rec = x.stt_rec,
+                    stt_rec0 = x.stt_rec0,
+                    gc_td1 = x.gc_td1,
+                    gia = x.gia
+        }).ToList();
         return listVatTu;
     }
     
@@ -179,12 +193,16 @@ public class PhieuNVTService : IPhieuNVTService
         var listPhieuChiTiet = new List<PhieuDeNghiNhanVatTuChiTietDaDuyet>();
         for(int i=0; i<listTongHop.Count; i++){
             var listPhieuChiTietFast = await GetByMaPhieu(listTongHop[i].maPhieu, listTongHop[i].codeYear);
-            var listPhieuDeNghiNhanVatTu = listPhieuChiTietFast.Select(x=>new PhieuDeNghiNhanVatTuChiTietDaDuyet{
-                                                                            MaVatTu = x.ma_vt,
-                                                                            SoLuong = x.so_luong,
-                                                                            GhiChu = x.gc_td1,
-                                                                            MaPhieu = x.stt_rec
-                                                                      });
+            var listPhieuDeNghiNhanVatTu = from phieuChuaduyet in listPhieuChiTietFast
+                                           join phieuDaDuyet in dbContext1.PhieuDeNghiNhanVatTuChiTietDaDuyet
+                                           on phieuChuaduyet.stt equals phieuDaDuyet.Stt into joinGroup
+                                           from joinItem in joinGroup.DefaultIfEmpty()
+                                           select new  PhieuDeNghiNhanVatTuChiTietDaDuyet{
+                                                MaVatTu = phieuChuaduyet.ma_vt,
+                                                SoLuong = joinItem?.SoLuong??phieuChuaduyet.so_luong,
+                                                GhiChu = phieuChuaduyet.gc_td1,
+                                                MaPhieu = phieuChuaduyet.stt_rec
+                                           };
             listPhieuChiTiet.AddRange(listPhieuDeNghiNhanVatTu);
         }
 
