@@ -23,6 +23,8 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<BaoGiaChitietVatTu> BaoGiaChitietVatTu{get;set;}
 
     public virtual DbSet<UserVatTu> UserVatTus{get;set;}
+    public virtual DbSet<VatTuBaoGiaChiTiet> VatTuBaoGiaChiTiets{get;set;}
+
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

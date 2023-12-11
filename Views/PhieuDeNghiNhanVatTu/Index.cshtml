@@ -91,6 +91,7 @@
                     <th style="min-width: 280px;">TÊN BỘ PHẬN</th>
                     <th>DIỄN GIẢI</th>
                     <th style="min-width: 200px;">NGƯỜI YÊU CẦU</th>
+                    <th id="th-trang-thai" style="display: none;">TRẠNG THÁI</th>
                 </thead>
                 <tbody style="overflow: scroll">
                     
@@ -242,6 +243,7 @@
                         <th style="min-width: 250px;">TÊN BỘ PHẬN</th>
                         <th style="min-width: 250px;">DIỄN GIẢI</th>
                         <th style="min-width: 200px;">NGƯỜI YÊU CẦU</th>
+                        <th style="min-width: 200px;">TRẠNG THÁI</th>
                     </thead>
                     <tbody style="overflow: scroll">
                         
@@ -291,8 +293,28 @@
         function tongHop(isTongHop){
             let table1 = isTongHop ? 'table-data' : 'table-tong-hop';
             let table2  = isTongHop ? 'table-tong-hop' : 'table-data';
+            let listCheckbox = $(`#${table1} .check-box-export`);
+            let existTongHop = false;
+            let message = "";
+            if(isTongHop){
+                message = 'Bạn muốn đưa toàn bộ phiếu đã chọn vào danh sách chuẩn bị tổng hợp?'
+            }else{
+                message = 'Bạn muốn hủy hoặc tổng hợp toàn bộ phiếu đã chọn?'
+            }
+            for(let i=0; i<listCheckbox.length; i++){
+                let rowClassSelected = $(listCheckbox[i]).parent().parent().attr("class").split(" ")[0];
+                let trangThai = $(`#${table1} .${rowClassSelected} .trang-thai`).text().trim();
+                if($(listCheckbox[i]).is(":checked")){
+                    if(trangThai=="ĐÃ TỔNG HỢP"){
+                        existTongHop = true;
+                        message = "Tồn tại phiếu nhận vật tư đã được tổng hợp trong báo giá khác. Bạn vẫn muốn xác nhận ?"
+                        break;
+                    }
+                }
+            }
             Swal.fire({
-                title: isTongHop ? 'Bạn muốn đưa toàn bộ phiếu đã chọn vào danh sách chuẩn bị tổng hợp?': 'Bạn muốn hủy hoặc tổng hợp toàn bộ phiếu đã chọn?',
+                icon: existTongHop ? "warning" : "question",
+                title: message,
                 showDenyButton: true,
                 showCancelButton: true,
                 confirmButtonText: isTongHop ? 'Xác nhận' : "Hủy tổng hợp",
@@ -300,12 +322,10 @@
                 }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
-                    let listCheckbox = $(`#${table1} .check-box-export`);
                     let listMaPhieu = $(`#${table1} .ma-phieu`);
                     let listPhieuDatetime = $(`#${table1} .phieu-datetime`);
                     @* let listMaPhieuSelected = []; *@
                     let rowSelected = "";
-    
                     for(let i=0; i<listCheckbox.length; i++){
                         if($(listCheckbox[i]).is(":checked")){
                            
@@ -318,7 +338,8 @@
                             let dateDeNghi = $(`#${table1} .${rowClassSelected} .date-de-nghi`).text().trim();
                             let decodeYear = decodeDatetime(dateDeNghi);
                             let indexRowSelected = rowClassSelected;
-                    
+                            let trangThai = $(`#${table1} .${rowClassSelected} .trang-thai`).text().trim();
+                            if(trangThai=="CHƯA TỔNG HỢP" && existTongHop==false) existTongHop = true;
                             //xoa row tai table da duyet
                             $(`#${table1} .${rowClassSelected}`).remove();
 
@@ -347,11 +368,13 @@
                                     </span>
                                 </td>
                                 <td class="nguoi-de-nghi nguoi-yeu-cau">${tenNguoiDeNghi}</td>
+                                <td class="trang-thai" style="text-align:center">
+                                    <span style="color:${trangThai=="CHƯA TỔNG HỢP"?"green":"red"}">${trangThai}</span>
+                                </td>
                             </tr>`;
                             rowSelected+=row;
                         }
                     }
-                    
                     if(rowSelected !== ""){
                         $(`#${table2} tbody`).append(rowSelected);
                         let rowStt = $(`#${table2} .row-stt`);
@@ -459,10 +482,11 @@
                     //view da duyet
                     //thay doi kich co cua header tai cua bang #table-data
                     let headersTableData = $("#table-data thead th");
-                    let listSize = ["","",150,250,250,200];
+                    let listSize = ["","",150,250,250,150,150];
                     for(let i=0; i<headersTableData.length; i++){
                         $(headersTableData[i]).css("min-width",`${listSize[i]}px`);
                     }
+                    $("#th-trang-thai").css("display","");
                     $("#container-filter").css("display","none")
                     for(let i=0; i<listPhieuNVTDaDuyet.length; i++){
                         let decodeYear = decodeDatetime(listPhieuNVTDaDuyet[i]["dateDeNghi"]);
@@ -489,12 +513,16 @@
                                 </span>
                             </td>
                             <td class="nguoi-de-nghi nguoi-yeu-cau">${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}</td>
+                            <td class="trang-thai" style="text-align:center">
+                                ${listPhieuNVTDaDuyet[i]["baoGiaId"]==null ? `<span style="color:green">CHƯA TỔNG HỢP</span>` : `<span style="color:RED">ĐÃ TỔNG HỢP</span>`}
+                            </td>
                         </tr>`;
                         rows+=row;
                     };
                 }else{
                     //view chua duyet
                     let x = 0;
+                    $("#th-trang-thai").css("display","none");
                     for(let i=0; i<listPhieuNVTFast.length; i++){
                         if(listPhieuNVTDaDuyet.length > 0){
                             for(let j=0; j<listPhieuNVTDaDuyet.length; j++){
