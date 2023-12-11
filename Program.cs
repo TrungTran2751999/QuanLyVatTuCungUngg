@@ -60,6 +60,7 @@ builder.Services.AddScoped<IVatTuService, VatTuService>();
 builder.Services.AddScoped<IPhieuDeNghiNhanVatTuDaPheDuyet, PhieuDeNghiNhanVatTuDaDuyetService>();
 builder.Services.AddScoped<IBaogiaService, BaoGiaService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IVatTuBaoGiaChiTietService, VatTuBaoGiaChiTietService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

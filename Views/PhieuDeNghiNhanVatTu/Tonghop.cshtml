@@ -268,6 +268,10 @@
                         <td class="don-vi-tinh">${param[i]["donViTinh"]?.trim()}</td>
                         <td class="row-ma-phieu" style="display:none">${param[i]["maPhieu"]?.trim()}</td>
                         <td style="display:none"><textarea class="xuat-xu"></textarea></td>
+
+                        <td class="row-ten-vat-tu" style="display:none">${param[i]["tenVatTu"]}</td>
+                        <td class="row-id-ten-vat-tu">${param[i]["idVatTu"]}</td>
+                       
                         @* <td><textarea class="ghi-chu-tong-hop"></textarea></td> *@
                     </tr>`;
                     rows+=row;
@@ -336,6 +340,7 @@
                 $(`#table-tong-hop #${idRowOnChange} .error-input-bao-gia-so-luong`).css("display","block");
             }
         }
+        //LAP BAO GIA========TONG HOP========================================================
         $("#table-data").on("contextmenu",(e)=>{
             e.preventDefault();
             Swal.fire({
@@ -353,22 +358,28 @@
                 let isExistNhaCungUng = false;
                 let isValidVal = true;
                 let message = "Chưa có vật tư nào được chọn nhà cung ứng";
-                for(let i=0; i<listSelectedNhaCungUng.length; i++){
+                @* for(let i=0; i<listSelectedNhaCungUng.length; i++){
                     if($($(listSelectedNhaCungUng)[i]).val().length > 0){
                         isExistNhaCungUng = true;
                         break;
                     }
-                }
-
+                } *@
+                let listVatTuBaoGiaChiTietDTO = [];
+                
                 for(let i=0; i<listSelectedNhaCungUng.length; i++){
                     if($($(listSelectedNhaCungUng)[i]).val().length > 0){
                         let rowId = $($(listSelectedNhaCungUng)[i]).parent().parent().attr("id");
                         let valueSoLuong = $(`#table-data #${rowId} .input-so-luong`).val();
+
+                        if(!isExistNhaCungUng) isExistNhaCungUng = true
+
                         if(!valueSoLuong || valueSoLuong==0){
                             isValidVal = false;
                             message = "Tồn tại số lượng báo giá không đúng định dạng"
                             break;
                         }
+
+                        
                     }
                 }
                 if(isExistNhaCungUng && isValidVal){
@@ -555,8 +566,6 @@
                         stt++;
                         tr+=td;
 
-                        
-
                         objVatTu.TenVatTu = arrResult[i]["listVatTu"][j]["tenVatTu"];
                         objVatTu.DonViTinh = arrResult[i]["listVatTu"][j]["donViTinh"];
                         objVatTu.YeuCauKiThuat = arrResult[i]["listVatTu"][j]["yeuCauKiThuat"];
@@ -679,7 +688,7 @@
                     }
                 }
                 
-                let objResultstr = JSON.stringify(objResult);
+                @* let objResultstr = JSON.stringify(objResult);
                 //call api
                 if(!isFail){
                     $.ajax({
@@ -708,7 +717,7 @@
                         title: "Oops...",
                         text: "Tồn tại số lượng không đúng định dạng!",
                     });
-                }
+                } *@
 
             }
         })
