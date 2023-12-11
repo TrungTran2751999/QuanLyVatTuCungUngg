@@ -9,5 +9,5 @@ public interface IBaogiaService{
     Task<List<NhaCungUngListVatTu>> GetById(Guid id);
     Task<byte[]> LapBaoGia(string data);
     Task<string> SaveBaoGia(BaoGiaCreateDTO baoGiaCreate);
-    Task<string> XoaBaoGia(Guid id);
+    Task<string> XoaBaoGia(List<Guid> listId);
 }

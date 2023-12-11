@@ -107,18 +107,12 @@ public class BaoGiaService : IBaogiaService
                                             .ToListAsync();
         if(listNhaCungUngId.Count != checkListNhaCungUng.Count) return "NhaCungUng:Tồn tại nhà cung ứng không thuộc danh sách";
         
-        //check xem phieu de nghi da duoc lap bao gia chua
         var listBaoGiaId = baoGiaCreate.ListPhieuPheDuyet;
-        foreach(var baoGiaId in listBaoGiaId){
-            var idBaoGia = await dbContext.PhieuDeNghiNhanVatTuDaDuyet
-                                        .Where(x=>x.BaoGiaId==baoGiaId)
-                                        .Select(x=>x.Id)
-                                        .FirstOrDefaultAsync();
-            XoaBaoGia(idBaoGia);
-        }
 
         using(var transaction = dbContext.Database.BeginTransaction()){
             try{
+                //check xem phieu de nghi da duoc lap bao gia chua
+                // await XoaBaoGia(listBaoGiaId);
                 //add du lieu vao bang bao gia
                 await dbContext.BaoGia.AddAsync(baoGiaCreate.ToModel());
                 dbContext.SaveChanges();
@@ -162,24 +156,34 @@ public class BaoGiaService : IBaogiaService
             }
         }
     }
-    public async Task<string> XoaBaoGia(Guid id){
-        var baoGia = await dbContext.BaoGia.Where(x=>x.Id==id).FirstOrDefaultAsync();
-        var listBaoGiaChiTiet = await dbContext.BaoGiaChiTiet.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
-        using(var transaction = dbContext.Database.BeginTransaction()){
-            try{
+    private static void CapNhatVatTuBaoGiaChiTiet(){
+        
+    } 
+    public async Task<string> XoaBaoGia(List<Guid> listId){
+        foreach(var id in listId){
+            var phieuNhanVatTu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.Id==id).FirstOrDefaultAsync();
+            var baoGia = await dbContext.BaoGia.Where(x=>x.Id==phieuNhanVatTu.BaoGiaId).FirstOrDefaultAsync();
+           
+            if(baoGia!=null){
+                foreach(var ids in listId){
+                    var phieuNhanVatTus = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.Id==ids).FirstOrDefaultAsync();
+                    phieuNhanVatTus.BaoGiaId = null;
+                    dbContext.SaveChanges();
+                }
+                var listBaoGiaChiTiet = await dbContext.BaoGiaChiTiet.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
                 foreach(var baoGiachiTiet in listBaoGiaChiTiet){
                     var baoGiaChiTietVatTu = await dbContext.BaoGiaChitietVatTu.Where(x=>x.BaoGiaChiTietId==baoGiachiTiet.Id).ToListAsync();
                     dbContext.BaoGiaChitietVatTu.RemoveRange(baoGiaChiTietVatTu);
                     dbContext.SaveChanges();
                 }
-                transaction.Commit();
-                return "OK";
-            }catch(Exception e){
-                Console.WriteLine(e);
-                transaction.Rollback();
-                return "NOT OK";
+                dbContext.BaoGiaChiTiet.RemoveRange(listBaoGiaChiTiet);
+                dbContext.SaveChanges();
+
+                dbContext.BaoGia.Remove(baoGia);
+                dbContext.SaveChanges();
             }
         }
+        return "OK";
     }
     public async Task<byte[]> LapBaoGia(string data){
         BaoGiaCreateDTO baoGias = JsonSerializer.Deserialize<BaoGiaCreateDTO>(data);
