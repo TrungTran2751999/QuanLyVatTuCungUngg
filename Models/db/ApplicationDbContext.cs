@@ -24,6 +24,7 @@ public class ApplicationDbContext : DbContext
 
     public virtual DbSet<UserVatTu> UserVatTus{get;set;}
     public virtual DbSet<VatTuBaoGiaChiTiet> VatTuBaoGiaChiTiets{get;set;}
+    public virtual DbSet<VatTuBaoGiaChiTietNhaCungUng> VatTuBaoGiaChiTietNhaCungUngs{get;set;}
 
 
 

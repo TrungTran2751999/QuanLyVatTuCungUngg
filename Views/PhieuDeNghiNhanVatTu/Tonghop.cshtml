@@ -256,7 +256,7 @@
                         <td style="padding: 0px 10px 10px 10px">
                             <select multiple class="form-select shadow-none droplist-nha-cung-ung" onchange="selectDropList(this)">
                                 ${listNhaCungUng.map(item=>{
-                                    return `<option value=${item.id} ${param[i]["listNhaCungUngId"].includes(item.id) ? "selected" : ""}>${item.tenNhaCungUng}</option>`;
+                                    return `<option id="option-${item.id}" value=${item.id} ${param[i]["listNhaCungUngId"].includes(item.id) ? "selected" : ""}>${item.tenNhaCungUng}</option>`;
                                 })}
                             </select>
                         </td>
@@ -270,7 +270,8 @@
                         <td style="display:none"><textarea class="xuat-xu"></textarea></td>
 
                         <td class="row-ten-vat-tu" style="display:none">${param[i]["tenVatTu"]}</td>
-                        <td class="row-id-ten-vat-tu">${param[i]["idVatTu"]}</td>
+                        <td class="row-id-ten-vat-tu" style="display:none">${param[i]["idVatTu"]}</td>
+                        <td class="row-ma-vat-tu" style="display:none">${param[i]["maVatTu"]}</td>
                        
                         @* <td><textarea class="ghi-chu-tong-hop"></textarea></td> *@
                     </tr>`;
@@ -343,6 +344,7 @@
         //LAP BAO GIA========TONG HOP========================================================
         $("#table-data").on("contextmenu",(e)=>{
             e.preventDefault();
+            let listVatTuBaoGiaChiTietDTOs = [];
             Swal.fire({
                 title: "Bạn muốn lập báo giá?",
                 showDenyButton: false,
@@ -364,8 +366,14 @@
                         break;
                     }
                 } *@
-                let listVatTuBaoGiaChiTietDTO = [];
-                
+                let listTenVatTus = $("#table-data .row-ten-vat-tu");
+                let listVatTuIds = $("#table-data .row-id-ten-vat-tu");
+                let listMaVatTus = $("#table-data .row-ma-vat-tu");
+                let soLuongBaoGias = $("#table-data .so-luong-bao-gia");
+                let ghiChu = $("#table-data .ghi-chu");
+                let maPhieu = $("#table-data .row-ma-phieu");
+                //tao param VatTuBaoGiaChiTietDTO
+                console.log(listNhaCungUng);
                 for(let i=0; i<listSelectedNhaCungUng.length; i++){
                     if($($(listSelectedNhaCungUng)[i]).val().length > 0){
                         let rowId = $($(listSelectedNhaCungUng)[i]).parent().parent().attr("id");
@@ -378,9 +386,29 @@
                             message = "Tồn tại số lượng báo giá không đúng định dạng"
                             break;
                         }
-
+                        let listObjNhaCungUng = $($(listSelectedNhaCungUng)[i]).val()
+                        let listNhaCungUngs = []
+                        for(let j=0; j<listObjNhaCungUng.length; j++){
+                            let objNhaCungUng = {
+                                NhaCungUngId: +listObjNhaCungUng[j],
+                                TenNhaCungUng: listNhaCungUng?.filter((e)=>e.id==listObjNhaCungUng[j])[0].tenNhaCungUng
+                            }
+                            listNhaCungUngs.push(objNhaCungUng)
+                        }
                         
+                        let obj = {
+                            TenVatTu: $(listTenVatTus[i])?.text().trim(),
+                            VatTuId: +$(listVatTuIds[i])?.text().trim(),
+                            MaVatTu: $(listMaVatTus[i])?.text().trim(),
+                            SoLuongBaogia: +$(soLuongBaoGias[i])?.text().trim(),
+                            GhiChu: $(ghiChu[i])?.text().trim(),
+                            MaPhieu: $(maPhieu[i])?.text().trim(),
+                            ListNhaCungUng: listNhaCungUngs
+                        }
+
+                        listVatTuBaoGiaChiTietDTOs.push(obj)
                     }
+
                 }
                 if(isExistNhaCungUng && isValidVal){
                     exportToHTMLDemoNhaCungUng();
@@ -596,6 +624,7 @@
                     CreatedBy: id,
                     UpdateBy: id,
                     ListNhaCungUngListVatTu: [],
+                    ListVatTuBaoGiaChiTietDTO: listVatTuBaoGiaChiTietDTOs
                 };
                 let listPhieu = localStorage.getItem("listPhieuTongHop");
                 if(listPhieu==null){
@@ -688,7 +717,7 @@
                     }
                 }
                 
-                @* let objResultstr = JSON.stringify(objResult);
+                let objResultstr = JSON.stringify(objResult);
                 //call api
                 if(!isFail){
                     $.ajax({
@@ -717,7 +746,7 @@
                         title: "Oops...",
                         text: "Tồn tại số lượng không đúng định dạng!",
                     });
-                } *@
+                }
 
             }
         })

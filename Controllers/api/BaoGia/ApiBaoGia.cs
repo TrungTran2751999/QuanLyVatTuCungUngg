@@ -13,8 +13,10 @@ namespace app.Controllers;
 [Route("api/bao-gia")]
 public class ApiBaoGia:Controller{
     private IBaogiaService baogiaService;
-    public ApiBaoGia(IBaogiaService baogiaService){
+    private IVatTuBaoGiaChiTietService vatTuBaoGiaChiTietService;
+    public ApiBaoGia(IBaogiaService baogiaService, IVatTuBaoGiaChiTietService vatTuBaoGiaChiTietService){
         this.baogiaService = baogiaService;
+        this.vatTuBaoGiaChiTietService = vatTuBaoGiaChiTietService;
     }
     public async Task<IActionResult> GetAll(bool isDeleted){
         var listResult = await baogiaService.GetAll(isDeleted);
@@ -42,5 +44,11 @@ public class ApiBaoGia:Controller{
         string name = "bao-gia"+"-"+DateTime.Now.ToString("dd")+"-"+DateTime.Now.ToString("MM")+"-"+DateTime.Now.ToString("yyyy")+"-"+DateTime.Now.ToString("hh")+"-"+DateTime.Now.ToString("mm")+"-"+DateTime.Now.ToString("ss");
         return File(result, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", name+".zip");
 
+    }
+    [HttpGet]
+    [Route("chi-tiet-cap-nhat")]
+    public async Task<ActionResult> ChiTietCapNhat(Guid id){
+        var result = await vatTuBaoGiaChiTietService.GetByBaoGiaId(id);
+        return Ok(result);
     }
 }

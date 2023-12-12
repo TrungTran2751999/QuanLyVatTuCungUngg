@@ -20,6 +20,7 @@ using EXCEL = OfficeOpenXml;
 using OfficeOpenXml.Style;
 using DW = System.Drawing;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage;
 
 // using System.Data.Entity;
 namespace app.Services;
@@ -87,6 +88,7 @@ public class BaoGiaService : IBaogiaService
         long updatedBy = baoGiaCreate.UpdateBy;
         
         List<NhaCungUngListVatTu> listNhaCungUngListVatTu = baoGiaCreate.ListNhaCungUngListVatTu;
+        
         List<VatTuInBaoGia> listVatTuAndIdNhaCungUng = new();
         for(int i=0; i<listNhaCungUngListVatTu.Count; i++){
             listVatTuAndIdNhaCungUng.AddRange(listNhaCungUngListVatTu[i].ListVatTu);
@@ -147,6 +149,17 @@ public class BaoGiaService : IBaogiaService
                     dbContext.SaveChanges();
                 }
                 
+                CreateVatTuBaoGiaChiTiet(lastRecordBaoGia.Id, baoGiaCreate.ListVatTuBaoGiaChiTietDTO, createdBy, updatedBy, transaction);
+                // foreach(var vatTuBaoGia in baoGiaCreate.ListVatTuBaoGiaChiTietDTO){
+                //     var vatTuBaoGiaParam = vatTuBaoGia.ToModel(lastRecordBaoGia.Id, createdBy, updatedBy);
+                //     await dbContext.VatTuBaoGiaChiTiets.AddAsync(vatTuBaoGiaParam);
+                //     dbContext.SaveChanges();
+                    
+                //     var listVatTuBaogia = vatTuBaoGia.ToListVatTuBaoGiaChiTietNhaCungUng(vatTuBaoGiaParam.Id, createdBy, updatedBy);
+                //     await dbContext.VatTuBaoGiaChiTietNhaCungUngs.AddRangeAsync(listVatTuBaogia);
+                //     dbContext.SaveChanges();
+                // }
+
                 transaction.Commit();
                 return "OK";
             }catch(Exception e){
@@ -156,9 +169,23 @@ public class BaoGiaService : IBaogiaService
             }
         }
     }
-    private static void CapNhatVatTuBaoGiaChiTiet(){
-        
-    } 
+    private void CreateVatTuBaoGiaChiTiet(Guid baoGiaId, List<VatTuBaoGiaChiTietDTO> listVatTuBaoGias, long CreatedBy, long UpdatedBy, IDbContextTransaction transaction){
+        try{
+            foreach(var vatTuBaoGia in listVatTuBaoGias){
+                var vatTuBaoGiaParam = vatTuBaoGia.ToModel(baoGiaId, CreatedBy, UpdatedBy);
+                dbContext.VatTuBaoGiaChiTiets.Add(vatTuBaoGiaParam);
+                dbContext.SaveChanges();
+                
+                var listVatTuBaogia = vatTuBaoGia.ToListVatTuBaoGiaChiTietNhaCungUng(baoGiaId, vatTuBaoGiaParam.Id, CreatedBy, UpdatedBy);
+                dbContext.VatTuBaoGiaChiTietNhaCungUngs.AddRangeAsync(listVatTuBaogia);
+                dbContext.SaveChanges();
+            }
+        }catch(Exception e){
+            Console.WriteLine(e);
+            transaction.Rollback();
+            return;
+        }
+    }
     public async Task<string> XoaBaoGia(List<Guid> listId){
         foreach(var id in listId){
             var phieuNhanVatTu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.Id==id).FirstOrDefaultAsync();
@@ -177,6 +204,13 @@ public class BaoGiaService : IBaogiaService
                     dbContext.SaveChanges();
                 }
                 dbContext.BaoGiaChiTiet.RemoveRange(listBaoGiaChiTiet);
+                dbContext.SaveChanges();
+
+                var vatTuBaoGiaChiTiet = await dbContext.VatTuBaoGiaChiTiets.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+                var vatTuBaoGiaChiTietNhaCungUng = await dbContext.VatTuBaoGiaChiTietNhaCungUngs.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+
+                dbContext.VatTuBaoGiaChiTietNhaCungUngs.RemoveRange(vatTuBaoGiaChiTietNhaCungUng);
+                dbContext.VatTuBaoGiaChiTiets.RemoveRange(vatTuBaoGiaChiTiet);
                 dbContext.SaveChanges();
 
                 dbContext.BaoGia.Remove(baoGia);

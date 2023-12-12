@@ -6,5 +6,5 @@ using OfficeOpenXml;
 namespace app.Services;
 
 public interface IVatTuBaoGiaChiTietService{
-    public Task<VatTuBaoGiaChiTiet> GetByBaoGiaChiTietId(Guid BaoGiaChiTietId);
+    public Task<List<VatTuBaoGiaChiTietReponse>> GetByBaoGiaId(Guid BaoGiaChiTietId);
 }

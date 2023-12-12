@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using app.Models;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 namespace app.DTOs;
 
 public class BaoGiaCreateDTO{
@@ -46,19 +47,16 @@ public class VatTuBaoGiaChiTietDTO{
     public string? TenVatTu{get;set;}
     public long VatTuId{get;set;}
     public string? MaVatTu{get;set;}
-    public string? TenNhaCungUng{get;set;}
-    public long NhaCungUngId{get;set;}
+    public List<NhaCungUng> ListNhaCungUng{get;set;}
     public decimal SoLuongBaoGia{get;set;}
     public string? GhiChu{get;set;}
     public string? MaPhieu{get;set;}
-    public VatTuBaoGiaChiTiet ToModel(Guid BaoGiaChiTietVatTuId, long CreatedBy, long UpdatedBy){
+    public VatTuBaoGiaChiTiet ToModel(Guid BaoGiaId, long CreatedBy, long UpdatedBy){
         VatTuBaoGiaChiTiet vatTuBaoGia = new(){
-            BaoGiaChiTietVatTuId = BaoGiaChiTietVatTuId,
+            BaoGiaId = BaoGiaId,
             TenVatTu = TenVatTu,
             VatTuId = VatTuId,
             MaVatTu = MaVatTu,
-            TenNhaCungUng = TenNhaCungUng,
-            NhaCungUngId = NhaCungUngId,
             SoLuongBaogia = SoLuongBaoGia,
             GhiChu = GhiChu,
             MaPhieu = MaPhieu,
@@ -68,6 +66,27 @@ public class VatTuBaoGiaChiTietDTO{
             UpdatedAt = DateTime.Now
         };
         return vatTuBaoGia;
+    }
+    public class NhaCungUng{
+        public string? TenNhaCungUng{get;set;}
+        public long NhaCungUngId{get;set;}
+    }
+    public List<VatTuBaoGiaChiTietNhaCungUng> ToListVatTuBaoGiaChiTietNhaCungUng(Guid BaoGiaId, Guid VatTuBaoGiaChiTietId, long CreatedBy, long UpdatedBy){
+        List<VatTuBaoGiaChiTietNhaCungUng> listNhaCungUng = new();
+        foreach(var nhaCungUngParam in ListNhaCungUng){
+            VatTuBaoGiaChiTietNhaCungUng nhaCungUng = new(){
+                BaoGiaId = BaoGiaId,
+                VatTuBaoGiaChiTietId = VatTuBaoGiaChiTietId,
+                NhaCungUngId = nhaCungUngParam.NhaCungUngId,
+                TenNhaCungUng = nhaCungUngParam.TenNhaCungUng,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                CreatedBy = CreatedBy,
+                UpdatedBy = UpdatedBy
+            };
+            listNhaCungUng.Add(nhaCungUng);
+        }
+        return listNhaCungUng;
     }
 }
 

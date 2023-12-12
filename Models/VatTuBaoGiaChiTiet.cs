@@ -8,18 +8,14 @@ public class VatTuBaoGiaChiTiet{
     [Key]
     [Column("Id")]
     public Guid Id{get;set;}
-    [Column("BaoGiaChiTietVatTuId")]
-    public Guid BaoGiaChiTietVatTuId{get;set;}
+    [Column("BaoGiaId")]
+    public Guid BaoGiaId{get;set;}
     [Column("TenVatTu")]
     public string? TenVatTu{get;set;}
     [Column("VatTuId")]
     public long VatTuId{get;set;}
     [Column("MaVatTu")]
     public string? MaVatTu{get;set;}
-    [Column("TenNhaCungUng")]
-    public string? TenNhaCungUng{get;set;}
-    [Column("NhaCungUngId")]
-    public long NhaCungUngId{get;set;}
     [Column("SoLuongBaogia")]
     public decimal SoLuongBaogia{get;set;}
     [Column("GhiChu")]

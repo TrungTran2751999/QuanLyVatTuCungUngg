@@ -6,9 +6,11 @@ namespace app.Models;
 public class VatTuBaoGiaChiTietNhaCungUng{
     [Key]
     [Column("Id")]
-    public long Id{get;set;}
+    public Guid Id{get;set;}
     [Column("VatTuBaoGiaChiTietId")]
     public Guid? VatTuBaoGiaChiTietId{get;set;}
+    [Column("BaoGiaId")]
+    public Guid? BaoGiaId{get;set;}
     [Column("NhaCungUngId")]
     public long NhaCungUngId{get;set;}
     [Column("TenNhaCungUng")]
