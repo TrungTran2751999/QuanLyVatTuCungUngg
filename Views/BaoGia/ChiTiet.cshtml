@@ -57,7 +57,7 @@
 
             </tbody>
         </table>
-        <button class="btn btn-primary" style="width: 100%;">CẬP NHẬT</button>
+        <button class="btn btn-primary" style="width: 100%;" onclick="directUpdate()">CẬP NHẬT</button>
         <form action="/api/bao-gia/lap-bao-gia" method="POST" style="display:none">
             <input name="data" type="text" id="input-bao-gia-param"/>
             <input type="submit" id="submit-bao-gia"/>
@@ -76,6 +76,9 @@
         {
         const searchParams = new URLSearchParams(window.location.search);
         const id = searchParams.get("id");
+        function directUpdate(){
+            window.location.href = `/bao-gia/cap-nhat?id=${id}`;
+        }
         //===========================INIT DATA==============================
         $.ajax({
             "headers": {

@@ -51,4 +51,11 @@ public class ApiBaoGia:Controller{
         var result = await vatTuBaoGiaChiTietService.GetByBaoGiaId(id);
         return Ok(result);
     }
+    [HttpPost]
+    [Route("cap-nhat")]
+    public async Task<ActionResult> CapNhatBaoGia([FromBody] BaoGiaUpdateDTO baoGiaUpdateDTO){
+        var result = await baogiaService.CapNhatBaoGia(baoGiaUpdateDTO);
+        if(result!="OK") return BadRequest(result);
+        return Ok(result);
+    }
 }

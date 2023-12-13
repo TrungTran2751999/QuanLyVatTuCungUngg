@@ -10,9 +10,14 @@ public class VatTuBaoGiaChiTietReponse{
     public long? VatTuId{get;set;}
     public string? MaVatTu{get;set;}
     public string? MaPhieu{get;set;}
-    public List<NhaCungUng> ListNhaCungUng{get;set;}
+    public string? YeuCauKiThuat{get;set;}
+    public string? GhiChu{get;set;}
+    public string? CodeYear{get;set;}
+    public decimal? SoLuongBaoGia{get;set;}
+    public string? DonViTinh{get;set;}
+    public List<long> ListNhaCungUng{get;set;}
 }
-public class NhaCungUng{
-    public long NhaCungUngId{get;set;}
-    public string? TenNhaCungUng{get;set;}
-}
+// public class NhaCungUng{
+//     public long NhaCungUngId{get;set;}
+//     public string? TenNhaCungUng{get;set;}
+// }

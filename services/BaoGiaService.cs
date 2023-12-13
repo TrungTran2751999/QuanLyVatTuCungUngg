@@ -21,6 +21,7 @@ using OfficeOpenXml.Style;
 using DW = System.Drawing;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 // using System.Data.Entity;
 namespace app.Services;
@@ -186,38 +187,106 @@ public class BaoGiaService : IBaogiaService
             return;
         }
     }
-    public async Task<string> XoaBaoGia(List<Guid> listId){
-        foreach(var id in listId){
-            var phieuNhanVatTu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.Id==id).FirstOrDefaultAsync();
-            var baoGia = await dbContext.BaoGia.Where(x=>x.Id==phieuNhanVatTu.BaoGiaId).FirstOrDefaultAsync();
-           
-            if(baoGia!=null){
-                foreach(var ids in listId){
-                    var phieuNhanVatTus = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.Id==ids).FirstOrDefaultAsync();
-                    phieuNhanVatTus.BaoGiaId = null;
+    public async Task<string> XoaBaoGiaByPhieuDeNghi(List<Guid> listId, IDbContextTransaction transaction){
+        try{
+            foreach(var id in listId){
+                var phieuNhanVatTu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.Id==id).FirstOrDefaultAsync();
+                var baoGia = await dbContext.BaoGia.Where(x=>x.Id==phieuNhanVatTu.BaoGiaId).FirstOrDefaultAsync();
+            
+                if(baoGia!=null){
+                    foreach(var ids in listId){
+                        var phieuNhanVatTus = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.Id==ids).FirstOrDefaultAsync();
+                        phieuNhanVatTus.BaoGiaId = null;
+                        dbContext.SaveChanges();
+                    }
+                    var listBaoGiaChiTiet = await dbContext.BaoGiaChiTiet.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+                    foreach(var baoGiachiTiet in listBaoGiaChiTiet){
+                        var baoGiaChiTietVatTu = await dbContext.BaoGiaChitietVatTu.Where(x=>x.BaoGiaChiTietId==baoGiachiTiet.Id).ToListAsync();
+                        dbContext.BaoGiaChitietVatTu.RemoveRange(baoGiaChiTietVatTu);
+                        dbContext.SaveChanges();
+                    }
+                    dbContext.BaoGiaChiTiet.RemoveRange(listBaoGiaChiTiet);
                     dbContext.SaveChanges();
-                }
-                var listBaoGiaChiTiet = await dbContext.BaoGiaChiTiet.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
-                foreach(var baoGiachiTiet in listBaoGiaChiTiet){
-                    var baoGiaChiTietVatTu = await dbContext.BaoGiaChitietVatTu.Where(x=>x.BaoGiaChiTietId==baoGiachiTiet.Id).ToListAsync();
-                    dbContext.BaoGiaChitietVatTu.RemoveRange(baoGiaChiTietVatTu);
+
+                    var vatTuBaoGiaChiTiet = await dbContext.VatTuBaoGiaChiTiets.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+                    var vatTuBaoGiaChiTietNhaCungUng = await dbContext.VatTuBaoGiaChiTietNhaCungUngs.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+
+                    dbContext.VatTuBaoGiaChiTietNhaCungUngs.RemoveRange(vatTuBaoGiaChiTietNhaCungUng);
+                    dbContext.VatTuBaoGiaChiTiets.RemoveRange(vatTuBaoGiaChiTiet);
                     dbContext.SaveChanges();
+
+                    dbContext.BaoGia.Remove(baoGia);
+                    dbContext.SaveChanges();
+
                 }
-                dbContext.BaoGiaChiTiet.RemoveRange(listBaoGiaChiTiet);
-                dbContext.SaveChanges();
+            }
+            return "OK";
+        }catch(Exception e){
+            Console.WriteLine(e);
+            transaction.Rollback();
+            return "NOT OK";
+        }
+    }
+    public async Task<string> XoaBaoGiaByBaoGiaId(Guid baoGiaId, IDbContextTransaction transaction)
+    {
+        try{
+            var baoGia = await dbContext.BaoGia.Where(x=>x.Id==baoGiaId).FirstOrDefaultAsync();
+            if(baoGia == null)  return "NOT OK";
 
-                var vatTuBaoGiaChiTiet = await dbContext.VatTuBaoGiaChiTiets.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
-                var vatTuBaoGiaChiTietNhaCungUng = await dbContext.VatTuBaoGiaChiTietNhaCungUngs.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
-
-                dbContext.VatTuBaoGiaChiTietNhaCungUngs.RemoveRange(vatTuBaoGiaChiTietNhaCungUng);
-                dbContext.VatTuBaoGiaChiTiets.RemoveRange(vatTuBaoGiaChiTiet);
-                dbContext.SaveChanges();
-
-                dbContext.BaoGia.Remove(baoGia);
+            var listBaoGiaChiTiet = await dbContext.BaoGiaChiTiet.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+            foreach(var baoGiachiTiet in listBaoGiaChiTiet){
+                var baoGiaChiTietVatTu = await dbContext.BaoGiaChitietVatTu.Where(x=>x.BaoGiaChiTietId==baoGiachiTiet.Id).ToListAsync();
+                dbContext.BaoGiaChitietVatTu.RemoveRange(baoGiaChiTietVatTu);
                 dbContext.SaveChanges();
             }
+            dbContext.BaoGiaChiTiet.RemoveRange(listBaoGiaChiTiet);
+            dbContext.SaveChanges();
+
+            var vatTuBaoGiaChiTiet = await dbContext.VatTuBaoGiaChiTiets.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+            var vatTuBaoGiaChiTietNhaCungUng = await dbContext.VatTuBaoGiaChiTietNhaCungUngs.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+
+            dbContext.VatTuBaoGiaChiTietNhaCungUngs.RemoveRange(vatTuBaoGiaChiTietNhaCungUng);
+            dbContext.VatTuBaoGiaChiTiets.RemoveRange(vatTuBaoGiaChiTiet);
+            dbContext.SaveChanges();
+
+            return "OK";
+
+        }catch(Exception e){
+            Console.WriteLine(e);
+            transaction.Rollback();
+            return "NOT OK";
         }
-        return "OK";
+    }
+    public async Task<string> CapNhatBaoGia(BaoGiaUpdateDTO baoGiaUpdateDTO)
+    {
+        var baoGiaUpdate = await dbContext.BaoGia.Where(x=>x.Id == baoGiaUpdateDTO.MaBaoGia).FirstOrDefaultAsync();
+        if(baoGiaUpdate==null) return "BaoGia:Không tồn tại báo giá";
+        
+        using(var transaction = dbContext.Database.BeginTransaction()){
+            try{
+                var maBaoGia = new List<Guid>(){baoGiaUpdate.Id};
+                var xoa = await XoaBaoGiaByBaoGiaId(baoGiaUpdate.Id, transaction);
+                if(xoa=="OK"){
+                    foreach(var vatTuNhaCungUng in baoGiaUpdateDTO.ListNhaCungUngListVatTu){
+                        var baoGiaChiTiet = vatTuNhaCungUng.ToBaoGiaChiTiet(baoGiaUpdate.Id, baoGiaUpdateDTO.CreatedBy, baoGiaUpdateDTO.UpdateBy);
+                        dbContext.BaoGiaChiTiet.Add(baoGiaChiTiet);
+
+                        var listVatTuBaoGiaChitiet = vatTuNhaCungUng.ToListBaoGiaChiTietVatTu(baoGiaChiTiet.Id, baoGiaUpdateDTO.CreatedBy, baoGiaUpdateDTO.UpdateBy);
+                        dbContext.BaoGiaChitietVatTu.AddRange(listVatTuBaoGiaChitiet);
+                    }
+
+                    CreateVatTuBaoGiaChiTiet(baoGiaUpdate.Id, baoGiaUpdateDTO.ListVatTuBaoGiaChiTietDTO, baoGiaUpdateDTO.CreatedBy, baoGiaUpdateDTO.UpdateBy, transaction);
+                    transaction.Commit();
+                    return "OK";
+                }else{
+                    return ":Lỗi hệ thống";
+                }
+            }catch(Exception e){
+                Console.WriteLine(e);
+                transaction.Rollback();
+                return "NOT OK";
+            }
+        }
     }
     public async Task<byte[]> LapBaoGia(string data){
         BaoGiaCreateDTO baoGias = JsonSerializer.Deserialize<BaoGiaCreateDTO>(data);

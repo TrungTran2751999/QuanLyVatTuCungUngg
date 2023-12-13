@@ -26,5 +26,18 @@ public class BaoGiaController : Controller
         ViewBag.listNhaCungUng = listNhaCungUng;
         return View();
     }
+    [Route("cap-nhat")]
+    public async Task<ActionResult> Update(){
+        var listNhaCungUng = await dbContext.NhaCungUng
+                                      .OrderBy(x=>x.TenNhaCungUng)
+                                      .Where(x=>x.IsDeleted==false)
+                                      .Select(
+                                        x=>new NhaCungUngVatTu{
+                                            Id = x.Id,
+                                            TenNhaCungUng = x.TenNhaCungUng
+                                        }).ToListAsync();
+        ViewBag.listNhaCungUng = listNhaCungUng;
+        return View();
+    }
     
 }

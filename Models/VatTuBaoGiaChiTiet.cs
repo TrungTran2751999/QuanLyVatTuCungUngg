@@ -14,14 +14,22 @@ public class VatTuBaoGiaChiTiet{
     public string? TenVatTu{get;set;}
     [Column("VatTuId")]
     public long VatTuId{get;set;}
+    [Column("Stt")]
+    public int Stt{get;set;}
+    [Column("YeuCauKiThuat")]
+    public string? YeuCauKiThuat{get;set;}
     [Column("MaVatTu")]
     public string? MaVatTu{get;set;}
     [Column("SoLuongBaogia")]
     public decimal SoLuongBaogia{get;set;}
+    [Column("CodeYear")]
+    public string? CodeYear{get;set;}
     [Column("GhiChu")]
     public string? GhiChu{get;set;}
     [Column("MaPhieu")]
     public string? MaPhieu{get;set;}
+    [Column("DonViTinh")]
+    public string? DonViTinh{get;set;}
     [Column("CreatedAt")]
     public DateTime CreatedAt{get;set;}
     [Column("UpdatedAt")]

@@ -26,7 +26,7 @@ public class NhaCungUngListVatTu{
         };
         return result;
     }
-    public List<BaoGiaChitietVatTu> ToListBaoGiaChiTietVatTu(Guid BaogiaChiTietId, long CreatedAt, long UpdatedAt){
+    public List<BaoGiaChitietVatTu> ToListBaoGiaChiTietVatTu(Guid BaogiaChiTietId, long CreatedBy, long UpdatedBy){
         var listResult = ListVatTu.Select(x=>new BaoGiaChitietVatTu{
                             BaoGiaChiTietId = BaogiaChiTietId,
                             NhaCungUngId = IdNhaCungUng,
@@ -38,8 +38,8 @@ public class NhaCungUngListVatTu{
                             YeucauKiThuat = x.YeuCauKiThuat,
                             CodeYear = x.CodeYear,
                             GhiChu = x.GhiChu,
-                            CreatedAt = CreatedAt,
-                            UpdatedAt = UpdatedAt,
+                            CreatedAt = CreatedBy,
+                            UpdatedAt = UpdatedBy,
                             CreatedTime = DateTime.Now,
                             UpdatedTime = DateTime.Now
                          }).ToList();

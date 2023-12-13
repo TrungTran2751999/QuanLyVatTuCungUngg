@@ -51,13 +51,21 @@ public class VatTuBaoGiaChiTietDTO{
     public decimal SoLuongBaoGia{get;set;}
     public string? GhiChu{get;set;}
     public string? MaPhieu{get;set;}
+    public int Stt{get;set;}
+    public string? YeuCauKiThuat{get;set;}
+    public string? DonViTinh{get;set;}
+    public string? CodeYear{get;set;}
     public VatTuBaoGiaChiTiet ToModel(Guid BaoGiaId, long CreatedBy, long UpdatedBy){
         VatTuBaoGiaChiTiet vatTuBaoGia = new(){
             BaoGiaId = BaoGiaId,
+            Stt = Stt,
+            DonViTinh = DonViTinh,
+            CodeYear = CodeYear,
             TenVatTu = TenVatTu,
             VatTuId = VatTuId,
             MaVatTu = MaVatTu,
             SoLuongBaogia = SoLuongBaoGia,
+            YeuCauKiThuat = YeuCauKiThuat,
             GhiChu = GhiChu,
             MaPhieu = MaPhieu,
             CreatedBy = CreatedBy,
@@ -77,7 +85,7 @@ public class VatTuBaoGiaChiTietDTO{
             VatTuBaoGiaChiTietNhaCungUng nhaCungUng = new(){
                 BaoGiaId = BaoGiaId,
                 VatTuBaoGiaChiTietId = VatTuBaoGiaChiTietId,
-                NhaCungUngId = nhaCungUngParam.NhaCungUngId,
+                NhaCungUngId = nhaCungUngParam.NhaCungUngId,    
                 TenNhaCungUng = nhaCungUngParam.TenNhaCungUng,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
