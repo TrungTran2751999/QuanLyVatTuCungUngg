@@ -59,6 +59,7 @@ public class BaoGiaService : IBaogiaService
                                         IdNhaCungUng = x.NhaCungUngId,
                                         BaoGiaId = x.BaoGiaId,
                                         ListVatTu = dbContext.BaoGiaChitietVatTu.Select(y=>new VatTuInBaoGia{
+                                            IdNhaCungUng = x.NhaCungUngId,
                                             VatTuId = y.VatTuId,
                                             TenVatTu = y.TenVatTu,
                                             MaPhieu = y.MaPhieu,
@@ -267,6 +268,10 @@ public class BaoGiaService : IBaogiaService
                 var maBaoGia = new List<Guid>(){baoGiaUpdate.Id};
                 var xoa = await XoaBaoGiaByBaoGiaId(baoGiaUpdate.Id, transaction);
                 if(xoa=="OK"){
+                    baoGiaUpdate.UpdatedTime = DateTime.Now;
+                    baoGiaUpdate.UpdatedAt = baoGiaUpdateDTO.UpdateBy;
+                    dbContext.SaveChanges();
+
                     foreach(var vatTuNhaCungUng in baoGiaUpdateDTO.ListNhaCungUngListVatTu){
                         var baoGiaChiTiet = vatTuNhaCungUng.ToBaoGiaChiTiet(baoGiaUpdate.Id, baoGiaUpdateDTO.CreatedBy, baoGiaUpdateDTO.UpdateBy);
                         dbContext.BaoGiaChiTiet.Add(baoGiaChiTiet);

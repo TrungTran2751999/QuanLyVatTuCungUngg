@@ -161,7 +161,13 @@
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get("id");
         let listNhaCungUng = @Html.Raw(Json.Serialize(ViewBag.listNhaCungUng));
-
+        let listBaogiaChiTiet = @Html.Raw(Json.Serialize(ViewBag.listBaogiaChiTiet));
+        let listVatTus = [];
+        for(let i=0; i<listBaogiaChiTiet.length; i++){
+            let listVatTu = listBaogiaChiTiet[i].listVatTu;
+            listVatTus = listVatTus.concat(listVatTu);
+        }
+        console.log(listVatTus);
         //onchange validate so luong lap bao gia
         function onChangeSoLuongLapBaoGia(param, soLuongXin){
             let val = $(param).val();
@@ -231,7 +237,6 @@
         })
         .done(res=>{
             let arrResult = res;
-            console.log(listNhaCungUng)
             function importTable(param){
                 let rows = "";
                 $("#table-data tbody").html("");
@@ -360,12 +365,13 @@
                 let listTenVatTus = $("#table-data .ten-vat-tu-area");
                 let listVatTuIds = $("#table-data .row-id-ten-vat-tu");
                 let listMaVatTus = $("#table-data .row-ma-vat-tu");
-                let soLuongBaoGias = $("#table-data .so-luong-bao-gia");
+                let soLuongBaoGias = $("#table-data .input-so-luong");
                 let ghiChu = $("#table-data .ghi-chu");
                 let maPhieu = $("#table-data .row-ma-phieu");
                 let listYeuCauKiThuat = $("#table-data .yeu-cau-ki-thuat");
                 let listCodeYear = $("#table-data .row-code-year");
                 let listDonViTinh = $("#table-data .don-vi-tinh");
+            
                 //tao param VatTuBaoGiaChiTietDTO
                 @* console.log(listNhaCungUng); *@
                 for(let i=0; i<listSelectedNhaCungUng.length; i++){
@@ -394,7 +400,7 @@
                             TenVatTu: $(listTenVatTus[i])?.val().trim(),
                             VatTuId: +$(listVatTuIds[i])?.text().trim(),
                             MaVatTu: $(listMaVatTus[i])?.text().trim(),
-                            SoLuongBaogia: +$(soLuongBaoGias[i])?.text().trim(),
+                            SoLuongBaogia: +$(soLuongBaoGias[i])?.val(),
                             YeuCauKiThuat : $(listYeuCauKiThuat[i])?.val().trim(),
                             GhiChu: $(ghiChu[i])?.text().trim(),
                             MaPhieu: $(maPhieu[i])?.text().trim(),

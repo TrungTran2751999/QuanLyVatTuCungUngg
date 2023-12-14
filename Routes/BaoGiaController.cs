@@ -27,7 +27,8 @@ public class BaoGiaController : Controller
         return View();
     }
     [Route("cap-nhat")]
-    public async Task<ActionResult> Update(){
+    public async Task<ActionResult> Update(Guid id){
+        var listBaogiaChiTiet = await baogiaService.GetById(id);
         var listNhaCungUng = await dbContext.NhaCungUng
                                       .OrderBy(x=>x.TenNhaCungUng)
                                       .Where(x=>x.IsDeleted==false)
@@ -37,6 +38,7 @@ public class BaoGiaController : Controller
                                             TenNhaCungUng = x.TenNhaCungUng
                                         }).ToListAsync();
         ViewBag.listNhaCungUng = listNhaCungUng;
+        ViewBag.listBaogiaChiTiet = listBaogiaChiTiet;
         return View();
     }
     

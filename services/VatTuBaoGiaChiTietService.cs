@@ -74,7 +74,6 @@ public class VatTuBaoGiaChiTietService : IVatTuBaoGiaChiTietService
                                             SoLuongBaoGia = phieuDeNghiConvert.SoLuongBaoGia,
                                             ListNhaCungUng = phieuDeNghiConvert.ListNhaCungUng
                                        }).ToList();
-
         var listResult = new List<VatTuBaoGiaChiTietReponse>();
         foreach(var phieuFast in listPhieuDeNghiConverted){
             var result = new VatTuBaoGiaChiTietReponse();

@@ -342,6 +342,7 @@
             }
         }
         //LAP BAO GIA========TONG HOP========================================================
+        let listNhaCungUngSauTongHop = []
         $("#table-data").on("contextmenu",(e)=>{
             e.preventDefault();
             let listVatTuBaoGiaChiTietDTOs = [];
@@ -369,7 +370,7 @@
                 let listTenVatTus = $("#table-data .ten-vat-tu-area");
                 let listVatTuIds = $("#table-data .row-id-ten-vat-tu");
                 let listMaVatTus = $("#table-data .row-ma-vat-tu");
-                let soLuongBaoGias = $("#table-data .so-luong-bao-gia");
+                let soLuongBaoGias = $("#table-data .input-so-luong");
                 let ghiChu = $("#table-data .ghi-chu");
                 let maPhieu = $("#table-data .row-ma-phieu");
                 let listYeuCauKiThuat = $("#table-data .yeu-cau-ki-thuat");
@@ -403,7 +404,7 @@
                             TenVatTu: $(listTenVatTus[i])?.val().trim(),
                             VatTuId: +$(listVatTuIds[i])?.text().trim(),
                             MaVatTu: $(listMaVatTus[i])?.text().trim(),
-                            SoLuongBaogia: +$(soLuongBaoGias[i])?.text().trim(),
+                            SoLuongBaogia: +$(soLuongBaoGias[i])?.val(),
                             YeuCauKiThuat : $(listYeuCauKiThuat[i])?.val().trim(),
                             GhiChu: $(ghiChu[i])?.text().trim(),
                             MaPhieu: $(maPhieu[i])?.text().trim(),
@@ -446,12 +447,15 @@
                 if (result.isConfirmed) {
                     callApiLapBaoGia();
                 } else if (result.isDenied) {
+                    listNhaCungUngSauTongHop = createArrFromTableTongHop().objResult.ListNhaCungUngListVatTu;
+                    console.log(listNhaCungUngSauTongHop)
                     $("#table-tong-hop tbody").html("");
                     $("#caption-tong-hop").css("display","block");
                     $("#container-table-data").css("display","block");
                     $("#table-tong-hop").css("display","none");
                     $("#container-filter").css("display","");
                     $("#btn-quay-lai").css("display","none");
+
                 }
                 });
             })
@@ -459,6 +463,9 @@
             //xuat du lieu duoi dang html
             let listNhaCungUngListVatTu = [];
             function exportToHTMLDemoNhaCungUng(){
+                console.log(listNhaCungUngSauTongHop);
+                
+        
                 let listRowNhaCungUng = $("#table-data tbody tr td .droplist-nha-cung-ung");
                 let listRowTableData = $("#table-data tbody tr");
 
@@ -514,11 +521,11 @@
                     }
                     arrResult.push(objNhaCungUng);
                 }
-                
+
                 //lay vat tu co pham chat trung nhau va cong don so luong tai array listVatTu trong tung object la element cua arrResult
+                let arResultConvert = [];
                 for(let i=0; i<arrResult.length; i++){
                     let listVatTu = arrResult[i].listVatTu;
-
                     for(let j=0; j<listVatTu.length; j++){
                         let tenVatTu = listVatTu[j].tenVatTu;
                         let yeuCauKiThuat = listVatTu[j].yeuCauKiThuat;
@@ -533,7 +540,10 @@
                             }
                         }
                     }
+
+                    
                 }
+                
                 $("#container-filter").css("display","none");
                 $("#btn-tong-hop").css("display","");
                 $("#btn-quay-lai").css("display","");
@@ -573,7 +583,11 @@
                                 <td class="row-don-vi-tinh">${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
                                 <td class="row-ma-phieu" style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
                                 <td style="display:none">${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
-                                <td><textarea class="row-ghi-chu ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
+                                <td>
+                                    <textarea class="row-ghi-chu ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}">${listNhaCungUngSauTongHop[i] && listNhaCungUngSauTongHop[i]?.ListVatTu?.filter(item=>{
+                                                                                                                    return item.TenVatTu == arrResult[i]["listVatTu"][j]["tenVatTu"]
+                                                                                                              })[0]?.GhiChu || ""}</textarea>
+                                </td>
                             </tr>`;
                         }else{
                             td = `
@@ -595,7 +609,11 @@
                                 <td class="row-don-vi-tinh">${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
                                 <td class="row-ma-phieu" style="display:none">${arrResult[i]["listVatTu"][j]["maPhieu"]}</td>
                                 <td style="display:none">${arrResult[i]["listVatTu"][j]["xuatXu"]}</td>
-                                <td><textarea class="row-ghi-chu ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}"></textarea></td>
+                                <td>
+                                    <textarea class="row-ghi-chu ghi-chu-${arrResult[i]["nhaCungUng"]["id"]}">${listNhaCungUngSauTongHop[i] && listNhaCungUngSauTongHop[i]?.ListVatTu?.filter(item=>{
+                                                                                                                    return item.TenVatTu == arrResult[i]["listVatTu"][j]["tenVatTu"]
+                                                                                                              })[0]?.GhiChu || ""}</textarea>
+                                </td>
                             </tr>`;
                         }
                         stt++;
@@ -621,9 +639,8 @@
                 $("#container-table-data").css("display","none");
 
             }
-
-            //luu du lieu bao gia vao trong database
-            function callApiLapBaoGia(){
+            //function tao obj chua du lieu tong hop
+            function createArrFromTableTongHop(){
                 //lay du lieu so phieu tong hop
                 let id = +getCookie("id");
                 let objResult = {
@@ -713,20 +730,24 @@
                     objResult.ListNhaCungUngListVatTu.push(obj);
 
                 }
-
+                return {arrNhaCungUngVaVatTu, objResult};
+            }
+            //luu du lieu bao gia vao trong database
+            function callApiLapBaoGia(){
+                let obj = createArrFromTableTongHop();
                 let isFail = false;
-                console.log(objResult);
-                for(let i=0; i<arrNhaCungUngVaVatTu.length; i++){
-                    let soLuong = arrNhaCungUngVaVatTu[i].soLuongBaoGia;
+                console.log(obj.objResult);
+                for(let i=0; i<obj.arrNhaCungUngVaVatTu.length; i++){
+                    let soLuong = obj.arrNhaCungUngVaVatTu[i].soLuongBaoGia;
                     if(soLuong == 0){
                         isFail = true;
                         break;
                     }
                 }
                 
-                let objResultstr = JSON.stringify(objResult);
+                let objResultstr = JSON.stringify(obj.objResult);
                 //call api
-                if(!isFail){
+                @* if(!isFail){
                     $.ajax({
                         url: host + "/api/bao-gia/save-bao-gia",
                         "headers": {
@@ -753,7 +774,7 @@
                         title: "Oops...",
                         text: "Tồn tại số lượng không đúng định dạng!",
                     });
-                }
+                } *@
 
             }
         })

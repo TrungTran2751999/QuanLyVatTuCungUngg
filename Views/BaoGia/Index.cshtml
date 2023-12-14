@@ -43,6 +43,7 @@
                     <th>MÃ BÁO GIÁ</th>
                     <th style="min-width: 250px;">NGƯỜI TẠO</th>
                     <th style="min-width: 250px;">NGÀY TẠO</th>
+                    <th style="min-width: 250px;">NGÀY CẬP NHẬT</th>
                 </thead>
                 <tbody>
                     
@@ -84,7 +85,8 @@
                     <td>${i+1}</td>
                     <td><a href="/bao-gia/chi-tiet?id=${res[i].id}">${res[i].maBaoGia}</a></td>
                     <td data-id="${res[i].userId}">${res[i].userBaoGia}</td>  
-                    <td>${convertDateTime(res[i].createdTime, "true")}</td>     
+                    <td>${convertDateTime(res[i].createdTime, "true")}</td>
+                    <td>${convertDateTime(res[i].updatedTime, "true")}</td>
                 </tr>`;
                 rows+=row;
             }
