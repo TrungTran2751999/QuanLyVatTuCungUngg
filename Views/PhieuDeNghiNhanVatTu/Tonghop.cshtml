@@ -146,8 +146,37 @@
             <input type="submit" id="submit-bao-gia"/>
         </form>
         @* <ul id="pagination" class="pagination"></ul> *@
-        
+        <button id="trigger-total-search" style="display: none;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#total-search">
+            Launch static backdrop modal
+        </button>
+        <div class="modal fade" id="total-search" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <th>TÊN VẬT TƯ</th>
+                            <th>YÊU CẦU KĨ THUẬT</th>
+                            <th>SỐ LƯỢNG</th>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    @* <button type="button" class="btn btn-primary"></button> *@
+                </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <button id="lap-tong-hop" onclick="lapTongHop()" style="display:none"></button>
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
     <!-- ============================================================== -->
@@ -192,6 +221,7 @@
                     $(rowsYeuCauKiThuatTableTongHop[i]).val(yeuCauKiThuat);
                 }
             }
+
         }
         //onchange validate so luong lap bao gia
         function onChangeSoLuongLapBaoGia(param, soLuongXin){
@@ -208,6 +238,36 @@
                 $(`#table-data #${idRowOnChange} .error-so-luong-show`).addClass("invalid-feedback");
                 $(`#table-data #${idRowOnChange} .error-so-luong-show`).css("display","block");
             }
+        }
+        //tim tong so vat tu hien ra theo tu khoa tim kiem
+        function totalBySearch(){
+            let rows = $("#table-data tbody tr");
+            let arr = [];
+            let isDuplicate = false
+            for(let i=0; i<rows.length; i++){
+                if($(rows[i]).css("display")!="none"){
+                    let id = $(rows[i]).attr("id");
+                    let tenVatTu = $(`#${id} .ten-vat-tu-area`).val().trim();
+                    let yeuCauKiThuat = $(`#${id} .yeu-cau-ki-thuat`).val().trim();
+                    let soLuong = +$(`#${id} .input-so-luong`).val();
+                    let obj = {
+                        tenVatTu,
+                        soLuong,
+                        yeuCauKiThuat
+                    };
+                    arr.push(obj);
+                }
+            }
+            for(let i=0; i<arr.length; i++){
+                for(let j=0; j<arr.length; j++){
+                    if(arr[j].tenVatTu==arr[i].tenVatTu && arr[j].yeuCauKiThuat==arr[j].yeuCauKiThuat){
+                        arr[i].soLuong+=arr[j].soLuong;
+                        arr.splice()
+                    }
+                }
+            }
+            console.log(arr);
+            return arr;
         }
         //search
         let listDataFilter = [];
@@ -273,7 +333,7 @@
                 for(let i=0; i<param.length; i++){
                     let x = i;
                     row = `
-                    <tr data-id=${i+1} id="${param[i]["idVatTu"]}-id-vat-tu-${`${Math.random()}`.split(".")[1]}">
+                    <tr data-id=${i+1} id="${param[i]["idVatTu"]}-id-vat-tu-${i+1}-${`${Math.random()}`.split(".")[1]}">
                         <td class="row-code-year" style="display:none">${param[i]["codeYear"]}</td>
                         <td class=row-stt>${++x}</td>
                         <td class="ten-vat-tu"><textarea class="ten-vat-tu-area">${param[i]["tenVatTu"]}</textarea></td>
@@ -376,93 +436,112 @@
         $("#table-data").on("contextmenu",(e)=>{
             e.preventDefault();
             Swal.fire({
-                title: "Bạn muốn lập báo giá?",
-                showDenyButton: false,
+                title: "Bạn muốn lập báo giá hay xem giá trị tổng?",
+                showDenyButton: true,
                 showCancelButton: true,
                 confirmButtonText: "Tổng hợp",
-                denyButtonText: ``,
+                denyButtonText: `Xem giá trị tổng`,
                 cancelButtonText: "Hủy"
             }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                //validate du lieu truoc khi tong hop
-                let listSelectedNhaCungUng = $("#table-data .droplist-nha-cung-ung");
-                let isExistNhaCungUng = false;
-                let isValidVal = true;
-                let message = "Chưa có vật tư nào được chọn nhà cung ứng";
-                @* for(let i=0; i<listSelectedNhaCungUng.length; i++){
-                    if($($(listSelectedNhaCungUng)[i]).val().length > 0){
-                        isExistNhaCungUng = true;
-                        break;
-                    }
-                } *@
-                let listTenVatTus = $("#table-data .ten-vat-tu-area");
-                let listVatTuIds = $("#table-data .row-id-ten-vat-tu");
-                let listMaVatTus = $("#table-data .row-ma-vat-tu");
-                let soLuongBaoGias = $("#table-data .input-so-luong");
-                let ghiChu = $("#table-data .ghi-chu");
-                let maPhieu = $("#table-data .row-ma-phieu");
-                let listYeuCauKiThuat = $("#table-data .yeu-cau-ki-thuat");
-                let listDonViTinh = $("#table-data .don-vi-tinh");
-                let listCodeYear = $("#table-data .row-code-year");
-                //tao param VatTuBaoGiaChiTietDTO
-                @* console.log(listNhaCungUng); *@
-                for(let i=0; i<listSelectedNhaCungUng.length; i++){
-                    if($($(listSelectedNhaCungUng)[i]).val().length > 0){
-                        let rowId = $($(listSelectedNhaCungUng)[i]).parent().parent().attr("id");
-                        let valueSoLuong = $(`#table-data #${rowId} .input-so-luong`).val();
-
-                        if(!isExistNhaCungUng) isExistNhaCungUng = true
-
-                        if(!valueSoLuong || valueSoLuong==0){
-                            isValidVal = false;
-                            message = "Tồn tại số lượng báo giá không đúng định dạng"
-                            break;
-                        }
-                        let listObjNhaCungUng = $($(listSelectedNhaCungUng)[i]).val()
-                        let listNhaCungUngs = []
-                        for(let j=0; j<listObjNhaCungUng.length; j++){
-                            let objNhaCungUng = {
-                                NhaCungUngId: +listObjNhaCungUng[j],
-                                TenNhaCungUng: listNhaCungUng?.filter((e)=>e.id==listObjNhaCungUng[j])[0].tenNhaCungUng
-                            }
-                            listNhaCungUngs.push(objNhaCungUng)
-                        }
-                        
-                        let obj = {
-                            TenVatTu: $(listTenVatTus[i])?.val().trim(),
-                            VatTuId: +$(listVatTuIds[i])?.text().trim(),
-                            MaVatTu: $(listMaVatTus[i])?.text().trim(),
-                            SoLuongBaogia: +$(soLuongBaoGias[i])?.val(),
-                            YeuCauKiThuat : $(listYeuCauKiThuat[i])?.val().trim(),
-                            GhiChu: $(ghiChu[i])?.text().trim(),
-                            MaPhieu: $(maPhieu[i])?.text().trim(),
-                            DonViTinh: $(listDonViTinh[i])?.text().trim(),
-                            CodeYear: $(listCodeYear[i])?.text().trim(),
-                            Stt: i,
-                            ListNhaCungUng: listNhaCungUngs
-                        }
-
-                        listVatTuBaoGiaChiTietDTOs.push(obj)
-                    }
-
-                }
-                if(isExistNhaCungUng && isValidVal){
-                    exportToHTMLDemoNhaCungUng();
-                }else{
-                    Swal.fire({
-                        icon: "error",
-                        title: "Alert",
-                        text: `${message}`,
-                    });
-                }
+                isTongHop = true
+                lapTongHop();
+                callApiLapBaoGia();
             } else if (result.isDenied) {
                 @* exportToExcel() *@
+                let arr = totalBySearch();
+                let rows = ""
+                for(let i=0; i<arr.length; i++){
+                    row = 
+                    `<tr>
+                        <td>${arr[i].tenVatTu}</td>
+                        <td>${arr[i].yeuCauKiThuat}</td>
+                        <td>${arr[i].soLuong}</td>
+                    </tr>`
+                    rows+=row;
+                }
+                $("#total-search table tbody").html(rows);
+                $("#trigger-total-search").click();
             }
             });
             //lay du lieu tu table tong hop xuat file excel va luu du lieu vao database
         })
+        let isTongHop = false
+        function lapTongHop(){
+            listVatTuBaoGiaChiTietDTOs = [];
+            //validate du lieu truoc khi tong hop
+            let listSelectedNhaCungUng = $("#table-data .droplist-nha-cung-ung");
+            let isExistNhaCungUng = false;
+            let isValidVal = true;
+            let message = "Chưa có vật tư nào được chọn nhà cung ứng";
+            @* for(let i=0; i<listSelectedNhaCungUng.length; i++){
+                if($($(listSelectedNhaCungUng)[i]).val().length > 0){
+                    isExistNhaCungUng = true;
+                    break;
+                }
+            } *@
+            let listTenVatTus = $("#table-data .ten-vat-tu-area");
+            let listVatTuIds = $("#table-data .row-id-ten-vat-tu");
+            let listMaVatTus = $("#table-data .row-ma-vat-tu");
+            let soLuongBaoGias = $("#table-data .input-so-luong");
+            let ghiChu = $("#table-data .ghi-chu");
+            let maPhieu = $("#table-data .row-ma-phieu");
+            let listYeuCauKiThuat = $("#table-data .yeu-cau-ki-thuat");
+            let listDonViTinh = $("#table-data .don-vi-tinh");
+            let listCodeYear = $("#table-data .row-code-year");
+            //tao param VatTuBaoGiaChiTietDTO
+            @* console.log(listNhaCungUng); *@
+            for(let i=0; i<listSelectedNhaCungUng.length; i++){
+                if($($(listSelectedNhaCungUng)[i]).val().length > 0){
+                    let rowId = $($(listSelectedNhaCungUng)[i]).parent().parent().attr("id");
+                    let valueSoLuong = $(`#table-data #${rowId} .input-so-luong`).val();
 
+                    if(!isExistNhaCungUng) isExistNhaCungUng = true
+
+                    if(!valueSoLuong || valueSoLuong==0){
+                        isValidVal = false;
+                        message = "Tồn tại số lượng báo giá không đúng định dạng"
+                        break;
+                    }
+                    let listObjNhaCungUng = $($(listSelectedNhaCungUng)[i]).val()
+                    let listNhaCungUngs = []
+                    for(let j=0; j<listObjNhaCungUng.length; j++){
+                        let objNhaCungUng = {
+                            NhaCungUngId: +listObjNhaCungUng[j],
+                            TenNhaCungUng: listNhaCungUng?.filter((e)=>e.id==listObjNhaCungUng[j])[0].tenNhaCungUng
+                        }
+                        listNhaCungUngs.push(objNhaCungUng)
+                    }
+                    
+                    let obj = {
+                        TenVatTu: $(listTenVatTus[i])?.val().trim(),
+                        VatTuId: +$(listVatTuIds[i])?.text().trim(),
+                        MaVatTu: $(listMaVatTus[i])?.text().trim(),
+                        SoLuongBaogia: +$(soLuongBaoGias[i])?.val(),
+                        YeuCauKiThuat : $(listYeuCauKiThuat[i])?.val().trim(),
+                        GhiChu: $(ghiChu[i])?.text().trim(),
+                        MaPhieu: $(maPhieu[i])?.text().trim(),
+                        DonViTinh: $(listDonViTinh[i])?.text().trim(),
+                        CodeYear: $(listCodeYear[i])?.text().trim(),
+                        Stt: i,
+                        ListNhaCungUng: listNhaCungUngs
+                    }
+
+                    listVatTuBaoGiaChiTietDTOs.push(obj)
+                }
+
+            }
+            if(isExistNhaCungUng && isValidVal){
+                if(isTongHop) exportToHTMLDemoNhaCungUng();
+            }else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Alert",
+                    text: `${message}`,
+                });
+            }
+        }
         let arrResult = [];
         $("#table-tong-hop").on("contextmenu",(e)=>{
             e.preventDefault();
@@ -485,7 +564,6 @@
                 $("#table-tong-hop").css("display","none");
                 $("#container-filter").css("display","");
                 $("#btn-quay-lai").css("display","none");
-
             }
             });
         })
@@ -574,9 +652,9 @@
                 
             }
             
-            $("#container-filter").css("display","none");
+            @* $("#container-filter").css("display","none");
             $("#btn-tong-hop").css("display","");
-            $("#btn-quay-lai").css("display","");
+            $("#btn-quay-lai").css("display",""); *@
             //xuat html tu mang arrResult
             let tbody = "";
             let stt = 1;
@@ -620,7 +698,7 @@
                             </td>
                     
                             <td>
-                                <input oninput="onchangeBaoGiaSoLuong(this, ${soLuongXin})" class="input-bao-gia-so-luong form-control" type="number" value="${soLuong || soLuongXin}" />
+                                <input oninput="onchangeBaoGiaSoLuong(this, ${soLuongXin})" class="input-bao-gia-so-luong form-control" type="number" value="${soLuongXin}" />
                                 <div class="error-input-bao-gia-so-luong" style="display:none; font-size:small; color:red">Không được để trống số lượng</div>
                             </td> 
                             <td class="row-don-vi-tinh">${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
@@ -645,7 +723,7 @@
                             </td>
                     
                             <td>
-                                <input oninput="onchangeBaoGiaSoLuong(this, ${soLuongXin})" class="input-bao-gia-so-luong form-control" type="number" value="${soLuong || soLuongXin}" />
+                                <input oninput="onchangeBaoGiaSoLuong(this, ${soLuongXin})" class="input-bao-gia-so-luong form-control" type="number" value="${soLuongXin}" />
                                 <div class="error-input-bao-gia-so-luong" style="display:none; font-size:small; color:red">Không được để trống số lượng</div>
                             </td> 
                             <td class="row-don-vi-tinh">${arrResult[i]["listVatTu"][j]["donViTinh"]}</td>
@@ -676,8 +754,8 @@
                 listNhaCungUngListVatTu.push(objNhaCungUngListVatTu);
                 $("#table-tong-hop tbody").append(tr);
             }
-            $("#table-tong-hop").css("display","block");
-            $("#container-table-data").css("display","none");
+            @* $("#table-tong-hop").css("display","block");
+            $("#container-table-data").css("display","none"); *@
 
         }
         //function tao obj chua du lieu tong hop
@@ -775,6 +853,8 @@
         }
         //luu du lieu bao gia vao trong database
         function callApiLapBaoGia(){
+            isTongHop = false;
+            $("#lap-tong-hop").click();
             let obj = createArrFromTableTongHop();
             let isFail = false;
             console.log(obj.objResult);
@@ -817,8 +897,8 @@
                 });
             }
 
-            }
         }
+    }
     </script>
 </body>
 <html>

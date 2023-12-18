@@ -367,7 +367,6 @@
         let listVatTuBaoGiaChiTietDTOs = []
         $("#table-data").on("contextmenu",(e)=>{
             e.preventDefault();
-            listVatTuBaoGiaChiTietDTOs = [];
             Swal.fire({
                 title: "Bạn muốn lập báo giá?",
                 showDenyButton: false,
@@ -378,87 +377,93 @@
             }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                //validate du lieu truoc khi tong hop
-                let listSelectedNhaCungUng = $("#table-data .droplist-nha-cung-ung");
-                let isExistNhaCungUng = false;
-                let isValidVal = true;
-                let message = "Chưa có vật tư nào được chọn nhà cung ứng";
-                @* for(let i=0; i<listSelectedNhaCungUng.length; i++){
-                    if($($(listSelectedNhaCungUng)[i]).val().length > 0){
-                        isExistNhaCungUng = true;
-                        break;
-                    }
-                } *@
-                let listTenVatTus = $("#table-data .ten-vat-tu-area");
-                let listVatTuIds = $("#table-data .row-id-ten-vat-tu");
-                let listMaVatTus = $("#table-data .row-ma-vat-tu");
-                let soLuongBaoGias = $("#table-data .input-so-luong");
-                let ghiChu = $("#table-data .ghi-chu");
-                let maPhieu = $("#table-data .row-ma-phieu");
-                let listYeuCauKiThuat = $("#table-data .yeu-cau-ki-thuat");
-                let listCodeYear = $("#table-data .row-code-year");
-                let listDonViTinh = $("#table-data .don-vi-tinh");
-            
-                //tao param VatTuBaoGiaChiTietDTO
-                @* console.log(listNhaCungUng); *@
-                for(let i=0; i<listSelectedNhaCungUng.length; i++){
-                    if($($(listSelectedNhaCungUng)[i]).val().length > 0){
-                        let rowId = $($(listSelectedNhaCungUng)[i]).parent().parent().attr("id");
-                        let valueSoLuong = $(`#table-data #${rowId} .input-so-luong`).val();
-
-                        if(!isExistNhaCungUng) isExistNhaCungUng = true
-
-                        if(!valueSoLuong || valueSoLuong==0){
-                            isValidVal = false;
-                            message = "Tồn tại số lượng báo giá không đúng định dạng"
-                            break;
-                        }
-                        let listObjNhaCungUng = $($(listSelectedNhaCungUng)[i]).val()
-                        let listNhaCungUngs = []
-                        for(let j=0; j<listObjNhaCungUng.length; j++){
-                            let objNhaCungUng = {
-                                NhaCungUngId: +listObjNhaCungUng[j],
-                                TenNhaCungUng: listNhaCungUng?.filter((e)=>e.id==listObjNhaCungUng[j])[0].tenNhaCungUng
-                            }
-                            listNhaCungUngs.push(objNhaCungUng)
-                        }
-                        
-                        let obj = {
-                            TenVatTu: $(listTenVatTus[i])?.val().trim(),
-                            VatTuId: +$(listVatTuIds[i])?.text().trim(),
-                            MaVatTu: $(listMaVatTus[i])?.text().trim(),
-                            SoLuongBaogia: +$(soLuongBaoGias[i])?.val(),
-                            YeuCauKiThuat : $(listYeuCauKiThuat[i])?.val().trim(),
-                            GhiChu: $(ghiChu[i])?.text().trim(),
-                            MaPhieu: $(maPhieu[i])?.text().trim(),
-                            CodeYear: $(listCodeYear[i])?.text().trim(),
-                            DonViTinh: $(listDonViTinh[i])?.text().trim(),
-                            Stt: i,
-                            ListNhaCungUng: listNhaCungUngs
-                        }
-
-                        listVatTuBaoGiaChiTietDTOs.push(obj)
-                    }
-
-                }
-                if(isExistNhaCungUng && isValidVal){
-                    exportToHTMLDemoNhaCungUng();
-                }else{
-                    Swal.fire({
-                        icon: "error",
-                        title: "Alert",
-                        text: `${message}`,
-                    });
-                }
+                @* isTongHop = true;
+                lapTongHop(); *@
+                callApiLapBaoGia();
             } else if (result.isDenied) {
                 @* exportToExcel() *@
             }
             });
             //lay du lieu tu table tong hop xuat file excel va luu du lieu vao database
         })
+        let isTongHop = false
+        function lapTongHop(){
+            //validate du lieu truoc khi tong hop
+            listVatTuBaoGiaChiTietDTOs = [];
+            let listSelectedNhaCungUng = $("#table-data .droplist-nha-cung-ung");
+            let isExistNhaCungUng = false;
+            let isValidVal = true;
+            let message = "Chưa có vật tư nào được chọn nhà cung ứng";
+            @* for(let i=0; i<listSelectedNhaCungUng.length; i++){
+                if($($(listSelectedNhaCungUng)[i]).val().length > 0){
+                    isExistNhaCungUng = true;
+                    break;
+                }
+            } *@
+            let listTenVatTus = $("#table-data .ten-vat-tu-area");
+            let listVatTuIds = $("#table-data .row-id-ten-vat-tu");
+            let listMaVatTus = $("#table-data .row-ma-vat-tu");
+            let soLuongBaoGias = $("#table-data .input-so-luong");
+            let ghiChu = $("#table-data .ghi-chu");
+            let maPhieu = $("#table-data .row-ma-phieu");
+            let listYeuCauKiThuat = $("#table-data .yeu-cau-ki-thuat");
+            let listCodeYear = $("#table-data .row-code-year");
+            let listDonViTinh = $("#table-data .don-vi-tinh");
+        
+            //tao param VatTuBaoGiaChiTietDTO
+            @* console.log(listNhaCungUng); *@
+            for(let i=0; i<listSelectedNhaCungUng.length; i++){
+                if($($(listSelectedNhaCungUng)[i]).val().length > 0){
+                    let rowId = $($(listSelectedNhaCungUng)[i]).parent().parent().attr("id");
+                    let valueSoLuong = $(`#table-data #${rowId} .input-so-luong`).val();
+
+                    if(!isExistNhaCungUng) isExistNhaCungUng = true
+
+                    if(!valueSoLuong || valueSoLuong==0){
+                        isValidVal = false;
+                        message = "Tồn tại số lượng báo giá không đúng định dạng"
+                        break;
+                    }
+                    let listObjNhaCungUng = $($(listSelectedNhaCungUng)[i]).val()
+                    let listNhaCungUngs = []
+                    for(let j=0; j<listObjNhaCungUng.length; j++){
+                        let objNhaCungUng = {
+                            NhaCungUngId: +listObjNhaCungUng[j],
+                            TenNhaCungUng: listNhaCungUng?.filter((e)=>e.id==listObjNhaCungUng[j])[0].tenNhaCungUng
+                        }
+                        listNhaCungUngs.push(objNhaCungUng)
+                    }
+                    
+                    let obj = {
+                        TenVatTu: $(listTenVatTus[i])?.val().trim(),
+                        VatTuId: +$(listVatTuIds[i])?.text().trim(),
+                        MaVatTu: $(listMaVatTus[i])?.text().trim(),
+                        SoLuongBaogia: +$(soLuongBaoGias[i])?.val(),
+                        YeuCauKiThuat : $(listYeuCauKiThuat[i])?.val().trim(),
+                        GhiChu: $(ghiChu[i])?.text().trim(),
+                        MaPhieu: $(maPhieu[i])?.text().trim(),
+                        CodeYear: $(listCodeYear[i])?.text().trim(),
+                        DonViTinh: $(listDonViTinh[i])?.text().trim(),
+                        Stt: i,
+                        ListNhaCungUng: listNhaCungUngs
+                    }
+
+                    listVatTuBaoGiaChiTietDTOs.push(obj)
+                }
+
+            }
+            if(isExistNhaCungUng && isValidVal){
+                if(isTongHop) exportToHTMLDemoNhaCungUng();
+            }else{
+                Swal.fire({
+                    icon: "error",
+                    title: "Alert",
+                    text: `${message}`,
+                });
+            }
+        }
         let arrResult = [];
         $("#table-tong-hop").on("contextmenu",(e)=>{
-            console.log("lissst",listVatTuBaoGiaChiTietDTOs)
             e.preventDefault();
             Swal.fire({
                 title: "Bạn muốn lập báo giá hay quay lại?",
@@ -565,9 +570,9 @@
                     }
                 }
             }
-            $("#container-filter").css("display","none");
-            $("#btn-tong-hop").css("display","");
-            $("#btn-quay-lai").css("display","");
+            @* $("#container-filter").css("display","none"); *@
+            @* $("#btn-tong-hop").css("display",""); *@
+            @* $("#btn-quay-lai").css("display",""); *@
             //xuat html tu mang arrResult
             let tbody = "";
             let stt = 1;
@@ -666,8 +671,8 @@
                 listNhaCungUngListVatTu.push(objNhaCungUngListVatTu);
                 $("#table-tong-hop tbody").append(tr);
             }
-            $("#table-tong-hop").css("display","block");
-            $("#container-table-data").css("display","none");
+            @* $("#table-tong-hop").css("display","block"); *@
+            @* $("#container-table-data").css("display","none"); *@
 
         }
         //function tao obj chua du lieu tong hop
@@ -755,6 +760,8 @@
         }
         //luu du lieu bao gia vao trong database
         function callApiLapBaoGia(){
+            isTongHop = false;
+            lapTongHop();
             let obj = createArrFromTableTongHop();
             let isFail = false;
             for(let i=0; i<obj.arrNhaCungUngVaVatTu.length; i++){
@@ -765,7 +772,7 @@
                 }
             }
             let objResultstr = JSON.stringify(obj.objResult);
-            
+            console.log(obj.objResult);
             //call api
             if(!isFail){
                 $.ajax({

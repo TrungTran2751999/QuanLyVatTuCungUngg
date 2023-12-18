@@ -79,7 +79,7 @@ public class VatTuBaoGiaChiTietService : IVatTuBaoGiaChiTietService
             var result = new VatTuBaoGiaChiTietReponse();
             result = phieuFast;
             foreach(var vatTu in listVatTuHasNhaCungUng){
-                if(vatTu.MaVatTu == phieuFast.MaVatTu && vatTu.MaPhieu==phieuFast.MaPhieu){
+                if(vatTu.MaVatTu == phieuFast.MaVatTu && vatTu.MaPhieu==phieuFast.MaPhieu && vatTu.GhiChu==phieuFast.GhiChu){
                     result = vatTu;
                     listVatTuHasNhaCungUng.Remove(vatTu);
                     break;

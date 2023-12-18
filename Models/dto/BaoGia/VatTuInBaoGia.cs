@@ -16,6 +16,7 @@ public class VatTuInBaoGia{
     public string? XuatXu{get;set;}
     public Decimal? SoLuong{get;set;}
     public string? GhiChu{get;set;}
+    public string? ChuThich{get;set;}
     public Guid BaoGiaChiTietId{get;set;}
 
     public BaoGiaChitietVatTu ToBaoGiaChitietVatTu(Guid BaoGiaChiTietId, long CreatedBy, long UpdatedBy){
