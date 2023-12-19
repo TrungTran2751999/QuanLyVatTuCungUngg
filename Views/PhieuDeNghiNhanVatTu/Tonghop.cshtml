@@ -150,10 +150,10 @@
             Launch static backdrop modal
         </button>
         <div class="modal fade" id="total-search" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">TỔNG SỐ</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -260,13 +260,13 @@
             }
             for(let i=0; i<arr.length; i++){
                 for(let j=0; j<arr.length; j++){
-                    if(arr[j].tenVatTu==arr[i].tenVatTu && arr[j].yeuCauKiThuat==arr[j].yeuCauKiThuat){
+                    if(arr[j].tenVatTu==arr[i].tenVatTu && arr[j].yeuCauKiThuat==arr[i].yeuCauKiThuat && i!=j){
                         arr[i].soLuong+=arr[j].soLuong;
-                        arr.splice()
+                        arr.splice(j,1)
+                        j=0
                     }
                 }
             }
-            console.log(arr);
             return arr;
         }
         //search
@@ -446,8 +446,8 @@
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
                 isTongHop = true
-                lapTongHop();
-                callApiLapBaoGia();
+                let result = lapTongHop();
+                if(result) callApiLapBaoGia();
             } else if (result.isDenied) {
                 @* exportToExcel() *@
                 let arr = totalBySearch();
@@ -475,12 +475,6 @@
             let isExistNhaCungUng = false;
             let isValidVal = true;
             let message = "Chưa có vật tư nào được chọn nhà cung ứng";
-            @* for(let i=0; i<listSelectedNhaCungUng.length; i++){
-                if($($(listSelectedNhaCungUng)[i]).val().length > 0){
-                    isExistNhaCungUng = true;
-                    break;
-                }
-            } *@
             let listTenVatTus = $("#table-data .ten-vat-tu-area");
             let listVatTuIds = $("#table-data .row-id-ten-vat-tu");
             let listMaVatTus = $("#table-data .row-ma-vat-tu");
@@ -534,12 +528,14 @@
             }
             if(isExistNhaCungUng && isValidVal){
                 if(isTongHop) exportToHTMLDemoNhaCungUng();
+                return true
             }else {
                 Swal.fire({
                     icon: "error",
                     title: "Alert",
                     text: `${message}`,
                 });
+                return false
             }
         }
         let arrResult = [];

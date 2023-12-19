@@ -7,16 +7,19 @@ namespace app.DTOs;
 
 public class FilterParam{
     public string? Search{get;set;}
-    public string? Time{get;set;}
+    public DateTime? TimeFrom{get;set;}
+    public DateTime? TimeTo{get;set;}
     public string? Status{get;set;}
-    public List<Filter> ListFilters{get;set;}
+    public string? Select{get;set;}
+    public List<Filter>? ListFilters{get;set;}
 }
 public class Filter{
     public int? Id{get;set;}
-    public string? Time{get;set;}
+    public DateTime Time{get;set;}
     public string? MaPhieu{get;set;}
     public string? TenBoPhan{get;set;}
     public string? DienGiai{get;set;}
     public string? NguoiYeuCau{get;set;}
     public string? Status{get;set;}
+    public bool Select{get;set;}
 }

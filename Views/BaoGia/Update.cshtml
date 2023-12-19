@@ -377,9 +377,9 @@
             }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                @* isTongHop = true;
-                lapTongHop(); *@
-                callApiLapBaoGia();
+                isTongHop = true;
+                let result = lapTongHop();
+                if(result) callApiLapBaoGia();
             } else if (result.isDenied) {
                 @* exportToExcel() *@
             }
@@ -454,12 +454,14 @@
             }
             if(isExistNhaCungUng && isValidVal){
                 if(isTongHop) exportToHTMLDemoNhaCungUng();
+                return true
             }else{
                 Swal.fire({
                     icon: "error",
                     title: "Alert",
                     text: `${message}`,
                 });
+                return false
             }
         }
         let arrResult = [];

@@ -56,7 +56,7 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
 
                 // //check xem co thieu thong tin danh sch vat tu khong
                 listPhieuChiTiet.AddRange(phieuDeNghiPheDuyet.ToListPhieuChiTiet(lastRecordPhieuDeNghi.Id)); 
-
+                
                 
                 // if(listPhieuChiTiet.Count==0) return "Thiếu thông tin danh sách vật tư";
 

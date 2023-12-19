@@ -339,6 +339,7 @@
                             let decodeYear = decodeDatetime(dateDeNghi);
                             let indexRowSelected = rowClassSelected;
                             let trangThai = $(`#${table1} .${rowClassSelected} .trang-thai`).text().trim();
+                            
                             if(trangThai=="CHƯA TỔNG HỢP" && existTongHop==false) existTongHop = true;
                             //xoa row tai table da duyet
                             $(`#${table1} .${rowClassSelected}`).remove();
@@ -357,7 +358,10 @@
                                 <td class="ten-bp row-ten-bp">${tenBp}</td>
                                 <td style="min-width: 105px" class="row-dien-giai">
                                     <span onclick="showMore('${indexRowSelected}', this, '${table2}')" class="show-brief-${indexRowSelected} show-brief">
-                                        <a href="#">...</a>
+                                        <a href="#">
+                                            <span>${dienGiai.split("").slice(0, Math.floor(dienGiai.length/3)).join("")}</span>
+                                            <span>...</span>
+                                        </a>
                                     </span>
                                     <span>
                                         <a class="show-more-${indexRowSelected} show-more" style="display:none" onclick="showMoreOrDirect('${indexRowSelected}', this, '${maPhieu}', '${decodeYear}', '${tenNguoiDeNghi}','${dateDeNghi}', '${table2}')" href="#">
@@ -491,6 +495,7 @@
                     for(let i=0; i<listPhieuNVTDaDuyet.length; i++){
                         let decodeYear = decodeDatetime(listPhieuNVTDaDuyet[i]["dateDeNghi"]);
                         let x = i;
+                        let lengthDienGiai = listPhieuNVTDaDuyet[i]["dienGiai"].length;
                         row = `
                         <tr onclick="clickRow('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="${listPhieuNVTDaDuyet[i]["id"]}" id="rows-${i}">
                             <td style="display:none"><input class="check-box-export-${listPhieuNVTDaDuyet[i]["id"]} check-box-export" type="checkbox"/></td>
@@ -503,7 +508,10 @@
                             <td class="ten-bp row-ten-bp">${listPhieuNVTDaDuyet[i]["tenBoPhan"]}</td>
                             <td style="min-width: 105px" class="row-dien-giai">
                                 <span onclick="showMore('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="show-brief-${listPhieuNVTDaDuyet[i]["id"]} show-brief">
-                                    <a href="#">...</a>
+                                    <a href="#">
+                                        <span>${listPhieuNVTDaDuyet[i]["dienGiai"]?.split("").slice(0,Math.floor(lengthDienGiai/3)).join("")}</span>
+                                        <span>...</span>
+                                    </a>
                                 </span>
                                 <span>
                                     <a class="show-more-${listPhieuNVTDaDuyet[i]["id"]} show-more" style="display:none" onclick="showMoreOrDirect('${listPhieuNVTDaDuyet[i]["id"]}', this, '${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}','${listPhieuNVTDaDuyet[i]["dateDeNghi"]}','table-data', )" href="#">

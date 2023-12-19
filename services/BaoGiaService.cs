@@ -115,8 +115,8 @@ public class BaoGiaService : IBaogiaService
 
         using(var transaction = dbContext.Database.BeginTransaction()){
             try{
-                //check xem phieu de nghi da duoc lap bao gia chua
-                // await XoaBaoGia(listBaoGiaId);
+                // check xem phieu de nghi da duoc lap bao gia chua
+                await XoaBaoGiaByPhieuDeNghi(listBaoGiaId, transaction);
                 //add du lieu vao bang bao gia
                 await dbContext.BaoGia.AddAsync(baoGiaCreate.ToModel());
                 dbContext.SaveChanges();

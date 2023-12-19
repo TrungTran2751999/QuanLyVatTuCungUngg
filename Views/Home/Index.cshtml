@@ -43,6 +43,9 @@
         #table-filter tbody tr td{
             padding: 10px 5px;
         }
+        .form-check-input:hover{
+            cursor: pointer;
+        }
     </style>
     <div class="page-wrapper">
         <!-- ============================================================== -->
@@ -68,14 +71,16 @@
         <div id="container-filter" style="width: 100%; display: flex;">
             <input oninput="search(this)" placeholder="Tìm kiếm theo mã phiếu, thời gian lập phiếu, tên bộ phận, diễn giải, người yêu cầu" type="search" id="search" class="form-control"/>
             <div class="filter" style="display: flex;">
-                <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status">CHƯA DUYỆT X</button>
-                <button onclick="xoaFilter('time-phieu',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-time">24/11/2023 X</button>
+                <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status"></button>
+                <button onclick="xoaFilter('time-phieu-from;time-phieu-to',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-time"></button>
+                <button onclick="xoaFilter('filter-select',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-select"></button>
             </div>
             <button class="btn btn-primary" style="width: 10%;" data-bs-toggle="modal" data-bs-target="#filter">BỘ LỌC</button>
         </div>
         <div>
             <table class="table" id="table-data" data-show-columns="true">
                 <thead>
+                    <th></th>
                     <th style="padding: 0px 10px;">STT</th>
                     <th>MÃ PHIẾU</th>
                     <th style="min-width: 280px;">TÊN BỘ PHẬN</th>
@@ -88,7 +93,8 @@
                         @foreach(var phieuFast in ViewBag.listPhieuFast){
                             @if(ViewBag.listPhieuDaDuyet.Count == 0){
                                 <tr search="true" show="true" id="rows-@id">
-                                    <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
+                                    <td><input type="checkbox" class="form-check-input row-check"/></td>
+                                    <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("yyyy-MM-dd")</td>
                                     <td class="row-stt">@id</td>
                                     <td class="row-ma-phieu">
                                         <a class="ma-phieu" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', '@id', this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</a>
@@ -98,7 +104,7 @@
                                         <a class="dien-giai" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', @id, this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.dien_giai</a>
                                     </td>
                                     <td class="nguoi-yeu-cau">@phieuFast.u1</td>
-                                    <td class="row-status">CHƯA DUYỆT</td>
+                                    <td class="row-status" style="color: red">CHƯA DUYỆT</td>
                                 </tr>
                                 id++;
                             }else{
@@ -107,7 +113,8 @@
                                     @if(phieuFast.stt_rec==phieuDaDuyet.MaPhieu){
                                         isDupplicate = true;
                                         <tr search="true" show="true" id="rows-@id" style="background-color: #80808036;">
-                                            <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
+                                            <td><input type="checkbox" class="form-check-input row-check" /></td>
+                                            <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("yyyy-MM-dd")</td>
                                             <td class="row-stt">@id</td>
                                             <td class="row-ma-phieu">
                                                 <span class="ma-phieu">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</span>
@@ -124,7 +131,8 @@
                                 }
                                 @if(isDupplicate==false){
                                     <tr id="rows-@id" show="true" search="true">
-                                        <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("dd/MM/yyyy")</td>
+                                        <td><input type="checkbox" class="form-check-input row-check" /></td>
+                                        <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("yyyy-MM-dd")</td>
                                         <td class="row-stt">@id</td>
                                         <td class="row-ma-phieu">
                                             <a class="ma-phieu" href="#" onclick="directChitiet('@phieuFast.stt_rec', '@phieuFast.ngay_ct.ToString("yyyyMM")', '@phieuFast.u1', '@id', this, '@phieuFast.ngay_ct.ToString("yyyy-MM-dd")')">@phieuFast.stt_rec @phieuFast.ngay_ct.ToString("dd/MM/yyyy")</a>
@@ -158,12 +166,17 @@
                         <tr>
                             <td style="font-weight: bold;">THỜI GIAN: </td>
                             <td>
-                                <input style="width: 100%;" type="date" id="time-phieu" class="form-control"/>
+                                <label>TỪ:</label>
+                                <input style="width: 100%;" type="date" id="time-phieu-from" class="form-control"/>
+                            </td>
+                            <td>
+                                <label>ĐẾN:</label>
+                                <input style="width: 100%;" type="date" id="time-phieu-to" class="form-control"/>
                             </td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold;">TRẠNG THÁI: </td>
-                            <td>
+                            <td colspan="2">
                                 <select style="width: 100%;" class="form-select" id="status">
                                     <option value="" disabled selected>---CHỌN TRẠNG THÁI---</option>
                                     <option value="ĐÃ DUYỆT">ĐÃ DUYỆT</option>
@@ -171,8 +184,18 @@
                                 </select>
                             </td>
                         </tr>
+                        <tr>
+                            <td style="font-weight: bold;">CHỌN: </td>
+                            <td colspan="2">
+                                <select style="width: 100%;" class="form-select" id="filter-select">
+                                    <option value="" disabled selected>---CHỌN---</option>
+                                    <option value="ĐÃ CHỌN">ĐÃ CHỌN</option>
+                                    <option value="CHƯA CHỌN">CHƯA CHỌN</option>
+                                </select>
+                            </td>
+                        </tr>
                     </tbody>
-                </table>
+                </table> 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ĐÓNG</button>
@@ -215,27 +238,40 @@
             }
         }
         
-        let filterVal = {time:"", status:"", search:""};
+        let filterVal = {time:"", status:"", search:"", select:""};
         // ham loc
         let listFilter = [];
-        let rows = $("#table-data tbody tr");
-        for(let i=0; i<rows.length; i++){
-            let filter = {};
-            filter.Id = i+1;
-            filter.Time = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
-            filter.MaPhieu = $($("#table-data tbody tr .ma-phieu")[i]).text().trim().split(" ")[0];
-            filter.TenBoPhan = $($("#table-data tbody tr .row-ten-bp")[i]).text().trim();
-            filter.DienGiai = $($("#table-data tbody tr .dien-giai")[i]).text().trim();
-            filter.NguoiYeuCau = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
-            filter.Status = $($("#table-data tbody tr .row-status")[i]).text().trim();
-
-            listFilter.push(filter);
+        function dataFilter(){
+            let rows = $("#table-data tbody tr");
+            for(let i=0; i<rows.length; i++){
+                let filter = {};
+                filter.Id = i+1;
+                filter.Time = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
+                filter.MaPhieu = $($("#table-data tbody tr .ma-phieu")[i]).text().trim().split(" ")[0];
+                filter.TenBoPhan = $($("#table-data tbody tr .row-ten-bp")[i]).text().trim();
+                filter.DienGiai = $($("#table-data tbody tr .dien-giai")[i]).text().trim();
+                filter.NguoiYeuCau = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
+                filter.Status = $($("#table-data tbody tr .row-status")[i]).text().trim();
+                filter.Select = $($("#table-data tbody tr .row-check")[i]).prop('checked');
+                
+                listFilter.push(filter);
+            }
         }
-        
+        dataFilter();
         function filter(){
-            filterVal.time = $("#time-phieu").val()?.split("-").reverse().join("/")||null;
+            let rows = $("#table-data tbody tr");
+            for(let i=0; i<listFilter.length; i++){
+                let isSelect = $($("#table-data tbody tr .row-check")[i]).prop('checked');
+                listFilter[i].Select = isSelect
+            }
+
+            let timeFrom = $("#time-phieu-from").val() ? $("#time-phieu-from").val()?.split("-").reverse().join("/") : null;
+            let timeTo = $("#time-phieu-to").val() ? $("#time-phieu-to").val()?.split("-").reverse().join("/") : null;
+            
+            filterVal.time = timeFrom || timeTo ? `${timeFrom}-${timeTo}` : null;
             filterVal.status = $("#status").val()||null;
             filterVal.search = $("#search").val()?.trim()||null;
+            filterVal.select = $("#filter-select").val()||null;
             for(let key of Object.keys(filterVal)){
                 if(key!="search" && filterVal[key]){
                     let str = filterVal[key]+" "+"X";
@@ -245,12 +281,14 @@
             }
             
             let paramFilter = {
-                Search: $("#search").val(),
-                Time: filterVal.time,
+                Select: $("#filter-select").val()?.trim(),
+                Search: $("#search").val()?.trim(),
+                TimeFrom: $("#time-phieu-from").val()||null,
+                TimeTo: $("#time-phieu-to").val()||null,
                 Status: filterVal.status,
                 ListFilters: listFilter,
             }
-            console.log(paramFilter)
+
             //loc
             $.ajax({
                 url: host + "/api/phieu-nhan-vat-tu/filter",
@@ -261,7 +299,6 @@
                 data: JSON.stringify(paramFilter)
             })
             .done(res=>{
-                console.log(res);
                 let rows = $("#table-data tbody tr");
                 let stt = $("#table-data tbody tr .row-stt")
                 let x = 1;
@@ -285,11 +322,15 @@
             })
             $(`#filter .btn-close`).click();
         }
+        
         function xoaFilter(value, element){
             filterVal[value] = "";
             $(element).css("display","none");
             //reset input loc
-            $(`#${value}`).val("");
+            let listStr = value.split(";")
+            for(let i=0; i<value.length; i++){
+                $(`#${listStr[i]}`).val("");
+            }
             filter();
             resetStt();
         }

@@ -10,16 +10,19 @@ using System.Runtime.CompilerServices;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using DocumentFormat.OpenXml.Office.CustomUI;
+using app.Utils;
 
 namespace app.Services;
 public class PhieuNVTService : IPhieuNVTService
 {
     private readonly ApplicationDbContextPhieuNVT dbContext;
     private readonly ApplicationDbContext dbContext1;
+    private IUtil util;
 
-    public PhieuNVTService(ApplicationDbContextPhieuNVT dbContext, ApplicationDbContext dbContext1){
+    public PhieuNVTService(ApplicationDbContextPhieuNVT dbContext, ApplicationDbContext dbContext1, IUtil util){
         this.dbContext = dbContext;
         this.dbContext1 = dbContext1;
+        this.util = util;
     }
 
     public async Task<PhieuNVTGetAllDTO?> GetAll(bool isDeleted, int page)
@@ -242,27 +245,41 @@ public class PhieuNVTService : IPhieuNVTService
         listResult = listFilter;
         if(filter.Search != "" && filter.Search!=null){
             listResult =  listFilter.Where(x=>
-                x.DienGiai.Contains(filter.Search) ||
-                x.MaPhieu.Contains(filter.Search) || 
-                x.TenBoPhan.Contains(filter.Search) || 
-                x.NguoiYeuCau.Contains(filter.Search))
+                util.RemoveDauTiengViet(x.DienGiai.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                util.RemoveDauTiengViet(x.MaPhieu.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) || 
+                util.RemoveDauTiengViet(x.TenBoPhan.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) || 
+                util.RemoveDauTiengViet(x.NguoiYeuCau.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search).ToLower()))
             .ToList();
             if(listResult.Count==0){
                 return listResult.DistinctBy(x=>x.Id).ToList();
             }
         }
-        if(filter.Time!="" && filter.Time != null){
+        if(filter.TimeFrom != null){
             List<Filter> listFil = new List<Filter>();
             if(listResult.Count > 0){
                 listFil = listResult;
             }else{
                 listFil = listFilter;
             }
-            listResult = listFil.Where(x=>x.Time==filter.Time).ToList();
+            listResult = listFil.Where(x=>x.Time>=filter.TimeFrom).ToList();
             if(listResult.Count==0){
                 return listResult.DistinctBy(x=>x.Id).ToList();
             }
         }
+
+        if(filter.TimeTo != null){
+            List<Filter> listFil = new List<Filter>();
+            if(listResult.Count > 0){
+                listFil = listResult;
+            }else{
+                listFil = listFilter;
+            }
+            listResult = listFil.Where(x=>x.Time<=filter.TimeTo).ToList();
+            if(listResult.Count==0){
+                return listResult.DistinctBy(x=>x.Id).ToList();
+            }
+        }
+
         if(filter.Status!="" && filter.Status != null){
             List<Filter> listFil = new List<Filter>();
             if(listResult.Count > 0){
@@ -271,6 +288,19 @@ public class PhieuNVTService : IPhieuNVTService
                 listFil = listFilter;
             }
             listResult = listFil.Where(x=>x.Status==filter.Status).ToList();
+            if(listResult.Count==0){
+                return listResult.DistinctBy(x=>x.Id).ToList();
+            }
+        }
+        if(filter.Select!=null && filter.Select!=""){
+            bool isSelect = filter.Select=="ĐÃ CHỌN";
+            List<Filter> listFil = new List<Filter>();
+            if(listResult.Count > 0){
+                listFil = listResult;
+            }else{
+                listFil = listFilter;
+            }
+            listResult = listFil.Where(x=>x.Select==isSelect).ToList();
             if(listResult.Count==0){
                 return listResult.DistinctBy(x=>x.Id).ToList();
             }
@@ -286,12 +316,13 @@ public class PhieuNVTService : IPhieuNVTService
         }
         if(filter.Search!=null && filter.Search!=""){
             listResult = filter.ListFilters.Where(x=>
-                            x.TenVatTu.Contains(filter.Search) ||
-                            x.GhiChu.Contains(filter.Search))
+                            util.RemoveDauTiengViet(x.TenVatTu.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                            util.RemoveDauTiengViet(x.GhiChu.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())))
                             .Select(x=>x.Id)
                             .ToList();
             if(listResult.Count==0) return listResult.Distinct().ToList();
         }
         return listResult.Distinct().ToList();
     }
+    
 }

@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Net;
+using app.Utils;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +62,7 @@ builder.Services.AddScoped<IPhieuDeNghiNhanVatTuDaPheDuyet, PhieuDeNghiNhanVatTu
 builder.Services.AddScoped<IBaogiaService, BaoGiaService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IVatTuBaoGiaChiTietService, VatTuBaoGiaChiTietService>();
+builder.Services.AddScoped<IUtil, Util>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
