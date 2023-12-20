@@ -72,7 +72,7 @@
             <input oninput="search(this)" placeholder="Tìm kiếm theo mã phiếu, thời gian lập phiếu, tên bộ phận, diễn giải, người yêu cầu" type="search" id="search" class="form-control"/>
             <div class="filter" style="display: flex;">
                 <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status"></button>
-                <button onclick="xoaFilter('time-phieu-from;time-phieu-to',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-time"></button>
+                <button onclick="xoaFilter('time-phieu-from; time-phieu-to',this)" class="btn btn-info btn-filter" style="width: 200px; display: none;" id="show-time"></button>
                 <button onclick="xoaFilter('filter-select',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-select"></button>
             </div>
             <button class="btn btn-primary" style="width: 10%;" data-bs-toggle="modal" data-bs-target="#filter">BỘ LỌC</button>
@@ -105,6 +105,8 @@
                                     </td>
                                     <td class="nguoi-yeu-cau">@phieuFast.u1</td>
                                     <td class="row-status" style="color: red">CHƯA DUYỆT</td>
+                                    <td class="row-code-year" style="display: none;">@phieuFast.ngay_ct.ToString("yyyyMM")</td>
+                                    <td class="row-code-year" style="display: none;">@phieuFast.ngay_ct.ToString("yyyyMM")</td>    
                                 </tr>
                                 id++;
                             }else{
@@ -113,7 +115,9 @@
                                     @if(phieuFast.stt_rec==phieuDaDuyet.MaPhieu){
                                         isDupplicate = true;
                                         <tr search="true" show="true" id="rows-@id" style="background-color: #80808036;">
-                                            <td><input type="checkbox" class="form-check-input row-check" /></td>
+                                            <td>
+                                                
+                                            </td>
                                             <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("yyyy-MM-dd")</td>
                                             <td class="row-stt">@id</td>
                                             <td class="row-ma-phieu">
@@ -125,6 +129,7 @@
                                             </td>
                                             <td class="nguoi-yeu-cau">@phieuFast.u1</td>
                                             <td class="row-status" style="color: green">ĐÃ DUYỆT</td>
+                                            <td class="row-code-year" style="display: none;">@phieuFast.ngay_ct.ToString("yyyyMM")</td>
                                         </tr>
                                         id++;
                                     }
@@ -143,6 +148,7 @@
                                         </td>
                                         <td class="nguoi-yeu-cau">@phieuFast.u1</td>
                                         <td class="row-status" style="color: red">CHƯA DUYỆT</td>
+                                        <td class="row-code-year" style="display: none;">@phieuFast.ngay_ct.ToString("yyyyMM")</td>
                                     </tr>
                                     id++;
                                 }
@@ -151,6 +157,7 @@
                         }
                 </tbody>
             </table>
+            <button style="width: 100%;" class="btn btn-primary" onclick="showDialogXacNhanPheDuyet()">XÁC NHẬN</button>
         </div>
         <!-- Filter -->
         <div class="modal fade" id="filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -246,12 +253,16 @@
             for(let i=0; i<rows.length; i++){
                 let filter = {};
                 filter.Id = i+1;
-                filter.Time = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
+                filter.DateDeNghi = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
                 filter.MaPhieu = $($("#table-data tbody tr .ma-phieu")[i]).text().trim().split(" ")[0];
                 filter.TenBoPhan = $($("#table-data tbody tr .row-ten-bp")[i]).text().trim();
                 filter.DienGiai = $($("#table-data tbody tr .dien-giai")[i]).text().trim();
-                filter.NguoiYeuCau = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
+                filter.TenNguoiDeNghi = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
+                filter.CodeYear = $($("#table-data tbody tr .row-code-year")[i]).text().trim();
+                filter.ListVatTuChangeSoLuong = [];
                 filter.Status = $($("#table-data tbody tr .row-status")[i]).text().trim();
+                filter.CreatedAt = getCookie("id");
+                filter.UpdatedAt = getCookie("id");
                 filter.Select = $($("#table-data tbody tr .row-check")[i]).prop('checked');
                 
                 listFilter.push(filter);
@@ -397,6 +408,72 @@
                 }
             }
         }
+        function callApiPheDuyet(){
+            let rows = $("#table-data tbody tr");
+            for(let i=0; i<listFilter.length; i++){
+                let isSelect = $($("#table-data tbody tr .row-check")[i]).prop('checked');
+                listFilter[i].Select = isSelect
+            }
+            listFilter = listFilter.filter(item=>item.Select==true);
+            if(listFilter.length == 0){
+                Swal.fire({
+                    icon: "warning",
+                    title: "Cảnh báo",
+                    text: "Không có phiếu nào được chọn !",
+                    footer: ''
+                });
+            }else{
+                $.ajax({
+                    url: host + "/api/phieu-nhan-vat-tu-da-duyet",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    data: JSON.stringify(listFilter) 
+                })
+                .done(res=>{
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Phê duyệt thành công",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    .then(()=>{
+                        location.reload();
+                    });
+                })
+                .fail(err=>{
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "Phê duyệt thất bạis",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                })
+            }
+        }
+        function showDialogXacNhanPheDuyet(){
+            Swal.fire({
+                icon: "question",
+                title: "Bạn chắc chắn rằng các phiếu đã chọn đã đươc phê duyệt",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Xác nhận",
+                denyButtonText: `Hủy`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    callApiPheDuyet();
+                } else if (result.isDenied) {
+                    
+                }
+            });
+        }
+        $("#table-data").on("contextmenu",(e)=>{
+            e.preventDefault();
+            showDialogXacNhanPheDuyet()
+        })
     </script>
 </body>
 <html>

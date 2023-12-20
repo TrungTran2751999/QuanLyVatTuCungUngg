@@ -51,6 +51,9 @@
         #table-data .row-status, #table-tong-hop .row-status{
             text-align: center;
         }
+        .form-check-input:hover{
+            cursor: pointer;
+        }
         
     </style>
     <div class="page-wrapper">
@@ -78,14 +81,15 @@
             <input oninput="search(this)" placeholder="Tìm kiếm theo mã phiếu, thời gian lập phiếu, tên bộ phận, diễn giải, người yêu cầu" type="search" id="search" class="form-control"/>
             <div class="filter" style="display: flex;">
                 <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status">CHƯA DUYỆT X</button>
-                <button onclick="xoaFilter('time-phieu',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-time">24/11/2023 X</button>
+                <button onclick="xoaFilter('time-phieu-from;time-phieu-to',this)" class="btn btn-info btn-filter" style="width: 200px; display: none;" id="show-time">24/11/2023 X</button>
+                <button onclick="xoaFilter('filter-select',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-select"></button>
             </div>
             <button class="btn- btn-primary" style="width: 10%;" data-bs-toggle="modal" data-bs-target="#filter">BỘ LỌC</button>
         </div>
         <div style="overflow: scroll; display: flex;">
             <table class="table" id="table-data" data-show-columns="true" style="width:50%">
                 <thead>
-                    <th style="display:none" class="check-box-column"></th>
+                    <th style="display:none" class="check-box-column" id="check-box-column"></th>
                     <th>STT</th>
                     <th>MÃ PHIẾU</th>
                     <th style="min-width: 280px;">TÊN BỘ PHẬN</th>
@@ -98,7 +102,7 @@
                 </tbody>
             </table>
         </div>
-
+        <button id="btn-xac-nhan-phe-duyet" style="width: 100%;display:none" class="btn btn-primary" onclick="xacNhanPheDuyet()">XÁC NHẬN</button>
         @* <ul id="pagination" class="pagination"></ul> *@
     </div>
     <!-- Filter -->
@@ -115,10 +119,24 @@
                     <tr>
                         <td style="font-weight: bold;">THỜI GIAN: </td>
                         <td>
-                            <input style="width: 100%;" type="date" id="time-phieu" class="form-control"/>
+                            <label>TỪ:</label>
+                            <input style="width: 100%;" type="date" id="time-phieu-from" class="form-control"/>
+                        </td>
+                        <td>
+                            <label>ĐẾN:</label>
+                            <input style="width: 100%;" type="date" id="time-phieu-to" class="form-control"/>
                         </td>
                     </tr>
-                   
+                    <tr>
+                        <td style="font-weight: bold;">CHỌN: </td>
+                        <td colspan="2">
+                            <select style="width: 100%;" class="form-select" id="filter-select">
+                                <option value="" disabled selected>---CHỌN---</option>
+                                <option value="ĐÃ CHỌN">ĐÃ CHỌN</option>
+                                <option value="CHƯA CHỌN">CHƯA CHỌN</option>
+                            </select>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -147,15 +165,20 @@
                 filter();
             },900);  
         }
-        let filterVal = {time:"", status:"", search:""};
+        let filterVal = {time:"", status:"", search:"", select:""};
         // ham loc
         let listFilter = [];
         
         
         function filter(){
-            filterVal.time = $("#time-phieu").val()?.split("-").reverse().join("/")||null;
+            let timeFrom = $("#time-phieu-from").val() ? $("#time-phieu-from").val().split("-").reverse().join("/") : null;
+            let timeTo = $("#time-phieu-to").val() ? $("#time-phieu-to").val().split("-").reverse().join("/") : null;;
+            let rows = $("#table-data tbody tr");
+            
+            filterVal.time = timeFrom||timeTo ? `${timeFrom}-${timeTo}`:null;
             filterVal.status = $("#status").val()||null;
             filterVal.search = $("#search").val()||null;
+            filterVal.select = $("#filter-select").val()||null;
             for(let key of Object.keys(filterVal)){
                 if(key!="search" && filterVal[key]){
                     let str = filterVal[key]+" "+"X";
@@ -164,12 +187,19 @@
                 }
             }
             
+            for(let i=0; i<rows.length; i++){
+                listFilter[i].Select = $($("#table-data tbody tr .row-check")[i]).is(":checked") 
+            }
+
             let paramFilter = {
-                Search: $("#search").val(),
-                Time: filterVal.time,
+                Select: $("#filter-select").val()||null,
+                Search: $("#search").val()?.trim(),
+                TimeFrom: $("#time-phieu-from").val()||null,
+                TimeTo: $("#time-phieu-to").val()||null,
                 Status: filterVal.status,
                 ListFilters: listFilter,
             }
+            
             
             //loc
             $.ajax({
@@ -181,7 +211,6 @@
                 data: JSON.stringify(paramFilter)
             })
             .done(res=>{
-    
                 let rows = $("#table-data tbody tr");
                 let stt = $("#table-data tbody tr .row-stt")
                 let x = 1;
@@ -211,7 +240,10 @@
             filterVal[value] = "";
             $(element).css("display","none");
             //reset input loc
-            $(`#${value}`).val("");
+            let valueArr = value.split(";");
+            for(let i=0; i<valueArr.length; i++){
+                $(`#${valueArr[i]}`).val("");
+            }
             filter();
             resetStt();
         }
@@ -251,6 +283,8 @@
                 </table>`
             $(tableTongHop).insertAfter("#table-data");
         }else if(status=='true'){
+            $("#btn-xac-nhan-phe-duyet").css("display","")
+            $("#check-box-column").css("display","");
             @* chinh sua css khi hien thi danh sach phieu chua duyet *@
              $("#table-data").css("width","100%");
              $("#table-data tr th").css("border","1px solid #d7d7d7");
@@ -283,13 +317,11 @@
                 tongHop(false);
             });
         };
-        function lapDanhSachTongHop(){
-                   
-        }
+        
         
         //dua cac phieu da chon vao danh sach tong hop hoac huy tong hop tai bang tong hop
 
-        //TONG HOP ========================================================================================================================================
+        //TONG HOP========================================================================================================================================
         function tongHop(isTongHop){
             let table1 = isTongHop ? 'table-data' : 'table-tong-hop';
             let table2  = isTongHop ? 'table-tong-hop' : 'table-data';
@@ -421,7 +453,6 @@
             })
         }
 
-
         function showMore(index, param, table){
             $(param).css("display","none");
             $(`#${table} .show-more-${index}`).css("display","block");
@@ -469,7 +500,68 @@
             localStorage.setItem("info",JSON.stringify(info));
             window.location.href = `phieu-de-nghi/chi-tiet?code=${code}&codeYear=${codeYear}&nguoiDeNghi=${nguoiDeNghi}&dateDeNghi=${dateDeNghi}`;
         }
-        
+        if(status=="true"){
+            $("#table-data").on("contextmenu",(e)=>{
+                e.preventDefault();
+                xacNhanPheDuyet();
+            })
+        }
+        function xacNhanPheDuyet(){
+            Swal.fire({
+                title: "Bạn chắc chắn các phiếu được chọn đã được phê duyệt ?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Xác nhận",
+                denyButtonText: `Hủy`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    callApiPheDuyet();
+                } else if (result.isDenied) {
+                    
+                }
+            });
+        }
+        function callApiPheDuyet(){
+            let rowChecks = $("#table-data tbody .row-check");
+            let listResult = [];
+            for(let i=0; i<rowChecks.length; i++){
+                if($(rowChecks[i]).is(":checked")){
+                    listResult.push(listFilter[i]);
+                };
+            }
+            
+            if(listResult.length==0){
+                Swal.fire({
+                    title: "Cảnh báo",
+                    text: "Không có phiếu nào được chọn",
+                    icon: "warning"
+                });
+            }else{
+                $.ajax({
+                    url: host + "/api/phieu-nhan-vat-tu-da-duyet",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    data: JSON.stringify(listResult)
+                })
+                .done(()=>{
+                   Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Xác nhận phê duyệt thành công!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    .then(()=>{
+                        location.reload();
+                    })
+                })
+                .fail(err=>{
+                    console.log(err);
+                })
+            }
+        }
         //INIT DATA =============================================================================================================================
 
         $.ajax({
@@ -540,7 +632,8 @@
                                     let decodeYear = decodeDatetime(listPhieuNVTFast[i]["ngay_ct"]);
                                     row = `
                                     <tr onclick="clickRow('${x}', this , 'table-data')" id="rows-${x+1}">
-                                        <td class="row-time-ma-phieu" style="display:none">${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}</td>
+                                        <td><input type="checkbox" class="form-check-input row-check"/></td>
+                                        <td class="row-time-ma-phieu" style="display:none">${listPhieuNVTFast[i]["ngay_ct"]}</td>
                                         <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
                                         <td class="row-stt">${++x}</td>
                                         <td class="row-ma-phieu">
@@ -555,6 +648,7 @@
                                             </a>
                                         </td>
                                         <td class="nguoi-yeu-cau">${listPhieuNVTFast[i]["u1"]}</td>
+                                        <td class="row-code-year" style="display:none">${decodeYear}</td>
                                     </tr>`;
                                     rows+=row;
                                 }
@@ -563,7 +657,8 @@
                             let decodeYear = decodeDatetime(listPhieuNVTFast[i]["ngay_ct"]);
                             row = `
                             <tr onclick="clickRow('${x}', this, 'table-data')" id="rows-${x+1}">
-                                <td class="row-time-ma-phieu" style="display:none">${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}</td>
+                                <td><input type="checkbox" class="form-check-input row-check"/></td>
+                                <td class="row-time-ma-phieu" style="display:none">${listPhieuNVTFast[i]["ngay_ct"]}</td>
                                 <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
                                 <td class="row-stt">${++x}</td>
                                 <td>
@@ -578,6 +673,7 @@
                                     </a>
                                 </td>
                                 <td class="nguoi-yeu-cau">${listPhieuNVTFast[i]["u1"]}</td>
+                                <td class="row-code-year" style="display:none">${decodeYear}</td>
                             </tr>`;
                             rows+=row;
                         }
@@ -590,11 +686,15 @@
                 for(let i=0; i<rowss.length; i++){
                     let filter = {};
                     filter.Id = i+1;
-                    filter.Time = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
+                    filter.DateDeNghi = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
                     filter.MaPhieu = $($("#table-data tbody tr .ma-phieu")[i]).text().trim().split(" ")[0];
                     filter.TenBoPhan = $($("#table-data tbody tr .row-ten-bp")[i]).text().trim();
                     filter.DienGiai = $($("#table-data tbody tr .dien-giai")[i]).text().trim();
-                    filter.NguoiYeuCau = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
+                    filter.TenNguoiDeNghi = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
+                    filter.CodeYear = $($("#table-data tbody tr .row-code-year")[i]).text().trim();
+                    filter.ListVatTuChangeSoLuong = [];
+                    filter.CreatedAt = getCookie("id");
+                    filter.UpdatedAt = getCookie("id");
                     filter.Status = $($("#table-data tbody tr .row-status")[i]).text().trim();
 
                     listFilter.push(filter);
@@ -625,6 +725,7 @@
         .fail(err=>{
             console.log(err);
         });
+
         }
     </script>
 </body>

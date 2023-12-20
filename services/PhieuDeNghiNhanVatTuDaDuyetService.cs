@@ -32,48 +32,50 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
         return listPhieu;
     }
 
-    public async Task<string> PheDuyet(PhieuDeNghiPheDuyetCreateDTO phieuDeNghiPheDuyet)
+    public async Task<string> PheDuyet(List<PhieuDeNghiPheDuyetCreateDTO> phieuDeNghiPheDuyet)
     {
          using (var transaction = dbContext.Database.BeginTransaction()){
             try{
-                //check ma phieu da ton tai trong table
-                var checkExistMaPhieu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.MaPhieu==phieuDeNghiPheDuyet.MaPhieu).FirstOrDefaultAsync();
-                if(checkExistMaPhieu!=null) return "Phiếu này đã được phê duyệt";
+                for(int i=0; i<phieuDeNghiPheDuyet.Count; i++){
+                    //check ma phieu da ton tai trong table
+                    var checkExistMaPhieu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.MaPhieu==phieuDeNghiPheDuyet[i].MaPhieu).FirstOrDefaultAsync();
+                    if(checkExistMaPhieu!=null) return "Phiếu này đã được phê duyệt";
 
-                var listVatTu = phieuDeNghiPheDuyet.ListVatTuChangeSoLuong;
-                List<PhieuDeNghiNhanVatTuChiTietDaDuyet> listPhieuChiTiet = new();
+                    var listVatTu = phieuDeNghiPheDuyet[i].ListVatTuChangeSoLuong;
+                    List<PhieuDeNghiNhanVatTuChiTietDaDuyet> listPhieuChiTiet = new();
 
 
-                // add phieu de nghi phe duyet vao table
-                await dbContext.PhieuDeNghiNhanVatTuDaDuyet.AddAsync(phieuDeNghiPheDuyet.ToModel());
-                dbContext.SaveChanges();
-
-                var lastRecordPhieuDeNghi = await dbContext.PhieuDeNghiNhanVatTuDaDuyet
-                                                  .OrderByDescending(x=>x.CreatedTime)
-                                                  .Select(x=>new{
-                                                    x.Id
-                                                  }).FirstOrDefaultAsync();
-
-                // //check xem co thieu thong tin danh sch vat tu khong
-                listPhieuChiTiet.AddRange(phieuDeNghiPheDuyet.ToListPhieuChiTiet(lastRecordPhieuDeNghi.Id)); 
-                
-                
-                // if(listPhieuChiTiet.Count==0) return "Thiếu thông tin danh sách vật tư";
-
-                
-                // var listMaVatTu = new List<string>();
-                // for(int i=0; i<listVatTu.Count; i++){
-                //     listMaVatTu.Add(listVatTu[i].MaVatTu);
-                // }
-
-                // var countListMaVatTu = await dbContext.VatTu.CountAsync(x=>listMaVatTu.Contains(x.MaVatTu));
-
-                // if(phieuDeNghiPheDuyet.ListVatTu.Count!=countListMaVatTu) return "Tồn tại mã vật tư ngoài danh sách";
-
-                // //add phieu de nghi nhan vat tu chi tiet da duyet tuong ung voi id phieu nhan vat tu
-                if(listPhieuChiTiet.Count > 0){
-                    await dbContext.PhieuDeNghiNhanVatTuChiTietDaDuyet.AddRangeAsync(listPhieuChiTiet);
+                    // add phieu de nghi phe duyet vao table
+                    await dbContext.PhieuDeNghiNhanVatTuDaDuyet.AddAsync(phieuDeNghiPheDuyet[i].ToModel());
                     dbContext.SaveChanges();
+
+                    var lastRecordPhieuDeNghi = await dbContext.PhieuDeNghiNhanVatTuDaDuyet
+                                                    .OrderByDescending(x=>x.CreatedTime)
+                                                    .Select(x=>new{
+                                                        x.Id
+                                                    }).FirstOrDefaultAsync();
+
+                    // //check xem co thieu thong tin danh sch vat tu khong
+                    listPhieuChiTiet.AddRange(phieuDeNghiPheDuyet[i].ToListPhieuChiTiet(lastRecordPhieuDeNghi.Id)); 
+                    
+                    
+                    // if(listPhieuChiTiet.Count==0) return "Thiếu thông tin danh sách vật tư";
+
+                    
+                    // var listMaVatTu = new List<string>();
+                    // for(int i=0; i<listVatTu.Count; i++){
+                    //     listMaVatTu.Add(listVatTu[i].MaVatTu);
+                    // }
+
+                    // var countListMaVatTu = await dbContext.VatTu.CountAsync(x=>listMaVatTu.Contains(x.MaVatTu));
+
+                    // if(phieuDeNghiPheDuyet.ListVatTu.Count!=countListMaVatTu) return "Tồn tại mã vật tư ngoài danh sách";
+
+                    // //add phieu de nghi nhan vat tu chi tiet da duyet tuong ung voi id phieu nhan vat tu
+                    if(listPhieuChiTiet.Count > 0){
+                        await dbContext.PhieuDeNghiNhanVatTuChiTietDaDuyet.AddRangeAsync(listPhieuChiTiet);
+                        dbContext.SaveChanges();
+                    }
                 }
 
                 transaction.Commit();

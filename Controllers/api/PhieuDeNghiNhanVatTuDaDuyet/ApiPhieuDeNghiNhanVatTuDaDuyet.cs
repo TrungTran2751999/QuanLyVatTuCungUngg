@@ -26,7 +26,7 @@ public class ApiPhieuDeNghiNhanVatTuDaDuyet:Controller{
         return Ok(listPhieu);
     }
     [HttpPost]
-    public async Task<IActionResult>PheDuyet([FromBody] PhieuDeNghiPheDuyetCreateDTO phieuDeNghiPheDuyet){
+    public async Task<IActionResult>PheDuyet([FromBody] List<PhieuDeNghiPheDuyetCreateDTO> phieuDeNghiPheDuyet){
         var result = await phieuDaDuyet.PheDuyet(phieuDeNghiPheDuyet);
 
         if(result!="OK") return BadRequest(result);

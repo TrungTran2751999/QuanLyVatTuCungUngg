@@ -15,11 +15,11 @@ public class FilterParam{
 }
 public class Filter{
     public int? Id{get;set;}
-    public DateTime Time{get;set;}
+    public DateTime DateDeNghi{get;set;}
     public string? MaPhieu{get;set;}
     public string? TenBoPhan{get;set;}
     public string? DienGiai{get;set;}
-    public string? NguoiYeuCau{get;set;}
+    public string? TenNguoiDeNghi{get;set;}
     public string? Status{get;set;}
     public bool Select{get;set;}
 }

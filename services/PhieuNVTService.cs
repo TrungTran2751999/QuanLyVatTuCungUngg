@@ -248,7 +248,7 @@ public class PhieuNVTService : IPhieuNVTService
                 util.RemoveDauTiengViet(x.DienGiai.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
                 util.RemoveDauTiengViet(x.MaPhieu.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) || 
                 util.RemoveDauTiengViet(x.TenBoPhan.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) || 
-                util.RemoveDauTiengViet(x.NguoiYeuCau.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search).ToLower()))
+                util.RemoveDauTiengViet(x.TenNguoiDeNghi.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search).ToLower()))
             .ToList();
             if(listResult.Count==0){
                 return listResult.DistinctBy(x=>x.Id).ToList();
@@ -261,7 +261,7 @@ public class PhieuNVTService : IPhieuNVTService
             }else{
                 listFil = listFilter;
             }
-            listResult = listFil.Where(x=>x.Time>=filter.TimeFrom).ToList();
+            listResult = listFil.Where(x=>x.DateDeNghi>=filter.TimeFrom).ToList();
             if(listResult.Count==0){
                 return listResult.DistinctBy(x=>x.Id).ToList();
             }
@@ -274,7 +274,7 @@ public class PhieuNVTService : IPhieuNVTService
             }else{
                 listFil = listFilter;
             }
-            listResult = listFil.Where(x=>x.Time<=filter.TimeTo).ToList();
+            listResult = listFil.Where(x=>x.DateDeNghi<=filter.TimeTo).ToList();
             if(listResult.Count==0){
                 return listResult.DistinctBy(x=>x.Id).ToList();
             }
