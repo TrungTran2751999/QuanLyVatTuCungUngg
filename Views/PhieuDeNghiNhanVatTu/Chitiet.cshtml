@@ -102,7 +102,7 @@
         }
 
         const listVatTu = [];
-        let data = {
+        let data = [{
             "MaPhieu":maPhieu,
             "TenNguoiDeNghi": nguoiDeNghi || 'null',
             "CodeYear": codeYear,
@@ -112,7 +112,7 @@
             "DienGiai": info.dienGiai,
             "DateDeNghi":dateDeNghi,
             "ListVatTuChangeSoLuong":[]
-        };
+        }];
         let listData = [];
         let listExcelParam = [];
         $.ajax({
@@ -238,7 +238,6 @@
 
         //luu tru toan bo phieu da duoc phe duyet vao database
         function savePheDuyet(){
-            console.log(data)
             $.ajax({
                 "headers": {
                     "Content-Type": "application/json"

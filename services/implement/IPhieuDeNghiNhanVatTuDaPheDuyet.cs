@@ -8,4 +8,5 @@ public interface IPhieuDeNghiNhanVatTuDaPheDuyet{
     Task<List<PhieuDeNghiNhanVatTuDaDuyet>?> GetAll(bool isDeleted, int page);
     Task<PhieuDeNghiNhanVatTuDaDuyet?> GetById(Guid id);
     Task<string> PheDuyet(List<PhieuDeNghiPheDuyetCreateDTO> phieuDeNghiPheDuyet);
+    Task<string> HuyPheDuyet(List<Guid> listIdPhieuPheDuyet);
 }

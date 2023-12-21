@@ -33,5 +33,10 @@ public class ApiPhieuDeNghiNhanVatTuDaDuyet:Controller{
 
         return Ok(result);
     }
-    
+    [HttpDelete]
+    public async Task<IActionResult>HuyPheDuyet(List<Guid> listIdPhieuPheDuyet){
+        var result = await phieuDaDuyet.HuyPheDuyet(listIdPhieuPheDuyet);
+        if(result!="OK") return BadRequest(result);
+        return Ok(result);
+    }
 }

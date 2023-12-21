@@ -9,7 +9,6 @@ namespace app.Services;
 public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuyet
 {
     private readonly ApplicationDbContext dbContext;
-    private IPhieuNVTService phieuNVTService;
     public PhieuDeNghiNhanVatTuDaDuyetService(ApplicationDbContext dbContext){
         this.dbContext = dbContext;
     }
@@ -88,4 +87,25 @@ public class PhieuDeNghiNhanVatTuDaDuyetService : IPhieuDeNghiNhanVatTuDaPheDuye
             }
         }
     }
+    public async Task<string> HuyPheDuyet(List<Guid> listIdPhieuPheDuyet)
+    {
+        using(var transaction = dbContext.Database.BeginTransaction()){
+            try{
+                foreach(var id in listIdPhieuPheDuyet){
+                    var phieu = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.FirstOrDefaultAsync(x=>x.Id==id);
+                    if(phieu==null || phieu.BaoGiaId!=null) throw new Exception();
+
+                    dbContext.Remove(phieu);
+                    dbContext.SaveChanges();
+                }
+                transaction.Commit();
+                return "OK";
+            }catch(Exception e){
+                Console.WriteLine(e);
+                transaction.Rollback();
+                return "NOT OK";
+            }
+        }
+    }
+
 }

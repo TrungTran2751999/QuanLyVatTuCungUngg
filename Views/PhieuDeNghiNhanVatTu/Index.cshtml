@@ -100,6 +100,9 @@
                 <tbody style="overflow: scroll">
                     
                 </tbody>
+                <tfoot>
+                    <button class="btn btn-primary">XEM THÊ</button>
+                </tfoot>
             </table>
         </div>
         <button id="btn-xac-nhan-phe-duyet" style="width: 100%;display:none" class="btn btn-primary" onclick="xacNhanPheDuyet()">XÁC NHẬN</button>
@@ -236,6 +239,7 @@
             resetStt(); *@
             $(`#filter .btn-close`).click();
         }
+        
         function xoaFilter(value, element){
             filterVal[value] = "";
             $(element).css("display","none");
@@ -247,6 +251,7 @@
             filter();
             resetStt();
         }
+        
         function resetStt(){
             let stt = $("#table-data tbody tr .row-stt");
             let rows = $("#table-data tbody tr");
@@ -322,6 +327,13 @@
         //dua cac phieu da chon vao danh sach tong hop hoac huy tong hop tai bang tong hop
 
         //TONG HOP========================================================================================================================================
+        if(status=="true"){
+            $("#table-data").on("contextmenu",(e)=>{
+                e.preventDefault();
+                xacNhanPheDuyet();
+            })
+        }
+
         function tongHop(isTongHop){
             let table1 = isTongHop ? 'table-data' : 'table-tong-hop';
             let table2  = isTongHop ? 'table-tong-hop' : 'table-data';
@@ -329,7 +341,7 @@
             let existTongHop = false;
             let message = "";
             if(isTongHop){
-                message = 'Bạn muốn đưa toàn bộ phiếu đã chọn vào danh sách chuẩn bị tổng hợp?'
+                message = 'Bạn muốn đưa toàn bộ phiếu đã chọn vào danh sách chuẩn bị tổng hợp hoặc hủy phê duyệt?'
             }else{
                 message = 'Bạn muốn hủy hoặc tổng hợp toàn bộ phiếu đã chọn?'
             }
@@ -350,7 +362,7 @@
                 showDenyButton: true,
                 showCancelButton: true,
                 confirmButtonText: isTongHop ? 'Xác nhận' : "Hủy tổng hợp",
-                denyButtonText: isTongHop ? "Hủy" : "Tổng hợp",
+                denyButtonText: isTongHop ? "Hủy phê duyệt" : "Tổng hợp",
                 }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
@@ -448,6 +460,8 @@
                             localStorage.setItem("listPhieuTongHop", JSON.stringify(listId));
                             window.location.href = "/phieu-de-nghi/tong-hop"
                         }
+                    }else{
+                        xoaPhieuPheDuyet();
                     }
                 }
             })
@@ -500,12 +514,7 @@
             localStorage.setItem("info",JSON.stringify(info));
             window.location.href = `phieu-de-nghi/chi-tiet?code=${code}&codeYear=${codeYear}&nguoiDeNghi=${nguoiDeNghi}&dateDeNghi=${dateDeNghi}`;
         }
-        if(status=="true"){
-            $("#table-data").on("contextmenu",(e)=>{
-                e.preventDefault();
-                xacNhanPheDuyet();
-            })
-        }
+        
         function xacNhanPheDuyet(){
             Swal.fire({
                 title: "Bạn chắc chắn các phiếu được chọn đã được phê duyệt ?",
@@ -521,6 +530,7 @@
                 }
             });
         }
+        
         function callApiPheDuyet(){
             let rowChecks = $("#table-data tbody .row-check");
             let listResult = [];
@@ -562,6 +572,47 @@
                 })
             }
         }
+        
+        function xoaPhieuPheDuyet(){
+            let rows = $("#table-data tbody tr");
+            let rowCheckBoxs = $("#table-data tbody tr .check-box-export");
+            let obj = {listIdPhieuPheDuyet:[]};
+            for(let i=0; i<rowCheckBoxs.length; i++){
+                if($(rowCheckBoxs[i]).is(":checked")){
+                    let id = $(rows[i]).data("id");
+                    obj.listIdPhieuPheDuyet.push(id);
+                }
+            }
+            $.ajax({
+                url: host + "/api/phieu-nhan-vat-tu-da-duyet",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                method: "DELETE",
+                data: JSON.stringify(obj.listIdPhieuPheDuyet)
+            })
+            .done(()=>{
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Hủy phê duyệt thành công !",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                .then(()=>{
+                    location.reload();
+                })
+            })
+            .fail(()=>{
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "Tồn tại phiếu phê duyệt đã tổng hợp. Vui lòng chọn lại !",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
+        }
         //INIT DATA =============================================================================================================================
 
         $.ajax({
@@ -589,7 +640,7 @@
                         let x = i;
                         let lengthDienGiai = listPhieuNVTDaDuyet[i]["dienGiai"].length;
                         row = `
-                        <tr onclick="clickRow('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="${listPhieuNVTDaDuyet[i]["id"]}" id="rows-${i}">
+                        <tr onclick="clickRow('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="${listPhieuNVTDaDuyet[i]["id"]}" id="rows-${i}" data-id="${listPhieuNVTDaDuyet[i]["id"]}">
                             <td style="display:none"><input class="check-box-export-${listPhieuNVTDaDuyet[i]["id"]} check-box-export" type="checkbox"/></td>
                             <td class=row-stt>${++x}</td>
                             <td class="row-ma-phieu">
