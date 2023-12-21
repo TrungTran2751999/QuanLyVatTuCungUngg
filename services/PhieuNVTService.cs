@@ -236,6 +236,7 @@ public class PhieuNVTService : IPhieuNVTService
                                                               .Select(x=>x.NhaCungUngId)
                                                               .ToList()
                                }).ToList();
+        Console.WriteLine(listResult.Count);
         return listResult;
     }   
     public List<Filter> Filter(FilterParam filter)
