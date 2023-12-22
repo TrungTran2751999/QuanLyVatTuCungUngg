@@ -9,10 +9,9 @@ public class ApplicationDbContext : DbContext
     {
     }
     public virtual DbSet<NhomVatTu> NhomVatTu{get;set;}
-    public virtual DbSet<VatTu> VatTu{get;set;}
+    // public virtual DbSet<VatTu> VatTu{get;set;}
     public virtual DbSet<NhaCungUngVatTu> NhaCungUng{get;set;}
     public virtual DbSet<PhieuNhanVatTuFast> PhieuNhanVatTuFasts{get;set;}
-
     public virtual DbSet<PhieuNhanVatTu> PhieuNhanVatTu{get;set;}
     public virtual DbSet<PhieuNhanVatTuChiTiet> PhieuNhanVatTuChiTiet{get;set;}
     public virtual DbSet<VatTuNhaCungUngRelation> VatTuNhaCungUngRelation{get;set;}

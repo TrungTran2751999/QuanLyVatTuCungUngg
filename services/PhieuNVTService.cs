@@ -11,17 +11,20 @@ using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using DocumentFormat.OpenXml.Office.CustomUI;
 using app.Utils;
+using DocumentFormat.OpenXml.ExtendedProperties;
 
 namespace app.Services;
 public class PhieuNVTService : IPhieuNVTService
 {
     private readonly ApplicationDbContextPhieuNVT dbContext;
     private readonly ApplicationDbContext dbContext1;
+    private readonly ApplicationDbContextQLVT dbContextQLVT;
     private IUtil util;
 
-    public PhieuNVTService(ApplicationDbContextPhieuNVT dbContext, ApplicationDbContext dbContext1, IUtil util){
+    public PhieuNVTService(ApplicationDbContextPhieuNVT dbContext, ApplicationDbContext dbContext1, ApplicationDbContextQLVT dbContextQLVT,IUtil util){
         this.dbContext = dbContext;
         this.dbContext1 = dbContext1;
+        this.dbContextQLVT = dbContextQLVT;
         this.util = util;
     }
 
@@ -208,34 +211,47 @@ public class PhieuNVTService : IPhieuNVTService
                                            };
             listPhieuChiTiet.AddRange(listPhieuDeNghiNhanVatTu);
         }
-
+        List<VatTu> listVatTu = dbContextQLVT.VatTu.ToList();
         List<VatTuNhaCungUngResultTongHop> listPhieuNhanVatTu = new();
+
         var listResult = (from PhieuDeNghiNhanVatTuChiTietDaDuyet in listPhieuChiTiet
         
                                join PhieuDeNghi in dbContext1.PhieuDeNghiNhanVatTuDaDuyet 
                                on PhieuDeNghiNhanVatTuChiTietDaDuyet.MaPhieu equals PhieuDeNghi.MaPhieu 
 
-                               join VatTu in dbContext1.VatTu
-                               on PhieuDeNghiNhanVatTuChiTietDaDuyet.MaVatTu equals VatTu.MaVatTu 
-
                                select new VatTuNhaCungUngResultTongHop{
                                  Id = PhieuDeNghiNhanVatTuChiTietDaDuyet.Id,
-                                 IdVatTu = VatTu.Id,
+                                 IdVatTu = 0,
                                  IdPhieu = PhieuDeNghiNhanVatTuChiTietDaDuyet.PhieuId,
                                  MaPhieu = PhieuDeNghi.MaPhieu,
                                  CodeYear = PhieuDeNghi.CodeYear,
                                  TenNguoiDeNghi = PhieuDeNghi.TenNguoiDeNghi,
                                  TenBoPhan = PhieuDeNghi.TenBoPhan,
-                                 TenVatTu = VatTu.TenVatTu,
+                                 TenVatTu = "",
                                  MaVatTu = PhieuDeNghiNhanVatTuChiTietDaDuyet.MaVatTu,
                                  Soluong = PhieuDeNghiNhanVatTuChiTietDaDuyet.SoLuong,
-                                 DonViTinh = VatTu.DonViTinh,
+                                 DonViTinh = "",
                                  GhiChu = PhieuDeNghiNhanVatTuChiTietDaDuyet.GhiChu,
-                                 ListNhaCungUngId = dbContext1.VatTuNhaCungUngRelation
-                                                              .Where(x => x.MaVatTu == VatTu.Id && x.IsDeleted==false)
-                                                              .Select(x=>x.NhaCungUngId)
-                                                              .ToList()
+                                 ListNhaCungUngId = new List<long?>()
                                }).ToList();
+         listResult = (from vatTuNhaCungUng in listResult
+                      join vatTu in dbContextQLVT.VatTu
+                      on vatTuNhaCungUng.MaVatTu equals vatTu.MaVatTu
+                      select new VatTuNhaCungUngResultTongHop{
+                        Id = vatTuNhaCungUng.Id,
+                        IdVatTu = vatTu.Id,
+                        IdPhieu = vatTuNhaCungUng.IdPhieu,
+                        MaPhieu = vatTuNhaCungUng.MaPhieu,
+                        CodeYear = vatTuNhaCungUng.CodeYear,
+                        TenNguoiDeNghi = vatTuNhaCungUng.TenNguoiDeNghi,
+                        TenBoPhan = vatTuNhaCungUng.TenBoPhan,
+                        TenVatTu = vatTu.TenVatTu,
+                        MaVatTu = vatTuNhaCungUng.MaVatTu,
+                        Soluong = vatTuNhaCungUng.Soluong,
+                        DonViTinh = vatTu.DonViTinh,
+                        GhiChu = vatTuNhaCungUng.GhiChu,
+                        ListNhaCungUngId = new List<long?>()
+                      }).ToList();
         Console.WriteLine(listResult.Count);
         return listResult;
     }   

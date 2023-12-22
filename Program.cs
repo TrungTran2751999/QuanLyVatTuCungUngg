@@ -17,7 +17,8 @@ builder.Services.AddDbContext<ApplicationDbContextUsers>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("connectStringHueWACODB")));
 builder.Services.AddDbContext<ApplicationDbContextPhieuNVT>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("connectStringPhieuNhanVatTu")));
-
+builder.Services.AddDbContext<ApplicationDbContextQLVT>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("connectStringVatTu")));
 
 // builder.Services.AddDbContext<ApplicationDbContextMySQl>(options =>
 //     options.builder.Configuration.GetConnectionString("connectStringMySql")));
@@ -26,7 +27,7 @@ builder.Services.AddSignalR();
 var _authkey = builder.Configuration.GetValue<string>("JwtSettings:securitykey");
 //=======TAO COOKIE=========
 builder.Services.AddAuthentication(item =>
-{
+{ 
     item.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     item.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(item =>
@@ -85,17 +86,17 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseStatusCodePages(async context =>
-{
-    var response = context.HttpContext.Response;
-    if(response.StatusCode==404){
-        response.Redirect("/404");
-    }else if(response.StatusCode==500){
-        response.Redirect("/500");
-    }
-    if (response.StatusCode == (int)HttpStatusCode.Unauthorized || response.StatusCode == (int)HttpStatusCode.Forbidden)
-        response.Redirect("/login");
-});
+// app.UseStatusCodePages(async context =>
+// {
+//     var response = context.HttpContext.Response;
+//     if(response.StatusCode==404){
+//         response.Redirect("/404");
+//     }else if(response.StatusCode==500){
+//         response.Redirect("/500");
+//     }
+//     if (response.StatusCode == (int)HttpStatusCode.Unauthorized || response.StatusCode == (int)HttpStatusCode.Forbidden)
+//         response.Redirect("/login");
+// });
 
 app.UseAuthentication();
 app.UseAuthorization();

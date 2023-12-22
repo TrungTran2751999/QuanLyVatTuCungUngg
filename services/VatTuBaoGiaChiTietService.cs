@@ -13,10 +13,12 @@ public class VatTuBaoGiaChiTietService : IVatTuBaoGiaChiTietService
 {
     private readonly ApplicationDbContext dbContext;
     private readonly IPhieuNVTService phieuNVTService;
+    private readonly ApplicationDbContextQLVT dbContextQLVT;
 
-    public VatTuBaoGiaChiTietService(ApplicationDbContext dbContext, IPhieuNVTService phieuNVTService){
+    public VatTuBaoGiaChiTietService(ApplicationDbContext dbContext, IPhieuNVTService phieuNVTService, ApplicationDbContextQLVT dbContextQLVT){
         this.dbContext = dbContext;
         this.phieuNVTService = phieuNVTService;
+        this.dbContextQLVT = dbContextQLVT;
     }
 
     public async Task<List<VatTuBaoGiaChiTietReponse>> GetByBaoGiaId(Guid BaoGiaId)
@@ -59,7 +61,7 @@ public class VatTuBaoGiaChiTietService : IVatTuBaoGiaChiTietService
         
         //xu ly tiep cai phan lay vat tu id
         var listPhieuDeNghiConverted = (from phieuDeNghiConvert in listPhieuDeNghiConvert
-                                       join vatTu in dbContext.VatTu
+                                       join vatTu in dbContextQLVT.VatTu
                                        on phieuDeNghiConvert.MaVatTu equals vatTu.MaVatTu into joinDept
                                        from result in joinDept.DefaultIfEmpty()
                                        select new VatTuBaoGiaChiTietReponse{

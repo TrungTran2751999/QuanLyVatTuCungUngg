@@ -330,6 +330,7 @@
             function importTable(param){
                 let rows = "";
                 $("#table-data tbody").html("");
+                console.log(param)
                 for(let i=0; i<param.length; i++){
                     let x = i;
                     row = `
@@ -344,7 +345,7 @@
                         <td style="padding: 0px 10px 10px 10px">
                             <select multiple class="form-select shadow-none droplist-nha-cung-ung" onchange="selectDropList(this)">
                                 ${listNhaCungUng.map(item=>{
-                                    return `<option id="option-${item.id}" value=${item.id} ${param[i]["listNhaCungUngId"].includes(item.id) ? "selected" : ""}>${item.tenNhaCungUng}</option>`;
+                                    return `<option id="option-${item.id}" value=${item.id} ${param[i]["listNhaCungUngId"].includes(item?.id) ? "selected" : ""}>${item.tenNhaCungUng}</option>`;
                                 })}
                             </select>
                         </td>

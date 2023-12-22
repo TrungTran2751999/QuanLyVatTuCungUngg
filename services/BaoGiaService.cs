@@ -28,9 +28,11 @@ namespace app.Services;
 public class BaoGiaService : IBaogiaService
 {
     private readonly ApplicationDbContext dbContext;
+    private readonly ApplicationDbContextQLVT dbContextQLVT;
 
-    public BaoGiaService(ApplicationDbContext dbContext){
+    public BaoGiaService(ApplicationDbContext dbContext, ApplicationDbContextQLVT dbContextQLVT){
         this.dbContext = dbContext;
+        this.dbContextQLVT = dbContextQLVT;
     }
 
     public async Task<List<BaoGiaResponse>?> GetAll(bool isDeleted)
@@ -106,7 +108,7 @@ public class BaoGiaService : IBaogiaService
         var checkListNhaCungUng = await dbContext.NhaCungUng
                                                  .Where(x=>listNhaCungUngId.Contains(x.Id))
                                                  .ToListAsync();
-        var checkListVatTu = await dbContext.VatTu
+        var checkListVatTu = await dbContextQLVT.VatTu
                                             .Where(x=>listVatTuId.Contains(x.Id))
                                             .ToListAsync();
         if(listNhaCungUngId.Count != checkListNhaCungUng.Count) return "NhaCungUng:Tồn tại nhà cung ứng không thuộc danh sách";
@@ -116,8 +118,9 @@ public class BaoGiaService : IBaogiaService
         using(var transaction = dbContext.Database.BeginTransaction()){
             try{
                 // check xem phieu de nghi da duoc lap bao gia chua
-                await XoaBaoGiaByPhieuDeNghi(listBaoGiaId, transaction);
-                //add du lieu vao bang bao gia
+                // await XoaBaoGiaByPhieuDeNghi(listBaoGiaId, transaction);
+                
+                // add du lieu vao bang bao gia
                 await dbContext.BaoGia.AddAsync(baoGiaCreate.ToModel());
                 dbContext.SaveChanges();
 
@@ -196,8 +199,8 @@ public class BaoGiaService : IBaogiaService
             
                 if(baoGia!=null){
                     foreach(var ids in listId){
-                        var phieuNhanVatTus = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.Id==ids).FirstOrDefaultAsync();
-                        phieuNhanVatTus.BaoGiaId = null;
+                        var phieuNhanVatTus = await dbContext.PhieuDeNghiNhanVatTuDaDuyet.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();
+                        phieuNhanVatTus.ForEach(x => x.BaoGiaId = null);
                         dbContext.SaveChanges();
                     }
                     var listBaoGiaChiTiet = await dbContext.BaoGiaChiTiet.Where(x=>x.BaoGiaId==baoGia.Id).ToListAsync();

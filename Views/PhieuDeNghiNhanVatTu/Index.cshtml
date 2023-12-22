@@ -103,7 +103,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="7">
-                            <button style="width: 100%;" class="btn btn-primary">XEM THÊM</button>
+                            <button id="btn-xem-them" style="width: 100%;" class="btn btn-primary">XEM THÊM</button>
                         </td>
                     </tr>
                 </tfoot>
@@ -291,6 +291,7 @@
                     </tbody>
                 </table>`
             $(tableTongHop).insertAfter("#table-data");
+            $("#btn-xem-them").css("display","")
         }else if(status=='true'){
             $("#btn-xac-nhan-phe-duyet").css("display","")
             $("#check-box-column").css("display","");
@@ -299,6 +300,7 @@
              $("#table-data tr th").css("border","1px solid #d7d7d7");
              $("#table-data tr th").css("padding","0px 10px");
              $("#table-data tr th").css("text-align","center");
+             $("#btn-xem-them").css("display","none");
         }
 
         if(localStorage.getItem("listData")!=null){
@@ -617,10 +619,15 @@
                 })
             })
         }
+        
+        function xemThem(){
+            page++;
+            
+        }
         //INIT DATA =============================================================================================================================
-
+        let page = 1;
         $.ajax({
-            url: host+ `/api/phieu-nhan-vat-tu?isDeleted=${status}`,
+            url: host+ `/api/phieu-nhan-vat-tu?isDeleted=${status}&page=${page}`,
             method: "GET"
         })
         .done(res=>{

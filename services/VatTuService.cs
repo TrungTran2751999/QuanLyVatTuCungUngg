@@ -4,19 +4,24 @@ using app.Models;
 using app.Services;
 using app.DTOs;
 using Microsoft.EntityFrameworkCore;
+using app.Utils;
 // using System.Data.Entity;
 namespace app.Services;
 public class VatTuService : IVatTuService
 {
     private readonly ApplicationDbContext dbContext;
+    private readonly ApplicationDbContextQLVT dbContextQLVT;
+    private readonly IUtil util;
 
-    public VatTuService(ApplicationDbContext dbContext){
+    public VatTuService(ApplicationDbContext dbContext, ApplicationDbContextQLVT dbContextQLVT, IUtil util){
         this.dbContext = dbContext;
+        this.dbContextQLVT = dbContextQLVT;
+        this.util = util;
     }
 
     public async Task<List<VatTu>> GetAll(int index)
     {
-        var listVatTu = await dbContext.VatTu
+        var listVatTu = await dbContextQLVT.VatTu
                                       .OrderBy(x=>x.Id)
                                       .Select(
                                         x=>new VatTu{
@@ -43,9 +48,10 @@ public class VatTuService : IVatTuService
 
     public async Task<VatTuSearch> Search(string hint, int index)
     {
-         var listVatTu = await dbContext.VatTu
+         hint = util.RemoveDauTiengViet(hint);
+         var listVatTu = await dbContextQLVT.VatTu
                                       .OrderBy(x=>x.TenVatTu)
-                                      .Where(x=>x.TenVatTu.Contains(hint) || x.MaVatTu.Contains(hint))
+                                      .Where(x=>x.TenVatTu.ToLower().Contains(hint.ToLower()) || x.MaVatTu.Contains(hint.ToLower()))
                                       .Select(
                                         x=>new VatTu{
                                             Id = x.Id,
@@ -53,8 +59,15 @@ public class VatTuService : IVatTuService
                                             MaVatTu = x.MaVatTu
                                         })
                                         .Skip(index).Take(10).ToListAsync();
-        var countSearch = await dbContext.VatTu
-                                         .Where(x=>x.TenVatTu.Contains(hint) || x.MaVatTu.Contains(hint))
+        // var listVatTu = (from vatTu in dbContextQLVT.VatTu
+        //              where util.RemoveDauTiengViet(vatTu.TenVatTu.ToLower()).Contains(hint.ToLower()) || util.RemoveDauTiengViet(vatTu.MaVatTu.ToLower()).Contains(hint.ToLower())
+        //              select new VatTu{
+        //                 Id = vatTu.Id,
+        //                 TenVatTu = vatTu.TenVatTu,
+        //                 MaVatTu = vatTu.MaVatTu
+        //              }).ToList();
+        var countSearch = await dbContextQLVT.VatTu
+                                         .Where(x=>x.TenVatTu.ToLower().Contains(hint.ToLower()) || x.MaVatTu.ToLower().Contains(hint.ToLower()))
                                          .CountAsync();
         VatTuSearch vatTuSearch = new()
         {

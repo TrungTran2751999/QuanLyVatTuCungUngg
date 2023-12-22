@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using app.Utils;
 
 namespace app.Models;
 [Table("DM_VatTu")]
@@ -40,5 +41,8 @@ public class VatTu{
     public long? UpdatedBy{get;set;}
     [Column("UpdatedTime")]
     public DateTime? UpdatedTime{get;set;}
-    
+
+    public string RemoveDauTiengViet(IUtil util, string hint){
+        return util.RemoveDauTiengViet(hint);
+    }
 }

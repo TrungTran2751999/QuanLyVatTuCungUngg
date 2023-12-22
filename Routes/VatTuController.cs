@@ -14,12 +14,14 @@ namespace app.Routes;
 public class VatTuController : Controller
 {
     private ApplicationDbContext dbContext;
-    public VatTuController(ApplicationDbContext dbContext){
+    private ApplicationDbContextQLVT dbContextQLVT;
+    public VatTuController(ApplicationDbContext dbContext, ApplicationDbContextQLVT dbContextQLVT){
         this.dbContext = dbContext;
+        this.dbContextQLVT = dbContextQLVT;
     }
     // [Authorize(Roles = "ADMIN,USER")]
     public ActionResult Index(){
-        var countVatTu = dbContext.VatTu.Count();
+        var countVatTu = dbContextQLVT.VatTu.Count();
         ViewBag.count = countVatTu;
         return View();
     }
