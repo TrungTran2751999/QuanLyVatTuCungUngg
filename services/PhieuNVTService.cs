@@ -28,21 +28,22 @@ public class PhieuNVTService : IPhieuNVTService
         this.util = util;
     }
 
-    public async Task<PhieuNVTGetAllDTO?> GetAll(bool isDeleted, int page)
+    public async Task<PhieuNVTGetAllDTO?> GetAll(bool isDeleted, int page, int limit)
     {
         var listPhieuDaDuyet = new List<PhieuDeNghiNhanVatTuDaDuyet>();
         PhieuNVTGetAllDTO phieuNVT = new();
         if(isDeleted==false){
+            int start = limit*(page-1);
             listPhieuDaDuyet = await dbContext1.PhieuDeNghiNhanVatTuDaDuyet
                                        .Where(x=>x.IsDeleted==false)
                                        .OrderByDescending(x=>x.CreatedTime)
-                                       .Skip(0).Take(200).ToListAsync();
+                                       .Skip(start).Take(limit).ToListAsync();
             phieuNVT.listPhieuNVTDaDuyet = listPhieuDaDuyet;
         }else{
             listPhieuDaDuyet = await dbContext1.PhieuDeNghiNhanVatTuDaDuyet
                                        .Where(x=>x.IsDeleted==false)
                                        .OrderByDescending(x=>x.CreatedTime)
-                                       .Skip(0).Take(200).ToListAsync();
+                                       .ToListAsync();
             var listPhieu = await dbContext.PhieuNhanVatTuFasts.FromSqlRaw("EXEC FastBusiness$App$Voucher$Loading {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15}",
             "PX0", 
             "c87$000000", 

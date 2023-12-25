@@ -6,7 +6,7 @@ using OfficeOpenXml;
 namespace app.Services;
 
 public interface IPhieuNVTService{
-    Task<PhieuNVTGetAllDTO?> GetAll(bool isDeleted, int page);
+    Task<PhieuNVTGetAllDTO?> GetAll(bool isDeleted, int page, int limit);
     Task<List<PhieuNhanVatTuChiTietFast>?> GetByMaPhieu(string maPhieu, string codeYear);
     Task<List<VatTuNhaCungUngResultTongHop>> TongHopPhieu(List<TongHopParam> listTongHop);
     List<Filter> Filter(FilterParam listFilter);

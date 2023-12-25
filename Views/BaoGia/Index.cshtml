@@ -72,7 +72,23 @@
             localStorage.setItem("info",JSON.stringify(info));
             window.location.href = `phieu-de-nghi/chi-tiet?code=${code}&codeYear=${codeYear}&nguoiDeNghi=${nguoiDeNghi}&dateDeNghi=${dateDeNghi}`;
         }
-        
+        function capNhatBaoGiaOrLapHopdong(id){
+            Swal.fire({
+                title: "Bạn muốn sửa báo giá hay lập hợp đồng?",
+                icon: "question",
+                showCancelButton: true,
+                showDenyButton: true,
+                denyButtonText: `Sửa báo giá`,
+                confirmButtonText: "Lập hợp đồng"
+            }).then((result) => {
+                if (result.isConfirmed){
+                    window.location.href = `/bao-gia/chi-tiet?id=${id}`
+                }else if(result.isDenied){
+                    window.location.href = `/bao-gia/cap-nhat?id=${id}`
+                }
+            });
+        }
+
         //======INIT DATA==========
         $.ajax({
             url: host + "/api/bao-gia?isDeleted=false"
@@ -83,7 +99,7 @@
                 let row = `
                 <tr class="${res[i].id}">
                     <td>${i+1}</td>
-                    <td><a href="/bao-gia/cap-nhat?id=${res[i].id}">${res[i].maBaoGia}</a></td>
+                    <td><a onclick="capNhatBaoGiaOrLapHopdong('${res[i].id}')" href="#">${res[i].maBaoGia}</a></td>
                     <td data-id="${res[i].userId}">${res[i].userBaoGia}</td>  
                     <td>${convertDateTime(res[i].createdTime, "true")}</td>
                     <td>${convertDateTime(res[i].updatedTime, "true")}</td>

@@ -10,9 +10,19 @@
             background-color: #34b7eb;
             color: black;
             font-size: 16px;
+            padding: 0px;
+            text-align: center;
+            border: 1px solid #d7d7d7;
+            text-align: center;
         }
         #table-data tr td{
-            color: black
+            color: black;
+            text-align: center;
+            border: 1px solid #d7d7d7;
+            padding-top: 3px;
+        }
+        #table-data{
+            background-color: white;
         }
     </style>
     <div class="page-wrapper">
@@ -37,26 +47,20 @@
             </div>
         </div> *@
         <div style="overflow: scroll;">
-            <table class="table" id="table-data" data-show-columns="true">
+            <table class="table" id="table-data" data-show-columns="true" style="overflow: scroll;">
                 <thead>
-                    <th style="width: 100px;">STT</th>
-                    <th style="width: 400px;">TÊN NHÀ CUNG ỨNG</th>
+                    <th>STT</th>
+                    <th style="min-width: 200px;">TÊN NHÀ CUNG ỨNG</th>
+                    <th style="min-width: 150px;">MÃ SỐ THUẾ</th>
+                    <th style="min-width: 200px;">ĐỊA CHỈ</th>
+                    <th style="min-width: 150px;">ĐIỆN THOẠI</th>
+                    <th style="min-width: 150px;">SỐ TÀI KHOẢN</th>
+                    <th style="min-width: 150px;">NGÂN HÀNG</th>
+                    <th style="min-width: 230px;">CHI NHÁNH NGÂN HÀNG</th>
                     <th>ACTION</th>
                 </thead>
                 <tbody>
-                    @* @{int id = 1;} *@
-                    @* @foreach(var item in ViewBag.result){
-                        <tr>
-                            <td>@id</td>
-                            <td><a href="nha-cung-ung/edit?id=@item.Id">@item.Name</a></td>
-                            <td>
-                                <button type="button" class="btn btn-danger" onclick="softDelete(@item.Id, '@item.Name')">
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        id++;
-                    } *@
+                    
                 </tbody>
             </table>
         </div>
@@ -88,7 +92,7 @@
         {
             function handleClickNhaCungUng(id, nhaVatTu){
                 Swal.fire({
-                    title: `Bạn xem chi tiết hay danh sách vât tư của ${nhaVatTu}?`,
+                    title: `Bạn xem chi tiết hay danh sách vật tư của ${nhaVatTu}?`,
                     showDenyButton: true,
                     showCancelButton: true,
                     confirmButtonText: 'Xem chi tiết',
@@ -122,7 +126,13 @@
                         let row = `
                             <tr>
                                 <td>${++j}</td>
-                                <td><a href="#" onclick="handleClickNhaCungUng(${res[i].id}, '${res[i].tenNhaCungUng}')">${res[i].tenNhaCungUng}</a></td>
+                                <td><a href="#" onclick="handleClickNhaCungUng(${res[i].id}, '${res[i].tenNhaCungUng}')">${res[i].tenNhaCungUng||""}</a></td>
+                                <td>${res[i].maSoThue||""}</td>
+                                <td>${res[i].diaChi||""}</td>
+                                <td>${res[i].dienThoai||""}</td>
+                                <td>${res[i].soTaiKhoan||""}</td>
+                                <td>${res[i].nganHang||""}</td>
+                                <td>${res[i].chiNhanhNganHang||""}</td>
                                 <td>
                                     <button type="button" class="btn btn-danger" onclick="softDelete(${res[i].id}, '${res[i].tenNhaCungUng}')">
                                         <i class="fa fa-trash" aria-hidden="true"></i>

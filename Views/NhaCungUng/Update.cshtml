@@ -11,7 +11,7 @@
       color: black;
       font-size: 16px;
     }
-
+    
     #table-data tr td {
       color: black
     }
@@ -48,17 +48,103 @@
               <div class="card-body">
                 <h4 class="card-title">Cập nhật thông tin nhà cung ứng</h4>
                 <div class="form-group row">
+                  @* name *@
                   <div class="row mb-3 align-items-center">
                     <div class="col-lg-4 col-md-12 text-end">
                       <span class="" id="label-ten-nha-cung-ung">Tên nhà cung ứng</span>
                     </div>
                     <div class="col-lg-8 col-md-12">
-                      <input value="@ViewBag.result.Name" type="text" class="form-control" id="input-ten-nha-cung-ung" placeholder="Tên nhà cung ứng" oninput="changeData('ten-nha-cung-ung')" />
+                      <input value="@ViewBag.result.TenNhaCungUng" type="text" class="form-control" id="input-ten-nha-cung-ung" placeholder="Tên nhà cung ứng" oninput="changeData('ten-nha-cung-ung')" />
                       <div class="invalid-feedback" id="err-ten-nha-cung-ung">
                         
                       </div>
                     </div>
                   </div>
+                  @* dia chi *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-dia-chi">Địa chỉ</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="@ViewBag.result.DiaChi" type="text" class="form-control" id="input-dia-chi" placeholder="Địa chỉ" oninput="changeData('dia-chi')" />
+                      <div class="invalid-feedback" id="err-dia-chi">
+                        
+                      </div>
+                    </div>
+                  </div>
+                  @* ma-so-thue *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-ma-so-thue">Mã số thuế</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="@ViewBag.result.MaSoThue" type="text" class="form-control" id="input-ma-so-thue" placeholder="Mã số thuế" oninput="changeData('ma-so-thue')" />
+                      <div class="invalid-feedback" id="err-ma-so-thue">
+
+                      </div>
+                    </div>
+                  </div>
+                  @* dien-thoai *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-dien-thoai">Điện thoại</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="@ViewBag.result.DienThoai" type="text" class="form-control" id="input-dien-thoai" placeholder="Điện thoại" oninput="changeData('dien-thoai')" />
+                      <div class="invalid-feedback" id="err-dien-thoai">
+
+                      </div>
+                    </div>
+                  </div>
+                   @* dien-thoai-di-dong *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-dien-thoai-di-dong">Điện thoại di động</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="@ViewBag.result.DienThoaiDiDong" type="text" class="form-control" id="input-dien-thoai-di-dong" placeholder="Điện thoại di động" oninput="changeData('dien-thoai-di-dong')" />
+                      <div class="invalid-feedback" id="err-dien-thoai-di-dong">
+
+                      </div>
+                    </div>
+                  </div>
+                  @* so-tai-khoan *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-so-tai-khoan">Số tài khoản</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="@ViewBag.result.SoTaiKhoan" type="text" class="form-control" id="input-so-tai-khoan" placeholder="Số tài khoản" oninput="changeData('so-tai-khoan')" />
+                      <div class="invalid-feedback" id="err-so-tai-khoan">
+
+                      </div>
+                    </div>
+                  </div>
+                  @* ngan-hang *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-so-tai-khoan">Ngân hàng</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="@ViewBag.result.NganHang" type="text" class="form-control" id="input-ngan-hang" placeholder="Ngân hàng" oninput="changeData('ngan-hang')" />
+                      <div class="invalid-feedback" id="err-ngan-hang">
+
+                      </div>
+                    </div>
+                  </div>
+                  @* chi-nhanh-ngan-hang *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-so-tai-khoan">Chi nhánh ngân hàng</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="@ViewBag.result.ChiNhanhNganHang" type="text" class="form-control" id="input-chi-nhanh-ngan-hang" placeholder="Chi nhánh ngân hàng" oninput="changeData('chi-nhanh-ngan-hang')" />
+                      <div class="invalid-feedback" id="err-chi-nhanh-ngan-hang">
+
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div class="border-top">
                     <div class="card-body">
                       <button id="update-nha-cung-ung" type="button" class="btn btn-primary" onclick="update()">
@@ -87,19 +173,31 @@
         const id = urlParams.get('id');
         let formatError = {
           "required": [
-            { "ten-nha-cung-ung": "Tên nhà cung ứng không được để trống" }
+            {"ten-nha-cung-ung": "Tên nhà cung ứng không được để trống"}
+          ],
+          "phone":[
+            {"dien-thoai": "Số điện thoại không đúng định dạng"}
+          ],
+          "mobile":[
+            {"dien-thoai-di-dong": "Số điện thoại di động không đúng định dạng"}
           ]
         }
         let listError = {
           "ten-nha-cung-ung": "TenNhaCungUng"
         }
         function update() {
-          let tenNhaCungUng = $("#input-ten-nha-cung-ung").val().trim();
-          let updateBy = 0;
-          let createdBy = 0;
+          let updateBy = getCookie("id");
+          let createdBy = getCookie("id");
           let datas = {
             "UpdateBy": updateBy,
-            "Name": tenNhaCungUng,
+            "Name": $("#input-ten-nha-cung-ung").val().trim(),
+            "MaSoThue": $("#input-ma-so-thue").val().trim(),
+            "DiaChi": $("#input-dia-chi").val().trim(),
+            "DienThoai": $("#input-dien-thoai").val().trim(),
+            "DienThoaiDiDong": $("#input-dien-thoai-di-dong").val().trim(),
+            "SoTaiKhoan": $("#input-so-tai-khoan").val().trim(),
+            "NganHang": $("#input-ngan-hang").val().trim(),
+            "ChiNhanhNganHang": $("#input-chi-nhanh-ngan-hang").val().trim(),
             "Id": id
           };
           if(getErrorFromFe()) return;
@@ -145,6 +243,28 @@
                   }
               }
             }
+            if(key=='phone'){
+              for(let i=0; i<formatError[key].length; i++){
+                  let val = $(`#input-${Object.keys(formatError[key][i])[0]}`).val().trim();
+                  if(!(/^0[0-9]{3}\.[0-9]{7}$/.test(val)||/^0[0-9]{3}[0-9]{7}$/.test(val)) && val!=""){
+                    $(`#input-${Object.keys(formatError[key][i])[0]}`).addClass("is-invalid");
+                    $(`#label-${Object.keys(formatError[key][i])[0]}`).addClass("text-danger");
+                    $(`#err-${Object.keys(formatError[key][i])[0]}`).text(`${Object.values(formatError[key][i])[0]}`);
+                    isErr = true;
+                  }
+              }
+            }
+            if(key=='mobile'){
+              for(let i=0; i<formatError[key].length; i++){
+                  let val = $(`#input-${Object.keys(formatError[key][i])[0]}`).val().trim();
+                  if(!/^0[0-9]{9}$/.test(val) && val!=""){
+                    $(`#input-${Object.keys(formatError[key][i])[0]}`).addClass("is-invalid");
+                    $(`#label-${Object.keys(formatError[key][i])[0]}`).addClass("text-danger");
+                    $(`#err-${Object.keys(formatError[key][i])[0]}`).text(`${Object.values(formatError[key][i])[0]}`);
+                    isErr = true;
+                  }
+              }
+            }
           }
           return isErr;
         }
@@ -168,6 +288,52 @@
           $(`#input-${param}`).removeClass("is-invalid");
           $(`#label-${param}`).removeClass("text-danger");
         }
+        function addApiCoSan(){
+          //goi api ngan hang
+          $.ajax({
+            url: "https://api.vietqr.io/v2/banks"
+          })
+          .done(res=>{
+              let arr = [];
+              res.data.map(item=>{
+                  let obj = {
+                    value: `${item.name}`,
+                    data: item.code
+                  }
+                  arr.push(obj);
+              })
+              $('#input-ngan-hang').autocomplete({
+                lookup: arr,
+              });
+          })
+          //goi api tinh, thanh pho viet nam
+          $.ajax({
+            url: "https://provinces.open-api.vn/api/"
+          })
+          .done(res=>{
+            let arr = [];
+            function showTinh(tinh){
+              let arr1 = tinh.split("Tỉnh");
+              let arr2 = tinh.split("Thành phố");
+              if(arr1.length>1){
+                return arr1[1];
+              }else if(arr2.length>1){
+                return arr2[0];
+              }
+            }
+            res.map(item=>{
+              console.log(showTinh(item.name))
+              let obj = {
+                value: showTinh(item.name)
+              }
+              arr.push(obj);
+            })
+            $("#input-chi-nhanh-ngan-hang").autocomplete({
+                lookup: arr
+            })
+          })
+        }
+        addApiCoSan()
       }
     </script>
 </body>

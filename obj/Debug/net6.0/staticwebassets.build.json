@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "TzvZbYwThHEOLI+wQeecnYvgdfOab6UYQ0oYeG6fbF8=",
+  "Hash": "SU9YM4HzWVyLLSa/THxuZuEwCGaxAMXND7ZnpaIYyus=",
   "Source": "app",
   "BasePath": "_content/app",
   "Mode": "Default",
@@ -13481,6 +13481,23 @@
       "OriginalItemSpec": "wwwroot\\assets\\libs\\toastr\\toastr.js"
     },
     {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\css\\autocomplete.css",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "css/autocomplete.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\autocomplete.css"
+    },
+    {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\css\\bootstrap-table-sticky-header.css",
       "SourceId": "app",
       "SourceType": "Discovered",
@@ -16658,6 +16675,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\autocomplete.js",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "js/autocomplete.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\autocomplete.js"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\bootstrap-table-sticky-header.min.js",

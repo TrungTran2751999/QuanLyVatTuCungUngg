@@ -20,8 +20,8 @@ public class ApiPhieuNhanVatTuController:Controller{
     public ApiPhieuNhanVatTuController(IPhieuNVTService phieuNVTService){
         this.phieuNVTService = phieuNVTService;
     }
-    public async Task<IActionResult> GetAll(bool isDeleted, int page = 0){
-        var listPhieu = await phieuNVTService.GetAll(isDeleted, page);
+    public async Task<IActionResult> GetAll(bool isDeleted, int page = 0, int limit = 10){
+        var listPhieu = await phieuNVTService.GetAll(isDeleted, page, limit);
         return Ok(listPhieu);
     }
     [Route("chi-tiet")]

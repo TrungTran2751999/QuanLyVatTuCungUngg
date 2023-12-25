@@ -19,11 +19,7 @@ public class NhaCungUngService : INhaCungUngService
         var nhaCungUng = await dbContext.NhaCungUng
                                       .OrderByDescending(x=>x.UpdateAt)
                                       .Where(x=>x.IsDeleted==isDeleted)
-                                      .Select(
-                                        x=>new NhaCungUngVatTu{
-                                            Id = x.Id,
-                                            TenNhaCungUng = x.TenNhaCungUng
-                                        }).Skip(index).Take(10).ToListAsync();
+                                      .Skip(index).Take(10).ToListAsync();
         
         return nhaCungUng;
     }
@@ -63,6 +59,13 @@ public class NhaCungUngService : INhaCungUngService
         if(checkNhaCungUng?.TenNhaCungUng!=null) return "TenNhaCungUng:Nhà cung ứng đã tồn tại";
 
         nhaCungUng.TenNhaCungUng = nhaCungUngUpdate.Name;
+        nhaCungUng.MaSoThue = nhaCungUngUpdate.MaSoThue;
+        nhaCungUng.DiaChi = nhaCungUngUpdate.DiaChi;
+        nhaCungUng.DienThoai = nhaCungUngUpdate.DienThoai;
+        nhaCungUng.DienThoaiDiDong = nhaCungUngUpdate.DienThoaiDiDong;
+        nhaCungUng.SoTaiKhoan = nhaCungUngUpdate.SoTaiKhoan;
+        nhaCungUng.NganHang = nhaCungUngUpdate.NganHang;
+        nhaCungUng.ChiNhanhNganHang = nhaCungUngUpdate.ChiNhanhNganHang;
         nhaCungUng.UpdateAt = DateTime.Now;
         nhaCungUng.UpdateBy = nhaCungUngUpdate.UpdateBy;
         dbContext.SaveChanges();

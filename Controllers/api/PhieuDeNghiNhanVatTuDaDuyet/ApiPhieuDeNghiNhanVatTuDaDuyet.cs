@@ -16,8 +16,8 @@ public class ApiPhieuDeNghiNhanVatTuDaDuyet:Controller{
         this.phieuDaDuyet = phieuDaDuyet;
         this.phieuNVTService = phieuNVTService;
     }
-    public async Task<IActionResult> GetAll(bool isDeleted, int page){
-        var listPhieu = await phieuNVTService.GetAll(isDeleted, page);
+    public async Task<IActionResult> GetAll(bool isDeleted, int page, int limit=10){
+        var listPhieu = await phieuNVTService.GetAll(isDeleted, page, limit);
         return Ok(listPhieu);
     }
     [Route("chi-tiet")]

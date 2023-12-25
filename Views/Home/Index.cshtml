@@ -116,7 +116,7 @@
                                         isDupplicate = true;
                                         <tr search="true" show="true" id="rows-@id" style="background-color: #80808036;">
                                             <td>
-                                                
+                                                <input style="display: none;" type="checkbox" class="form-check-input row-check" />
                                             </td>
                                             <td style="display: none;" class="row-time-ma-phieu">@phieuFast.ngay_ct.ToString("yyyy-MM-dd")</td>
                                             <td class="row-stt">@id</td>
@@ -299,6 +299,8 @@
                 Status: filterVal.status,
                 ListFilters: listFilter,
             }
+
+            console.log(paramFilter);
 
             //loc
             $.ajax({

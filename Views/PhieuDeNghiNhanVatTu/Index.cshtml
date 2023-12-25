@@ -88,7 +88,7 @@
         </div>
         <div style="overflow: scroll; display: flex;">
             <table class="table" id="table-data" data-show-columns="true" style="width:50%">
-                <thead>
+                <thead id="main-thead">
                     <th style="display:none" class="check-box-column" id="check-box-column"></th>
                     <th>STT</th>
                     <th>MÃ PHIẾU</th>
@@ -103,7 +103,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="7">
-                            <button id="btn-xem-them" style="width: 100%;" class="btn btn-primary">XEM THÊM</button>
+                            <button id="btn-xem-them" style="width: 100%;" class="btn btn-primary" onclick="xemThem()">XEM THÊM</button>
                         </td>
                     </tr>
                 </tfoot>
@@ -306,7 +306,7 @@
         if(localStorage.getItem("listData")!=null){
             localStorage.removeItem("listData");
         }
-
+        
         function clickRow(index, param, table){
             if(status=='false'){
                 let checkBox = $(`#${table} .check-box-export-${index}`);
@@ -619,175 +619,225 @@
                 })
             })
         }
-        
+        //function xem them
+        let page = 1;
         function xemThem(){
             page++;
-            
+            $.ajax({
+                url: host+ `/api/phieu-nhan-vat-tu?isDeleted=${status}&page=${page}`,
+                method: "GET"
+            })
+            .done(res=>{
+                let rows = "";
+                let listPhieuNVTDaDuyet = res.listPhieuNVTDaDuyet;
+                let currentCountRow = $("#table-data tbody tr").length;
+                let x = currentCountRow;
+                for(let i=0; i<listPhieuNVTDaDuyet.length; i++){
+                    let decodeYear = decodeDatetime(listPhieuNVTDaDuyet[i]["dateDeNghi"]);
+                    let lengthDienGiai = listPhieuNVTDaDuyet[i]["dienGiai"].length;
+                    let row = `
+                    <tr onclick="clickRow('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="${listPhieuNVTDaDuyet[i]["id"]}" id="rows-${i}" data-id="${listPhieuNVTDaDuyet[i]["id"]}">
+                        <td style="display:none"><input class="check-box-export-${listPhieuNVTDaDuyet[i]["id"]} check-box-export" type="checkbox"/></td>
+                        <td class=row-stt>${++x}</td>
+                        <td class="row-ma-phieu">
+                            <a href="#" onclick="directChitiet('${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTDaDuyet[i]["dateDeNghi"])}')">
+                                <span class="ma-phieu">${listPhieuNVTDaDuyet[i]["maPhieu"]}</span> <span class="phieu-datetime">${convertDateTime(listPhieuNVTDaDuyet[i]["dateDeNghi"])}</span>
+                            </a>
+                        </td>
+                        <td class="ten-bp row-ten-bp">${listPhieuNVTDaDuyet[i]["tenBoPhan"]}</td>
+                        <td style="min-width: 105px" class="row-dien-giai">
+                            <span onclick="showMore('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="show-brief-${listPhieuNVTDaDuyet[i]["id"]} show-brief">
+                                <a href="#">
+                                    <span>${listPhieuNVTDaDuyet[i]["dienGiai"]?.split("").slice(0,Math.floor(lengthDienGiai/3)).join("")}</span>
+                                    <span>...</span>
+                                </a>
+                            </span>
+                            <span>
+                                <a class="show-more-${listPhieuNVTDaDuyet[i]["id"]} show-more" style="display:none" onclick="showMoreOrDirect('${listPhieuNVTDaDuyet[i]["id"]}', this, '${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}','${listPhieuNVTDaDuyet[i]["dateDeNghi"]}','table-data', )" href="#">
+                                    ${listPhieuNVTDaDuyet[i]["dienGiai"]}
+                                </a>
+                                <div class="date-de-nghi" style="display:none">${listPhieuNVTDaDuyet[i]["dateDeNghi"]}</div>
+                            </span>
+                        </td>
+                        <td class="nguoi-de-nghi nguoi-yeu-cau">${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}</td>
+                        <td class="trang-thai" style="text-align:center">
+                            ${listPhieuNVTDaDuyet[i]["baoGiaId"]==null ? `<span style="color:green">CHƯA TỔNG HỢP</span>` : `<span style="color:RED">ĐÃ TỔNG HỢP</span>`}
+                        </td>
+                    </tr>`;
+                    rows+=row;
+                };
+                $("#table-data tbody").append(rows);
+            })
+        }
+        //function filter
+        function filter(){
+
         }
         //INIT DATA =============================================================================================================================
-        let page = 1;
-        $.ajax({
-            url: host+ `/api/phieu-nhan-vat-tu?isDeleted=${status}&page=${page}`,
-            method: "GET"
-        })
-        .done(res=>{
-            let listPhieuNVTFast = res.listPhieuNVTFast?res.listPhieuNVTFast.reverse():null;
-            let listPhieuNVTDaDuyet = res.listPhieuNVTDaDuyet;
-            function importTable(listPhieuNVTDaDuyet, listPhieuNVTFast){
-                let rows = "";
-                $("#table-data tbody").html("");
-                if(!listPhieuNVTFast){
-                    //view da duyet
-                    //thay doi kich co cua header tai cua bang #table-data
-                    let headersTableData = $("#table-data thead th");
-                    let listSize = ["","",150,250,250,150,150];
-                    for(let i=0; i<headersTableData.length; i++){
-                        $(headersTableData[i]).css("min-width",`${listSize[i]}px`);
-                    }
-                    $("#th-trang-thai").css("display","");
-                    $("#container-filter").css("display","none")
-                    for(let i=0; i<listPhieuNVTDaDuyet.length; i++){
-                        let decodeYear = decodeDatetime(listPhieuNVTDaDuyet[i]["dateDeNghi"]);
-                        let x = i;
-                        let lengthDienGiai = listPhieuNVTDaDuyet[i]["dienGiai"].length;
-                        row = `
-                        <tr onclick="clickRow('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="${listPhieuNVTDaDuyet[i]["id"]}" id="rows-${i}" data-id="${listPhieuNVTDaDuyet[i]["id"]}">
-                            <td style="display:none"><input class="check-box-export-${listPhieuNVTDaDuyet[i]["id"]} check-box-export" type="checkbox"/></td>
-                            <td class=row-stt>${++x}</td>
-                            <td class="row-ma-phieu">
-                                <a href="#" onclick="directChitiet('${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTDaDuyet[i]["dateDeNghi"])}')">
-                                    <span class="ma-phieu">${listPhieuNVTDaDuyet[i]["maPhieu"]}</span> <span class="phieu-datetime">${convertDateTime(listPhieuNVTDaDuyet[i]["dateDeNghi"])}</span>
-                                </a>
-                            </td>
-                            <td class="ten-bp row-ten-bp">${listPhieuNVTDaDuyet[i]["tenBoPhan"]}</td>
-                            <td style="min-width: 105px" class="row-dien-giai">
-                                <span onclick="showMore('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="show-brief-${listPhieuNVTDaDuyet[i]["id"]} show-brief">
-                                    <a href="#">
-                                        <span>${listPhieuNVTDaDuyet[i]["dienGiai"]?.split("").slice(0,Math.floor(lengthDienGiai/3)).join("")}</span>
-                                        <span>...</span>
-                                    </a>
-                                </span>
-                                <span>
-                                    <a class="show-more-${listPhieuNVTDaDuyet[i]["id"]} show-more" style="display:none" onclick="showMoreOrDirect('${listPhieuNVTDaDuyet[i]["id"]}', this, '${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}','${listPhieuNVTDaDuyet[i]["dateDeNghi"]}','table-data', )" href="#">
-                                        ${listPhieuNVTDaDuyet[i]["dienGiai"]}
-                                    </a>
-                                    <div class="date-de-nghi" style="display:none">${listPhieuNVTDaDuyet[i]["dateDeNghi"]}</div>
-                                </span>
-                            </td>
-                            <td class="nguoi-de-nghi nguoi-yeu-cau">${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}</td>
-                            <td class="trang-thai" style="text-align:center">
-                                ${listPhieuNVTDaDuyet[i]["baoGiaId"]==null ? `<span style="color:green">CHƯA TỔNG HỢP</span>` : `<span style="color:RED">ĐÃ TỔNG HỢP</span>`}
-                            </td>
-                        </tr>`;
-                        rows+=row;
-                    };
-                }else{
-                    //view chua duyet
-                    let x = 0;
-                    $("#th-trang-thai").css("display","none");
-                    for(let i=0; i<listPhieuNVTFast.length; i++){
-                        if(listPhieuNVTDaDuyet.length > 0){
-                            for(let j=0; j<listPhieuNVTDaDuyet.length; j++){
-                                if(listPhieuNVTFast[i]["stt_rec"]==listPhieuNVTDaDuyet[j]["maPhieu"]){
-                                    break;
-                                }else if(j==listPhieuNVTDaDuyet.length-1){
-                                    let decodeYear = decodeDatetime(listPhieuNVTFast[i]["ngay_ct"]);
-                                    row = `
-                                    <tr onclick="clickRow('${x}', this , 'table-data')" id="rows-${x+1}">
-                                        <td><input type="checkbox" class="form-check-input row-check"/></td>
-                                        <td class="row-time-ma-phieu" style="display:none">${listPhieuNVTFast[i]["ngay_ct"]}</td>
-                                        <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
-                                        <td class="row-stt">${++x}</td>
-                                        <td class="row-ma-phieu">
-                                            <a class="ma-phieu" href="#" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')">
-                                                ${listPhieuNVTFast[i]["stt_rec"]} ${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}
-                                            </a>
-                                        </td>                                        
-                                        <td class="row-ten-bp">${listPhieuNVTFast[i]["ten_bp"]}</td>
-                                        <td class="row-dien-giai">
-                                            <a class="dien-giai" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')" href="#">
-                                                ${listPhieuNVTFast[i]["dien_giai"]}
-                                            </a>
-                                        </td>
-                                        <td class="nguoi-yeu-cau">${listPhieuNVTFast[i]["u1"]}</td>
-                                        <td class="row-code-year" style="display:none">${decodeYear}</td>
-                                    </tr>`;
-                                    rows+=row;
-                                }
-                            }
-                        }else{
-                            let decodeYear = decodeDatetime(listPhieuNVTFast[i]["ngay_ct"]);
-                            row = `
-                            <tr onclick="clickRow('${x}', this, 'table-data')" id="rows-${x+1}">
-                                <td><input type="checkbox" class="form-check-input row-check"/></td>
-                                <td class="row-time-ma-phieu" style="display:none">${listPhieuNVTFast[i]["ngay_ct"]}</td>
-                                <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
-                                <td class="row-stt">${++x}</td>
-                                <td>
-                                    <a class="ma-phieu" href="#" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')">
-                                        ${listPhieuNVTFast[i]["stt_rec"]} ${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}
+        function initData(status, page){
+            $.ajax({
+                url: host+ `/api/phieu-nhan-vat-tu?isDeleted=${status}&page=${page}`,
+                method: "GET"
+            })
+            .done(res=>{
+                let listPhieuNVTFast = res.listPhieuNVTFast?res.listPhieuNVTFast.reverse():null;
+                let listPhieuNVTDaDuyet = res.listPhieuNVTDaDuyet;
+                function importTable(listPhieuNVTDaDuyet, listPhieuNVTFast){
+                    let rows = "";
+                    $("#table-data tbody").html("");
+                    if(!listPhieuNVTFast){
+                        //view da duyet
+                        //thay doi kich co cua header tai cua bang #table-data
+                        let headersTableData = $("#table-data thead th");
+                        let listSize = ["","",150,250,250,150,150];
+                        for(let i=0; i<headersTableData.length; i++){
+                            $(headersTableData[i]).css("min-width",`${listSize[i]}px`);
+                        }
+                        $("#th-trang-thai").css("display","");
+                        $("#container-filter").css("display","none")
+                        for(let i=0; i<listPhieuNVTDaDuyet.length; i++){
+                            let decodeYear = decodeDatetime(listPhieuNVTDaDuyet[i]["dateDeNghi"]);
+                            let x = i;
+                            let lengthDienGiai = listPhieuNVTDaDuyet[i]["dienGiai"].length;
+                            let row = `
+                            <tr onclick="clickRow('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="${listPhieuNVTDaDuyet[i]["id"]}" id="rows-${i}" data-id="${listPhieuNVTDaDuyet[i]["id"]}">
+                                <td style="display:none"><input class="check-box-export-${listPhieuNVTDaDuyet[i]["id"]} check-box-export" type="checkbox"/></td>
+                                <td class=row-stt>${++x}</td>
+                                <td class="row-ma-phieu">
+                                    <a href="#" onclick="directChitiet('${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTDaDuyet[i]["dateDeNghi"])}')">
+                                        <span class="ma-phieu">${listPhieuNVTDaDuyet[i]["maPhieu"]}</span> <span class="phieu-datetime">${convertDateTime(listPhieuNVTDaDuyet[i]["dateDeNghi"])}</span>
                                     </a>
                                 </td>
-                                <td class="row-ten-bp">${listPhieuNVTFast[i]["ten_bp"]}</td>
-                                <td class="row-dien-giai">
-                                    <a class="dien-giai" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x},this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')" href="#">
-                                        ${listPhieuNVTFast[i]["dien_giai"]}
-                                    </a>
+                                <td class="ten-bp row-ten-bp">${listPhieuNVTDaDuyet[i]["tenBoPhan"]}</td>
+                                <td style="min-width: 105px" class="row-dien-giai">
+                                    <span onclick="showMore('${listPhieuNVTDaDuyet[i]["id"]}', this, 'table-data')" class="show-brief-${listPhieuNVTDaDuyet[i]["id"]} show-brief">
+                                        <a href="#">
+                                            <span>${listPhieuNVTDaDuyet[i]["dienGiai"]?.split("").slice(0,Math.floor(lengthDienGiai/3)).join("")}</span>
+                                            <span>...</span>
+                                        </a>
+                                    </span>
+                                    <span>
+                                        <a class="show-more-${listPhieuNVTDaDuyet[i]["id"]} show-more" style="display:none" onclick="showMoreOrDirect('${listPhieuNVTDaDuyet[i]["id"]}', this, '${listPhieuNVTDaDuyet[i]["maPhieu"]}', '${decodeYear}', '${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}','${listPhieuNVTDaDuyet[i]["dateDeNghi"]}','table-data', )" href="#">
+                                            ${listPhieuNVTDaDuyet[i]["dienGiai"]}
+                                        </a>
+                                        <div class="date-de-nghi" style="display:none">${listPhieuNVTDaDuyet[i]["dateDeNghi"]}</div>
+                                    </span>
                                 </td>
-                                <td class="nguoi-yeu-cau">${listPhieuNVTFast[i]["u1"]}</td>
-                                <td class="row-code-year" style="display:none">${decodeYear}</td>
+                                <td class="nguoi-de-nghi nguoi-yeu-cau">${listPhieuNVTDaDuyet[i]["tenNguoiDeNghi"]}</td>
+                                <td class="trang-thai" style="text-align:center">
+                                    ${listPhieuNVTDaDuyet[i]["baoGiaId"]==null ? `<span style="color:green">CHƯA TỔNG HỢP</span>` : `<span style="color:RED">ĐÃ TỔNG HỢP</span>`}
+                                </td>
                             </tr>`;
                             rows+=row;
+                        };
+                    }else{
+                        //view chua duyet
+                        let x = 0;
+                        $("#th-trang-thai").css("display","none");
+                        for(let i=0; i<listPhieuNVTFast.length; i++){
+                            if(listPhieuNVTDaDuyet.length > 0){
+                                for(let j=0; j<listPhieuNVTDaDuyet.length; j++){
+                                    if(listPhieuNVTFast[i]["stt_rec"]==listPhieuNVTDaDuyet[j]["maPhieu"]){
+                                        break;
+                                    }else if(j==listPhieuNVTDaDuyet.length-1){
+                                        let decodeYear = decodeDatetime(listPhieuNVTFast[i]["ngay_ct"]);
+                                        row = `
+                                        <tr onclick="clickRow('${x}', this , 'table-data')" id="rows-${x+1}">
+                                            <td><input type="checkbox" class="form-check-input row-check"/></td>
+                                            <td class="row-time-ma-phieu" style="display:none">${listPhieuNVTFast[i]["ngay_ct"]}</td>
+                                            <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
+                                            <td class="row-stt">${++x}</td>
+                                            <td class="row-ma-phieu">
+                                                <a class="ma-phieu" href="#" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')">
+                                                    ${listPhieuNVTFast[i]["stt_rec"]} ${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}
+                                                </a>
+                                            </td>                                        
+                                            <td class="row-ten-bp">${listPhieuNVTFast[i]["ten_bp"]}</td>
+                                            <td class="row-dien-giai">
+                                                <a class="dien-giai" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')" href="#">
+                                                    ${listPhieuNVTFast[i]["dien_giai"]}
+                                                </a>
+                                            </td>
+                                            <td class="nguoi-yeu-cau">${listPhieuNVTFast[i]["u1"]}</td>
+                                            <td class="row-code-year" style="display:none">${decodeYear}</td>
+                                        </tr>`;
+                                        rows+=row;
+                                    }
+                                }
+                            }else{
+                                let decodeYear = decodeDatetime(listPhieuNVTFast[i]["ngay_ct"]);
+                                row = `
+                                <tr onclick="clickRow('${x}', this, 'table-data')" id="rows-${x+1}">
+                                    <td><input type="checkbox" class="form-check-input row-check"/></td>
+                                    <td class="row-time-ma-phieu" style="display:none">${listPhieuNVTFast[i]["ngay_ct"]}</td>
+                                    <td style="display:none"><input class="check-box-export" type="checkbox"/></td>
+                                    <td class="row-stt">${++x}</td>
+                                    <td>
+                                        <a class="ma-phieu" href="#" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x}, this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')">
+                                            ${listPhieuNVTFast[i]["stt_rec"]} ${convertDateTime(listPhieuNVTFast[i]["ngay_ct"])}
+                                        </a>
+                                    </td>
+                                    <td class="row-ten-bp">${listPhieuNVTFast[i]["ten_bp"]}</td>
+                                    <td class="row-dien-giai">
+                                        <a class="dien-giai" onclick="directChitiet('${listPhieuNVTFast[i]["stt_rec"]}', '${decodeYear}', '${listPhieuNVTFast[i]["u1"]}', ${x},this, '${convertDateTimeDB(listPhieuNVTFast[i]["ngay_ct"])}')" href="#">
+                                            ${listPhieuNVTFast[i]["dien_giai"]}
+                                        </a>
+                                    </td>
+                                    <td class="nguoi-yeu-cau">${listPhieuNVTFast[i]["u1"]}</td>
+                                    <td class="row-code-year" style="display:none">${decodeYear}</td>
+                                </tr>`;
+                                rows+=row;
+                            }
                         }
                     }
+                
+                    $("#table-data tbody").html(rows);
+
+                    let rowss = $("#table-data tbody tr");
+                    for(let i=0; i<rowss.length; i++){
+                        let filter = {};
+                        filter.Id = i+1;
+                        filter.DateDeNghi = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
+                        filter.MaPhieu = $($("#table-data tbody tr .ma-phieu")[i]).text().trim().split(" ")[0];
+                        filter.TenBoPhan = $($("#table-data tbody tr .row-ten-bp")[i]).text().trim();
+                        filter.DienGiai = $($("#table-data tbody tr .dien-giai")[i]).text().trim();
+                        filter.TenNguoiDeNghi = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
+                        filter.CodeYear = $($("#table-data tbody tr .row-code-year")[i]).text().trim();
+                        filter.ListVatTuChangeSoLuong = [];
+                        filter.CreatedAt = getCookie("id");
+                        filter.UpdatedAt = getCookie("id");
+                        filter.Status = $($("#table-data tbody tr .row-status")[i]).text().trim();
+
+                        listFilter.push(filter);
+                    }
                 }
-            
-                $("#table-data tbody").html(rows);
-
-                let rowss = $("#table-data tbody tr");
-                for(let i=0; i<rowss.length; i++){
-                    let filter = {};
-                    filter.Id = i+1;
-                    filter.DateDeNghi = $($("#table-data tbody tr .row-time-ma-phieu")[i]).text().trim();
-                    filter.MaPhieu = $($("#table-data tbody tr .ma-phieu")[i]).text().trim().split(" ")[0];
-                    filter.TenBoPhan = $($("#table-data tbody tr .row-ten-bp")[i]).text().trim();
-                    filter.DienGiai = $($("#table-data tbody tr .dien-giai")[i]).text().trim();
-                    filter.TenNguoiDeNghi = $($("#table-data tbody tr .nguoi-yeu-cau")[i]).text().trim();
-                    filter.CodeYear = $($("#table-data tbody tr .row-code-year")[i]).text().trim();
-                    filter.ListVatTuChangeSoLuong = [];
-                    filter.CreatedAt = getCookie("id");
-                    filter.UpdatedAt = getCookie("id");
-                    filter.Status = $($("#table-data tbody tr .row-status")[i]).text().trim();
-
-                    listFilter.push(filter);
+                let count = res.length;
+                let totalPage = 0;
+                if(count%10 != 0){
+                    totalPages = Math.floor(count/10)+1;
+                }else{
+                    totalPages = Math.floor(count/10);
+                }  
+                importTable(listPhieuNVTDaDuyet, listPhieuNVTFast);
+                // Cấu hình twbsPagination
+                @* var options = {
+                    totalPages: totalPages, // Tổng số trang
+                    visiblePages: 5, // Số trang hiển thị trên thanh phân trang
+                    onPageClick: function (event, page) {
+                        let pag = +(page-1)*10;
+                        let listResult = res.slice(pag, pag+10);
+                        console.log(listResult);
+                        importTable(listResult);
                 }
-            }
-            let count = res.length;
-            let totalPage = 0;
-            if(count%10 != 0){
-                totalPages = Math.floor(count/10)+1;
-            }else{
-                totalPages = Math.floor(count/10);
-            }  
-            importTable(listPhieuNVTDaDuyet, listPhieuNVTFast);
-            // Cấu hình twbsPagination
-            @* var options = {
-                totalPages: totalPages, // Tổng số trang
-                visiblePages: 5, // Số trang hiển thị trên thanh phân trang
-                onPageClick: function (event, page) {
-                    let pag = +(page-1)*10;
-                    let listResult = res.slice(pag, pag+10);
-                    console.log(listResult);
-                    importTable(listResult);
-            }
-            }
-            // Áp dụng twbsPagination vào phần tử phân trang
-            $('#pagination').twbsPagination(options); *@
-        })
-        .fail(err=>{
-            console.log(err);
-        });
-
+                }
+                // Áp dụng twbsPagination vào phần tử phân trang
+                $('#pagination').twbsPagination(options); *@
+            })
+            .fail(err=>{
+                console.log(err);
+            });
+        }
+        initData(status, page);
         }
     </script>
 </body>

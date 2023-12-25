@@ -38,8 +38,15 @@ public class NhaCungUngController : Controller
         var listNhaCungUng = dbContext.NhaCungUng
                              .Where(x=>x.Id==id)
                              .Select(x=>new{
-                                Id = x.Id,
-                                Name = x.TenNhaCungUng
+                                x.Id,
+                                x.TenNhaCungUng,
+                                x.DiaChi,
+                                x.MaSoThue,
+                                x.DienThoai,
+                                x.DienThoaiDiDong,
+                                x.SoTaiKhoan,
+                                x.NganHang,
+                                x.ChiNhanhNganHang
                              }).FirstOrDefault();
         ViewBag.result = listNhaCungUng;
         return View();
