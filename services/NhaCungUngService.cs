@@ -32,7 +32,7 @@ public class NhaCungUngService : INhaCungUngService
 
     public async Task<string?> Save(NhaCungUngCreateDTO nhaCungUngCreate)
     {
-        var checkNhaCungUng = await dbContext.NhaCungUng.FirstOrDefaultAsync(x=>x.TenNhaCungUng==nhaCungUngCreate.Name);
+        var checkNhaCungUng = await dbContext.NhaCungUng.FirstOrDefaultAsync(x=>x.TenNhaCungUng.ToLower()==nhaCungUngCreate.Name.ToLower());
         if(checkNhaCungUng?.TenNhaCungUng!=null) return "TenNhaCungUng:Nhà cung ứng đã tồn tại";
                 
         long maxId = 0;
@@ -55,7 +55,7 @@ public class NhaCungUngService : INhaCungUngService
         var nhaCungUng = await dbContext.NhaCungUng.FirstOrDefaultAsync(p=>p.Id==nhaCungUngUpdate.Id);
         if(nhaCungUng?.TenNhaCungUng==null) return "TenNhaCungUng:Nhà cung ứng không tồn tại";
 
-        var checkNhaCungUng = await dbContext.NhaCungUng.FirstOrDefaultAsync(x=>x.TenNhaCungUng==nhaCungUngUpdate.Name && x.Id!=nhaCungUngUpdate.Id);
+        var checkNhaCungUng = await dbContext.NhaCungUng.FirstOrDefaultAsync(x=>x.TenNhaCungUng.ToLower()==nhaCungUngUpdate.Name.ToLower() && x.Id!=nhaCungUngUpdate.Id);
         if(checkNhaCungUng?.TenNhaCungUng!=null) return "TenNhaCungUng:Nhà cung ứng đã tồn tại";
 
         nhaCungUng.TenNhaCungUng = nhaCungUngUpdate.Name;
