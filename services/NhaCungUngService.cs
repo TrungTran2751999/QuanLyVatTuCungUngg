@@ -59,6 +59,7 @@ public class NhaCungUngService : INhaCungUngService
         if(checkNhaCungUng?.TenNhaCungUng!=null) return "TenNhaCungUng:Nhà cung ứng đã tồn tại";
 
         nhaCungUng.TenNhaCungUng = nhaCungUngUpdate.Name;
+        nhaCungUng.TenVietTat = nhaCungUngUpdate.TenVietTat;
         nhaCungUng.MaSoThue = nhaCungUngUpdate.MaSoThue;
         nhaCungUng.DiaChi = nhaCungUngUpdate.DiaChi;
         nhaCungUng.DienThoai = nhaCungUngUpdate.DienThoai;
@@ -66,6 +67,9 @@ public class NhaCungUngService : INhaCungUngService
         nhaCungUng.SoTaiKhoan = nhaCungUngUpdate.SoTaiKhoan;
         nhaCungUng.NganHang = nhaCungUngUpdate.NganHang;
         nhaCungUng.ChiNhanhNganHang = nhaCungUngUpdate.ChiNhanhNganHang;
+        nhaCungUng.ChucVu = nhaCungUngUpdate.ChucVu;
+        nhaCungUng.NguoiDaiDien = nhaCungUngUpdate.NguoiDaiDien;
+        nhaCungUng.GioiTinhNguoiDaiDien = nhaCungUngUpdate.GioiTinhNguoiDaiDien;
         nhaCungUng.UpdateAt = DateTime.Now;
         nhaCungUng.UpdateBy = nhaCungUngUpdate.UpdateBy;
         dbContext.SaveChanges();

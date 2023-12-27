@@ -8,6 +8,8 @@ public class NhaCungUngUpdateDTO{
     [Required]
     public long? Id{get;set;}
     [Required]
+    public string? TenVietTat{get;set;}
+    [Required]
     public string? Name {get;set;}
     public string? MaSoThue{get;set;}
     public string? DiaChi{get;set;}
@@ -16,6 +18,12 @@ public class NhaCungUngUpdateDTO{
     public string? NganHang{get;set;}
     public string? ChiNhanhNganHang{get;set;}
     public string? DienThoaiDiDong{get;set;}
+    [Required]
+    public string? ChucVu{get;set;}
+    [Required]
+    public string? NguoiDaiDien{get;set;}
+    [Required]
+    public bool? GioiTinhNguoiDaiDien{get;set;}
     [Required]
     public long? UpdateBy{get;set;}
     public NhaCungUngVatTu ToModel(){
@@ -29,6 +37,9 @@ public class NhaCungUngUpdateDTO{
             SoTaiKhoan = SoTaiKhoan,
             DienThoaiDiDong = DienThoaiDiDong,
             ChiNhanhNganHang = ChiNhanhNganHang,
+            ChucVu = ChucVu,
+            NguoiDaiDien = NguoiDaiDien,
+            GioiTinhNguoiDaiDien = GioiTinhNguoiDaiDien,
             UpdateBy = UpdateBy
         };
         return nhaCungUng;

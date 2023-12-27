@@ -7,6 +7,8 @@ namespace app.DTOs;
 public class NhaCungUngCreateDTO{
     [Required]
     public string? Name {get;set;}
+    [Required]
+    public string? TenVietTat{get;set;}
     public string? MaSoThue{get;set;}
     public string? DiaChi{get;set;}
     public string? DienThoai{get;set;}
@@ -14,6 +16,12 @@ public class NhaCungUngCreateDTO{
     public string? NganHang{get;set;}
     public string? ChiNhanhNganHang{get;set;}
     public string? DienThoaiDiDong{get;set;}
+    [Required]
+    public string? ChucVu{get;set;}
+    [Required]
+    public string? NguoiDaiDien{get;set;}
+    [Required]
+    public bool? GioiTinhNguoiDaiDien{get;set;}
     [Required]
     public long? CreatedBy{get;set;}
     [Required]
@@ -23,6 +31,7 @@ public class NhaCungUngCreateDTO{
         NhaCungUngVatTu nhaCungUngVatTu = new NhaCungUngVatTu
         {
             TenNhaCungUng = Name,
+            TenVietTat = TenVietTat,
             MaSoThue = MaSoThue,
             DiaChi = DiaChi,
             DienThoai = DienThoai,
@@ -30,6 +39,9 @@ public class NhaCungUngCreateDTO{
             NganHang = NganHang,
             ChiNhanhNganHang = ChiNhanhNganHang,
             DienThoaiDiDong = DienThoaiDiDong,
+            ChucVu = ChucVu,
+            NguoiDaiDien = NguoiDaiDien,
+            GioiTinhNguoiDaiDien = GioiTinhNguoiDaiDien,
             CreatedBy = CreatedBy,
             UpdateBy = UpdateBy,
             CreatedAt = DateTime.Now,

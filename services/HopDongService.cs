@@ -23,6 +23,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 using app.Utils;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 
 // using System.Data.Entity;
 namespace app.Services;
@@ -35,6 +36,7 @@ public class HopDongService : IHopdongSerVice
         this.dbContext = dbContext;
         this.util = util;
     }
+
 
     public byte[] XuatHopDong(string data)
     {
@@ -50,7 +52,24 @@ public class HopDongService : IHopdongSerVice
             {
                 // Truy cập phần tài liệu chính
                 MainDocumentPart mainPart = document.MainDocumentPart;
-                Document doc = mainPart.Document;
+                Body doc = mainPart.Document.Body;
+                string tableHopDong = "bangmuahang";
+                // Tạo hàng mới
+                TableRow tableRow = new TableRow();
+
+                // Tạo các ô trong hàng
+                for (int col = 0; col < 3; col++)
+                {
+                    TableCell tableCell = new TableCell();
+                    Paragraph cellParagraph = new Paragraph();
+                    Run cellRun = new Run();
+                    cellRun.AppendChild(new Text($"Dòng mới, Cột {col + 1}"));
+
+                    cellParagraph.Append(cellRun);
+                    tableCell.Append(cellParagraph);
+                    tableRow.Append(tableCell);
+                }
+                
                 foreach (Text textElement in document.MainDocumentPart.Document.Descendants<Text>())
                 {
                     // Console.WriteLine(textElement.Text);
@@ -64,7 +83,17 @@ public class HopDongService : IHopdongSerVice
                     textElement.Text = textElement.Text.Replace("{DienThoaiNhaCungUng}", "0234.3839099-0905009055");
                     textElement.Text = textElement.Text.Replace("{TaiKhoanNhaCungUng}", "1019700320 tại ngân hàng Ngoại thương Việt Nam - CN Thừa Thiên Huế");
                     textElement.Text = textElement.Text.Replace("{MaSoThueNhaCungUng}", "3301629767");
-                    
+                }
+                //them bang mua hang vao table
+                BookmarkStart bookmarkStart = doc.Descendants<BookmarkStart>().FirstOrDefault(b => b.Name == tableHopDong);
+                if (bookmarkStart != null){
+                    Table targetTable = bookmarkStart.Ancestors<Table>().FirstOrDefault();
+                    if (targetTable != null){
+                        List<TableRow> listRow = util.TaoBangHopDong(xuatHopDongDTO.ListHang);
+                        foreach(TableRow row in listRow){
+                            targetTable.Append(row);
+                        }
+                    }
                 }
                 document.MainDocumentPart.Document.Save(stream);
             }
@@ -73,5 +102,6 @@ public class HopDongService : IHopdongSerVice
             return result;
         }
     }
+    
 }
 

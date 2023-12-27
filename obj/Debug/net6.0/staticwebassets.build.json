@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "jvL9ctu3OWAsx3Mz+EiDQvjzomL+eQ0CFzl7Wnt0psU=",
+  "Hash": "WE19KpyzGy0+E7/3NfgnstpIkIksQYrxjsfMuLswjvA=",
   "Source": "app",
   "BasePath": "_content/app",
   "Mode": "Default",
@@ -16641,23 +16641,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\dist\\js\\waves.js"
-    },
-    {
-      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\document\\~$pDongMuaBan.docx",
-      "SourceId": "app",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
-      "BasePath": "_content/app",
-      "RelativePath": "document/~$pDongMuaBan.docx",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\document\\~$pDongMuaBan.docx"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\document\\HopDongMuaBan.docx",

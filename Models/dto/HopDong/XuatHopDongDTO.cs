@@ -16,5 +16,6 @@ public class ListHang{
     public decimal? SoLuong{get;set;}
     public decimal? DonGia{get;set;}
     public decimal? ThanhTien{get;set;}
+    public string? TenNhaCungUng{get;set;}
 }
 

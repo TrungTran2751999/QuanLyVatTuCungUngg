@@ -11,6 +11,8 @@ public class NhaCungUngVatTu{
     public Guid? Guid{set;get;}
     [Column("TenNhaCungUng")]
     public string? TenNhaCungUng{set;get;}
+    [Column("TenVietTat")]
+    public string? TenVietTat{set;get;}
     [Column("MaSoThue")]
     public string? MaSoThue{set;get;}
     [Column("DiaChi")]
@@ -25,6 +27,12 @@ public class NhaCungUngVatTu{
     public string? NganHang{set;get;}
     [Column("ChiNhanhNganHang")]
     public string? ChiNhanhNganHang{set;get;}
+    [Column("NguoiDaiDien")]
+    public string? NguoiDaiDien{get;set;}
+    [Column("ChucVu")]
+    public string? ChucVu{get;set;}
+    [Column("GioiTinhNguoiDaiDien")]
+    public bool? GioiTinhNguoiDaiDien{get;set;}
     [Column("CreatedAt")]
     public DateTime? CreatedAt{set;get;}
     [Column("CreatedBy")]

@@ -60,6 +60,58 @@
                       </div>
                     </div>
                   </div>
+                  @* ten viet tat *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-ten-viet-tat">Tên viết tắt</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="" type="text" class="form-control" id="input-ten-viet-tat" placeholder="VD: HUEWACO, TANLOCPHAT" oninput="changeData('ten-viet-tat')" />
+                      <div class="invalid-feedback" id="err-ten-viet-tat">
+                        
+                      </div>
+                    </div>
+                  </div>
+                  @* nguoi dai dien *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-nguoi-dai-dien">Người đại diện</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="" type="text" class="form-control" id="input-nguoi-dai-dien" placeholder="Người đại diện" oninput="changeData('nguoi-dai-dien')" />
+                      <div class="invalid-feedback" id="err-nguoi-dai-dien">
+                        
+                      </div>
+                    </div>
+                  </div>
+                  @* gioi tinh nguoi dai dien *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-gioi-tinh-nguoi-dai-dien">Giới tính người đại diện</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <select onchange="changeData('gioi-tinh-nguoi-dai-dien')" class="form-select" id="input-gioi-tinh-nguoi-dai-dien">
+                          <option value="" disabled selected>---Chọn giới tính người đại diện---</option>
+                          <option value=true>Nam</option>
+                          <option value=false>Nữ</option>
+                      </select>
+                      <div class="invalid-feedback" id="err-gioi-tinh-nguoi-dai-dien">
+                        
+                      </div>
+                    </div>
+                  </div>
+                  @* chuc vu *@
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-lg-4 col-md-12 text-end">
+                      <span class="" id="label-chuc-vu">Chức vụ</span>
+                    </div>
+                    <div class="col-lg-8 col-md-12">
+                      <input value="" type="text" class="form-control" id="input-chuc-vu" placeholder="Chức vụ" oninput="changeData('chuc-vu')" />
+                      <div class="invalid-feedback" id="err-chuc-vu">
+                        
+                      </div>
+                    </div>
+                  </div>
                   @* dia chi *@
                   <div class="row mb-3 align-items-center">
                     <div class="col-lg-4 col-md-12 text-end">
@@ -172,13 +224,20 @@
         const id = urlParams.get('id');
         let formatError = {
           "required": [
-            {"ten-nha-cung-ung": "Tên nhà cung ứng không được để trống"}
+            {"ten-nha-cung-ung": "Tên nhà cung ứng không được để trống"},
+            {"ten-viet-tat": "Tên viết tắt không được để trống"},
+            {"nguoi-dai-dien": "Người đại diện không được để trống"},
+            {"chuc-vu": "Chức vụ không được để trống"},
+            {"gioi-tinh-nguoi-dai-dien": "Giới tính người đại diện không được để trống"}
           ],
           "phone":[
             {"dien-thoai": "Số điện thoại không đúng định dạng"}
           ],
           "mobile":[
             {"dien-thoai-di-dong": "Số điện thoại di động không đúng định dạng"}
+          ],
+          "viettat":[
+            {"ten-viet-tat": "Tên viết tắt không đúng định dạng"}
           ]
         }
         let listError = {
@@ -193,6 +252,7 @@
             "UpdateBy": updateBy,
             "CreatedBy": createdBy,
             "Name": $("#input-ten-nha-cung-ung").val().trim(),
+            "TenVietTat": $("#input-ten-viet-tat").val().trim()?.toUpperCase(),
             "MaSoThue": $("#input-ma-so-thue").val().trim(),
             "DiaChi": $("#input-dia-chi").val().trim(),
             "DienThoai": $("#input-dien-thoai").val().trim(),
@@ -200,6 +260,9 @@
             "SoTaiKhoan": $("#input-so-tai-khoan").val().trim(),
             "NganHang": $("#input-ngan-hang").val().trim(),
             "ChiNhanhNganHang": $("#input-chi-nhanh-ngan-hang").val().trim(),
+            "ChucVu":$("#input-chuc-vu").val().trim(),
+            "NguoiDaiDien": $("#input-nguoi-dai-dien").val().trim(),
+            "GioiTinhNguoiDaiDien": $("#input-gioi-tinh-nguoi-dai-dien").val()=="true",
             "Id": id
           }
           if(getErrorFromFe()) return;
@@ -229,6 +292,13 @@
                 getErrorFromDB(err.responseText, listError)
                 $("#create-nha-cung-ung").attr("disabled",false)
                 $("#create-nha-cung-ung").html("Thêm mới");
+                 Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  title: 'Thêm mới nhà cung ứng thất bại !',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
             })
           })
         }
@@ -238,8 +308,8 @@
           for(let key of Object.keys(formatError)){
             if(key=="required"){
               for(let i=0; i<formatError[key].length; i++){
-                  let val = $(`#input-${Object.keys(formatError[key][i])[0]}`).val().trim();
-                  if(val==""){
+                  let val = $(`#input-${Object.keys(formatError[key][i])[0]}`).val()?.trim();
+                  if(val==""||val==null){
                     $(`#input-${Object.keys(formatError[key][i])[0]}`).addClass("is-invalid");
                     $(`#label-${Object.keys(formatError[key][i])[0]}`).addClass("text-danger");
                     $(`#err-${Object.keys(formatError[key][i])[0]}`).text(`${Object.values(formatError[key][i])[0]}`);
@@ -262,6 +332,17 @@
               for(let i=0; i<formatError[key].length; i++){
                   let val = $(`#input-${Object.keys(formatError[key][i])[0]}`).val().trim();
                   if(!/^0[0-9]{9}$/.test(val) && val!=""){
+                    $(`#input-${Object.keys(formatError[key][i])[0]}`).addClass("is-invalid");
+                    $(`#label-${Object.keys(formatError[key][i])[0]}`).addClass("text-danger");
+                    $(`#err-${Object.keys(formatError[key][i])[0]}`).text(`${Object.values(formatError[key][i])[0]}`);
+                    isErr = true;
+                  }
+              }
+            }
+            if(key=='viettat'){
+              for(let i=0; i<formatError[key].length; i++){
+                  let val = $(`#input-${Object.keys(formatError[key][i])[0]}`).val().trim();
+                  if(!/^[a-z0-9A-Z]\S*$/.test(val) && val!=""){
                     $(`#input-${Object.keys(formatError[key][i])[0]}`).addClass("is-invalid");
                     $(`#label-${Object.keys(formatError[key][i])[0]}`).addClass("text-danger");
                     $(`#err-${Object.keys(formatError[key][i])[0]}`).text(`${Object.values(formatError[key][i])[0]}`);
@@ -325,7 +406,6 @@
               }
             }
             res.map(item=>{
-              console.log(showTinh(item.name))
               let obj = {
                 value: showTinh(item.name)
               }

@@ -13,5 +13,11 @@ public class HopDongController : Controller
         
         return View();
     }
+    [Route("/create")]
+    public async Task<IActionResult> Create()
+    {
+        
+        return View();
+    }
     
 }

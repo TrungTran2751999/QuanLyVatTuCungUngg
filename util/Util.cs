@@ -212,6 +212,35 @@ public class Util:IUtil{
         }
         return result;
     }
+    public List<TableRow> TaoBangHopDong(List<ListHang> tableHopDongs){
+        //in body cua bang
+        List<TableRow> tableRow = new();
+        for(int i=0; i<tableHopDongs.Count; i++){
+            TableRow bodyRow = new TableRow();
+
+            Paragraph stt = InDoanVan((i+1).ToString(), "null", "center", null, 14);
+            TableCell cellStt = CreateTableCellWithBorders(stt);
+
+            Paragraph tenHang = InDoanVan(tableHopDongs[i].TenHang, null, "center", null, 14);
+            TableCell cellTenVatTu = CreateTableCellWithBorders(tenHang);
+
+            Paragraph donViTinh = InDoanVan(tableHopDongs[i].DVT, null, "center", null, 14);
+            TableCell cellDonViTinh = CreateTableCellWithBorders(donViTinh);
+
+            Paragraph soLuong = InDoanVan(tableHopDongs[i].SoLuong.ToString(), null, "center", null, 14);
+            TableCell cellSoLuong = CreateTableCellWithBorders(soLuong);
+
+            Paragraph donGia = InDoanVan(tableHopDongs[i].DonGia.ToString(), null, "center", null, 14);
+            TableCell cellDonGia = CreateTableCellWithBorders(donGia);
+            
+            Paragraph thanhTien = InDoanVan(tableHopDongs[i].ThanhTien.ToString(), null, "center", null, 14);
+            TableCell cellThanhTien = CreateTableCellWithBorders(thanhTien);
+
+            bodyRow.Append(cellStt, cellTenVatTu, cellSoLuong, cellDonViTinh, cellDonGia, cellThanhTien);
+            tableRow.Add(bodyRow);
+        }
+        return tableRow;
+    }
     private Table TaoBang(List<string> headers, List<VatTuInBaoGia> listVatTu){
         Table table = new Table();
         TableWidth tableWidth = new TableWidth() { Width = "5000", Type = TableWidthUnitValues.Pct };

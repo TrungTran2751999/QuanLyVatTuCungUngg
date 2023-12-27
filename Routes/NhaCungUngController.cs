@@ -40,6 +40,10 @@ public class NhaCungUngController : Controller
                              .Select(x=>new{
                                 x.Id,
                                 x.TenNhaCungUng,
+                                x.TenVietTat,
+                                x.NguoiDaiDien,
+                                x.GioiTinhNguoiDaiDien,
+                                x.ChucVu,
                                 x.DiaChi,
                                 x.MaSoThue,
                                 x.DienThoai,

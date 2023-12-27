@@ -3,6 +3,7 @@ using app.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using app.Utils;
+using DocumentFormat.OpenXml.Wordprocessing;
 namespace app.Utils;
 
 public interface IUtil{
@@ -11,4 +12,5 @@ public interface IUtil{
     public Task<MemoryStream> ExportBaoGiaToWord(List<VatTuInBaoGia> listVatTu);
     public byte[] ZipFile(ExportFile exportFile);
     public string DoiNgayThangHienTai(string type);
+    public List<TableRow> TaoBangHopDong(List<ListHang> tableHopDongs);
 }

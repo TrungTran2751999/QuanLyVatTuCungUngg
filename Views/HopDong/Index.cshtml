@@ -5,15 +5,42 @@
 <body>
     @Html.Partial("layout/TopBar")
     @Html.Partial("layout/LeftBar")
-    <style>
-        
-    </style>
     <div class="page-wrapper">
-        <button id="btn-xuat-hop-dong" onclick="xuatHopDong()" class="btn btn-primary">Xuất hợp đồng</button>
-        <form action="/api/hop-dong" method="POST">
-            <input type="text" name="data" id="input-hop-dong"/>
-            <input type="submit" id="btn-submit"/>
-        </form>
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        @* <div class="page-breadcrumb">
+            <div class="row">
+                <div class="col-12 d-flex no-block align-items-center">
+                    <h4 class="page-title">Tables</h4>
+                    <div class="ms-auto text-end">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Library
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div style="overflow: scroll;">
+            <table class="table" id="table-data" data-show-columns="true" style="overflow: scroll;">
+                <thead>
+                    <th>STT</th>
+                    <th style="min-width: 200px;">SỐ HỢP ĐỒNG</th>
+                    <th style="min-width: 100px;">CÔNG TY BÁN HÀNG</th>
+                    <th style="min-width: 150px;">NGƯỜI ĐẠI DIỆN</th>
+                    <th style="min-width: 150px;">NGÀY KÍ HỢP ĐỒNG</th>
+                    <th>ACTION</th>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
     </div>
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
@@ -23,24 +50,6 @@
     <!-- ============================================================== -->
     @Html.Partial("layout/Footer")
     <script>
-    function xuatHopDong(){
-        let obj = 
-        {   
-            TenFile: `HopDongMuaHang${new Date().getTime()}.docx`,
-            ListHang: 
-            [
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                }
-            ]
-        }
-        $("#input-hop-dong").val(JSON.stringify(obj));
-        $("#btn-submit").click();
-    }
-</script>
+    </script>
 </body>
 <html>

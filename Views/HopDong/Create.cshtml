@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        
+    </style>
+    <div class="page-wrapper">
+        <button id="btn-xuat-hop-dong" onclick="xuatHopDong()" class="btn btn-primary">Xuất hợp đồng</button>
+        <form style="display: none;" action="/api/hop-dong" method="POST">
+            <input type="text" name="data" id="input-hop-dong"/>
+            <input type="submit" id="btn-submit"/>
+        </form>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+    
+    function xuatHopDong(){
+        let obj = 
+        {   
+            TenFile: `HopDongMuaHang${new Date().getTime()}.docx`,
+            ListHang: 
+            [
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                },
+                {
+                    TenHang: "Co le, Mo let",
+                    DVT:"cai",
+                    SoLuong: 1,
+                    DonGia: 100000,
+                    ThanhTien: 100000
+                }
+            ]
+        }
+        $("#input-hop-dong").val(JSON.stringify(obj));
+        $("#btn-submit").click();
+    }
+</script>
+</body>
+<html>
