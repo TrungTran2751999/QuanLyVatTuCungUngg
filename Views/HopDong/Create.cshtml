@@ -6,14 +6,111 @@
     @Html.Partial("layout/TopBar")
     @Html.Partial("layout/LeftBar")
     <style>
-        
+        .input-background{
+            background-color: white;
+            color: black;
+            border: none;
+        }
+        .input-background:focus{
+            border: none;
+            outline: none;
+        }
+        .container-hop-dong{
+            font-family: 'Times New Roman', Times, serif;
+            width: 793.7px;
+            height: 1122px;
+        }
+        .button-span{
+            width: 40px;
+            height: 40px;
+            background-color: orange;
+        }
+        .input-edit{
+            border: 1px solid rgb(48, 48, 48);
+            padding: 2px;
+        }
     </style>
     <div class="page-wrapper">
-        <button id="btn-xuat-hop-dong" onclick="xuatHopDong()" class="btn btn-primary">Xuất hợp đồng</button>
+        <div class="container-fluid">
+      <!-- ============================================================== -->
+      <!-- Start Page Content -->
+      <!-- ============================================================== -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+              <div class="card-body">
+                <h4 class="card-title"></h4>
+                <div class="form-group row">
+                
+                  <div class="container-hop-dong">
+                        <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:14pt">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</span></button>
+                        <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:14pt">Độc lập - Tự do- Hạnh phúc</span></button>
+                        <button style="width: 100%;" class="input-background"><img src="../assets/images/logo-huewaco.png" width="40px" height="40px" /></button>
+                        <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:18pt">HỢP ĐỒNG MUA BÁN</span></button>
+                        <button style="width: 100%;" class="input-background">
+                            <span onclick="truyenNoiDung('so-hop-dong')" data-bs-toggle="modal" data-bs-target="#modal-sua-noi-dung" class="input-edit" style="font-weight: bold; font-size:12pt" id="so-hop-dong">
+                                Số 04-17.08/2023/HDMB/HueWACO-HUNGLOCPHAT
+                            </span>
+                        </button>
+                        <p style="font-size:12pt">- Căn cứ Luật Dân Sự của Quốc Hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, Số 91/2015/QH13 ngày 24 tháng 11 năm 2015;</p>
+                        <p style="font-size:12pt">- Căn cứ Luật Thương Mại của Quốc hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, số 36/2005/QH11 ngày 14 tháng 6 năm 2005;</p>
+                        <p style="font-size:12pt">- Căn cứ năng lực và nhu cầu của hai bên.</p>
+                        <p style="font-size:12pt">Hôm nay, ngày 
+                        <span>
+                            <select class="select-ngay">
+                                <option value="1">1</option>
+                            </select>
+                        </span> 
+                        tháng 
+                        <span>
+                            <select class="select-thang">
+                                <option value="1">1</option>
+                            </select>
+                        </span> 
+                        năm 
+                        <span>
+                            <select class="select-thang">
+                                <option value="2023">2023</option>
+                            </select>
+                        </span> 
+                        , tại văn phòng Công ty Cổ phần Cấp nước Thừa Thiên Huế, chúng tôi gồm có:</p>
+                  </div>
+                 
+                  <div class="border-top">
+                    <div class="card-body">
+                      <button style="width: 100%;" id="update-nha-cung-ung" type="button" class="btn btn-primary">
+                           LẬP HỢP ĐỒNG 
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+      @* modal sua noi dung *@
+      <div class="modal fade" id="modal-sua-noi-dung" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Sửa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="content-sua-noi-dung"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" onclick="suaNoiDung()">Sửa</button>
+            </div>
+            </div>
+        </div>
+    </div>
+        @* <button id="btn-xuat-hop-dong" onclick="xuatHopDong()" class="btn btn-primary">Xuất hợp đồng</button>
         <form style="display: none;" action="/api/hop-dong" method="POST">
             <input type="text" name="data" id="input-hop-dong"/>
             <input type="submit" id="btn-submit"/>
-        </form>
+        </form> *@
     </div>
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
@@ -22,99 +119,50 @@
     <!-- footer -->
     <!-- ============================================================== -->
     @Html.Partial("layout/Footer")
+    <script src="https://cdn.tiny.cloud/1/ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar/tinymce/6/tinymce.min.js"></script>
     <script>
-    
+    initTiniMCE('content-sua-noi-dung');
+    function initTiniMCE(idTextarea){
+        tinymce.init({
+            selector: `textarea#${idTextarea}`,
+            apiKey: 'ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar',
+            plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+            content_css: "../css/tinimce.css"
+        });
+    }
+    //set up ngay thang cho select option
+    function setUpNgayThang(){
+
+    }
+    function exportTextarea(textareaId){
+        var content = tinymce.get(textareaId).getContent();
+        console.log(content);
+    }
+    let idSua = "";
+    function truyenNoiDung(selector, style, paragraph){
+        let content = $(`#${selector}`).text();
+        let editor = tinymce.get(`content-sua-noi-dung`);
+        let styleContent = $(`#${selector}`).attr("style");
+        content = `<p style="${styleContent}">${content}</p>`;
+        editor.setContent(content);
+        idSua = selector;
+    }
+    function suaNoiDung(){
+        let contentSua = tinymce.get(`content-sua-noi-dung`).getContent();
+        @* contentSua =contentSua.split(">")[1].split("<")[0]; *@
+        $(`#${idSua}`).html(contentSua);
+        console.log(contentSua);
+        $("#modal-sua-noi-dung .btn-close").click();
+    }
     function xuatHopDong(){
         let obj = 
         {   
             TenFile: `HopDongMuaHang${new Date().getTime()}.docx`,
-            ListHang: 
-            [
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                },
-                {
-                    TenHang: "Co le, Mo let",
-                    DVT:"cai",
-                    SoLuong: 1,
-                    DonGia: 100000,
-                    ThanhTien: 100000
-                }
-            ]
+            ListHang: []
         }
         $("#input-hop-dong").val(JSON.stringify(obj));
         $("#btn-submit").click();

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "WE19KpyzGy0+E7/3NfgnstpIkIksQYrxjsfMuLswjvA=",
+  "Hash": "MTsOnMf53w1CUbCTFxDDLS8+Ai6hKjHIJdalJpT9deM=",
   "Source": "app",
   "BasePath": "_content/app",
   "Mode": "Default",
@@ -950,6 +950,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\assets\\images\\favicon.png"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\assets\\images\\logo-huewaco.png",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "assets/images/logo-huewaco.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\assets\\images\\logo-huewaco.png"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\assets\\images\\logo-icon.png",
@@ -13581,6 +13598,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\css\\tinimce.css",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "css/tinimce.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\tinimce.css"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\dist\\css\\icons\\font-awesome\\css\\fa-brands.css",

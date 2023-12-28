@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using app.DTOs;
 
 namespace app.Controllers;
-[Route("/hop-dong")]
+[Route("hop-dong")]
 public class HopDongController : Controller
 {
     public async Task<IActionResult> Index()
@@ -13,7 +13,7 @@ public class HopDongController : Controller
         
         return View();
     }
-    [Route("/create")]
+    [Route("create")]
     public async Task<IActionResult> Create()
     {
         
