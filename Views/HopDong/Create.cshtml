@@ -17,8 +17,8 @@
         }
         .container-hop-dong{
             font-family: 'Times New Roman', Times, serif;
-            width: 793.7px;
-            height: 1122px;
+            width: 100%;
+            padding: 0 150px;
         }
         .button-span{
             width: 40px;
@@ -29,6 +29,16 @@
             border: 1px solid rgb(48, 48, 48);
             padding: 2px;
         }
+        input{
+            border: none;
+        }
+        .table tbody td, .table thead th{
+            padding: 0px;
+            text-align: center;
+        }
+        .table tbody input{
+            border: none
+        }
     </style>
     <div class="page-wrapper">
         <div class="container-fluid">
@@ -36,7 +46,7 @@
       <!-- Start Page Content -->
       <!-- ============================================================== -->
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6" style="width: 100%;">
           <div class="card">
               <div class="card-body">
                 <h4 class="card-title"></h4>
@@ -48,32 +58,117 @@
                         <button style="width: 100%;" class="input-background"><img src="../assets/images/logo-huewaco.png" width="40px" height="40px" /></button>
                         <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:18pt">HỢP ĐỒNG MUA BÁN</span></button>
                         <button style="width: 100%;" class="input-background">
-                            <span onclick="truyenNoiDung('so-hop-dong')" data-bs-toggle="modal" data-bs-target="#modal-sua-noi-dung" class="input-edit" style="font-weight: bold; font-size:12pt" id="so-hop-dong">
-                                Số 04-17.08/2023/HDMB/HueWACO-HUNGLOCPHAT
-                            </span>
+                            <input id="hop-dong" type="text" style="font-weight: bold; width: 100%; text-align: center;" value="Số 04-ngày 17.08/2023/HDMB/HueWACO-HUNGLOCPHAT"/>
                         </button>
-                        <p style="font-size:12pt">- Căn cứ Luật Dân Sự của Quốc Hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, Số 91/2015/QH13 ngày 24 tháng 11 năm 2015;</p>
-                        <p style="font-size:12pt">- Căn cứ Luật Thương Mại của Quốc hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, số 36/2005/QH11 ngày 14 tháng 6 năm 2005;</p>
-                        <p style="font-size:12pt">- Căn cứ năng lực và nhu cầu của hai bên.</p>
-                        <p style="font-size:12pt">Hôm nay, ngày 
+                        <div>- Căn cứ Luật Dân Sự của Quốc Hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, Số 91/2015/QH13 ngày 24 tháng 11 năm 2015;</div>
+                        <div>- Căn cứ Luật Thương Mại của Quốc hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, số 36/2005/QH11 ngày 14 tháng 6 năm 2005;</div>
+                        <div>- Căn cứ năng lực và nhu cầu của hai bên.</div>
+                        <div>Hôm nay, ngày 
                         <span>
                             <select class="select-ngay">
-                                <option value="1">1</option>
+                                
                             </select>
                         </span> 
                         tháng 
                         <span>
                             <select class="select-thang">
-                                <option value="1">1</option>
+                               
                             </select>
                         </span> 
                         năm 
                         <span>
-                            <select class="select-thang">
-                                <option value="2023">2023</option>
+                            <select class="select-nam">
+                                
                             </select>
                         </span> 
-                        , tại văn phòng Công ty Cổ phần Cấp nước Thừa Thiên Huế, chúng tôi gồm có:</p>
+                        , tại văn phòng Công ty Cổ phần Cấp nước Thừa Thiên Huế, chúng tôi gồm có:</div>
+                        @* BEN A *@
+                        <div>
+                            <span style="font-weight: bold;">I-Bên A.</span>
+                            <input id="input-ben-a" style="font-weight: bold;width: 70%;" value="CÔNG TY CỔ PHẦN CẤP NƯỚC THỪA THIÊN HUẾ"/>
+                        </div>
+                        <div style="margin-left: 50px;">
+                            <div>
+                                <span>Đại diện: </span> <span>Ông</span> <input id="input-ten-dai-dien-a" style="font-weight: bold;" value="Dương Quý Dương" /> <span>Chức vụ: </span> <input id="input-chuc-vu-dai-dien-a" style="font-weight: bold;" value="Tổng Giám đốc" />
+                            </div>
+                            <div>
+                                <span>Địa chỉ: </span> <input style="width: 80%;" id="input-dia-chi-a" value="103 Bùi Thị Xuân, P Phường Đúc, Tp Huế, tỉnh Thừa Thiên Huế, Việt Nam" />
+                            </div>
+                            <div>
+                                <span>Điện thoại: </span> <input style="width: 15%;" id="input-dien-thoai-a" value="0234.3845673" />
+                            </div>
+                            <div>
+                                <span>Tài khoản: </span> <input style="width: 60%;" id="input-stk-a" value="5511 0000 000 370 tại NH Đầu tư và Phát triển T.T Huế" />
+                            </div>
+                            <div>
+                                <span>Mã số thuế: </span> <input style="width: 15%;" id="input-stk-a" value="3300 101 491" />
+                            </div>
+                        </div>
+                        @* BEN B *@
+                        <div>
+                            <span style="font-weight: bold;">I-Bên B.</span>
+                            <input id="input-ben-a" style="font-weight: bold;width: 70%;" value="CÔNG TY TNHH MTV HƯNG LỘC PHÁT METAL"/>
+                        </div>
+                        <div style="margin-left: 50px;">
+                            <div>
+                                <span>Đại diện: </span> <span>Bà</span> <input id="input-ten-dai-dien-b" style="font-weight: bold;" value="Nguyễn Thị Hường" /> <span>Chức vụ: </span> <input id="input-chuc-vu-dai-dien-b" style="font-weight: bold;" value="Giám đốc" />
+                            </div>
+                            <div>
+                                <span>Địa chỉ: </span> <input style="width: 80%;" id="input-dia-chi-b" value="Số 4 Kiệt 272 Điện Biên Phủ, P.Trường An, TP Huế, Tỉnh TT Huế" />
+                            </div>
+                            <div>
+                                <span>Điện thoại: </span> <input style="width: 50%;" id="input-dien-thoai-a" value="0234.3839099 - 0905009055" />
+                            </div>
+                            <div>
+                                <span>Tài khoản: </span> <input style="width: 60%;" id="input-stk-a" value="1019700320 tại ngân hàng Ngoại Thương Việt Nam - CN Huế" />
+                            </div>
+                            <div>
+                                <span>Mã số thuế: </span> <input style="width: 15%;" id="input-stk-a" value="3300 101 491" />
+                            </div>
+                        </div>
+                        @*BANG MUA HANG *@
+                        <div>Sau khi bàn bạc hai bên thỏa thuận ký hợp đồng theo các điều khoản sau: </div>
+                        <div><span style="font-weight: bold;">Điều I. Nội dung hợp đồng</span></div>
+                        <div>Bên A đồng ý mua vật tư do bên B cung cấp với quy cách, số lượng, đơn giá và tổng số tiền như sau:</div>
+                        <table id="table-mua-hang" class="table table-bordered">
+                            <thead>
+                                <th style="font-weight: bold;">TT</th>
+                                <th style="font-weight: bold;">Tên hàng</th>
+                                <th style="font-weight: bold; width: 8%">ĐVT</th>
+                                <th style="font-weight: bold; width: 10%">Số lượng</th>
+                                <th style="font-weight: bold; width: 15%">Đơn giá (đồng)</th>
+                                <th style="font-weight: bold; width: 15%">Thành tiền (đồng)</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><input class="form-control input-ten-hang" value="Vít bắn tôn 1,5cm"/></td>
+                                    <td><input class="form-control input-don-vi" value="Kg"/></td>
+                                    <td><input class="form-control input-so-luong" onchange="onChangeSoLuong(this)" type="number" value="2"/></td>
+                                    <td><input class="form-control input-don-gia" type="number" value="95000"/></td>
+                                    <td><input class="form-control input-thanh-tien" type="number" value="190000"/></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><input class="form-control input-ten-hang" value="Vít bắn tôn 1,5cm"/></td>
+                                    <td><input class="form-control input-don-vi" value="Kg"/></td>
+                                    <td><input class="form-control input-so-luong" onchange="onChangeSoLuong(this)" type="number" value="2"/></td>
+                                    <td><input class="form-control input-don-gia" type="number" value="95000"/></td>
+                                    <td><input class="form-control input-thanh-tien" type="number" value="190000"/></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><input class="form-control input-ten-hang" value="Vít bắn tôn 1,5cm"/></td>
+                                    <td><input class="form-control input-don-vi" value="Kg"/></td>
+                                    <td><input class="form-control input-so-luong" onchange="onChangeSoLuong(this)" type="number" value="2"/></td>
+                                    <td><input class="form-control input-don-gia" type="number" value="95000"/></td>
+                                    <td><input class="form-control input-thanh-tien" type="number" value="190000"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6"><button onclick="themHang(this)" class="btn btn-primary" style="width: 100%;"/>Thêm hàng</button>
+                                </tr>
+                            </tbody>
+                        </table>
                   </div>
                  
                   <div class="border-top">
@@ -122,6 +217,7 @@
     <script src="https://cdn.tiny.cloud/1/ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar/tinymce/6/tinymce.min.js"></script>
     <script>
     initTiniMCE('content-sua-noi-dung');
+    setUpNgayThang();
     function initTiniMCE(idTextarea){
         tinymce.init({
             selector: `textarea#${idTextarea}`,
@@ -135,7 +231,55 @@
         });
     }
     //set up ngay thang cho select option
-    function setUpNgayThang(){
+    function setUpNgayThang() {
+        let selectNgay = $(".select-ngay");
+        let selectThang = $(".select-thang");
+        let selectNam = $(".select-nam");
+        let ngayHienTai = new Date().getDate();
+        let thangHienTai = new Date().getMonth()+1;
+        for(let i=0; i<selectNgay.length; i++){
+            let options = ""
+            for(let j=1; j<=31; j++){
+                let option = `<option value="${j}" ${j==ngayHienTai?"selected":""}>${j}</option>`;
+                options+=option;
+            }
+            $(selectNgay[i]).html(options);
+        }
+
+        for(let i=0; i<selectThang.length; i++){
+            let options = ""
+            for(let j=1; j<=12; j++){
+                let option = `<option value="${j}" ${j==thangHienTai?"selected":""}>${j}</option>`;
+                options+=option;
+            }
+            $(selectThang[i]).html(options);
+        }
+        for(let i=0; i<selectNam.length; i++){
+            let options="";
+            let namHienTai = new Date().getFullYear();
+            let optionNamHientai = `<option value=${namHienTai} selected>${namHienTai}</option>`;
+            let optionNamTiepTheo = `<option value=${namHienTai+1}>${namHienTai+1}</option>`;
+            options+=optionNamHientai+=optionNamTiepTheo;
+            $(selectNam[i]).html(options);
+        }
+    }
+    function themHang(param){
+        let tr = $(param).parent().parent();
+        let rows = $("#table-mua-hang tbody tr");
+        let lengthRow = rows.length;
+        let row = 
+        `<tr>
+            <td>${lengthRow}</td>
+            <td><input class="form-control input-ten-hang" value=""/></td>
+            <td><input class="form-control input-don-vi" value=""/></td>
+            <td><input class="form-control input-so-luong" onchange="onChangeSoLuong()" type="number" value=""/></td>
+            <td><input class="form-control input-don-gia" type="number" value=""/></td>
+            <td><input class="form-control input-thanh-tien" type="number" value=""/></td>
+        </tr>`;
+        $(row).insertBefore(tr);
+        
+    }
+    function onChangeSoLuong(){
 
     }
     function exportTextarea(textareaId){
