@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "MTsOnMf53w1CUbCTFxDDLS8+Ai6hKjHIJdalJpT9deM=",
+  "Hash": "vMseg9ryu1eI3P0lWPMWBmZcvqU4q1jK4v8a5CgiLwA=",
   "Source": "app",
   "BasePath": "_content/app",
   "Mode": "Default",
@@ -16728,6 +16728,23 @@
       "OriginalItemSpec": "wwwroot\\favicon.ico"
     },
     {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\accounting.js",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "js/accounting.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\accounting.js"
+    },
+    {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\autocomplete.js",
       "SourceId": "app",
       "SourceType": "Discovered",
@@ -16828,6 +16845,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\multiple-droplist.js"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\numeral.js",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "js/numeral.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\numeral.js"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\pagination.js",

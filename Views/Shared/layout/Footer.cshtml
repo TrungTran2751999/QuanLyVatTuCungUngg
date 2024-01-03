@@ -24,6 +24,8 @@
 <script src="../js/pagination.min.js"></script>
 <script src="../js/pagination.js"></script>
 <script src="../js/multiple-droplist.js"></script>
+<script src="../js/numeral.js"></script>
+<script src="../js/accounting.js"></script>
 
 <script>
     @* let host = "http://192.168.0.15:5221"; *@
@@ -71,5 +73,96 @@
             cookieEnd = cookieValue.length;
         }
         return decodeURIComponent(cookieValue.substring(cookieStart, cookieEnd));
+    }
+    function doiSoThanhChu(number){
+        let arrNumber = `${number}`.split(",");
+        switch(arrNumber.length){
+            case 1:
+                return phanChiaCoBan(number);
+                break;
+            case 2:
+                return `${phanChiaCoBan(arrNumber[0])} nghìn ${phanChiaCoBan(arrNumber[1])}`;
+                break;
+            case 3:
+                return `${phanChiaCoBan(arrNumber[0])} triệu ${phanChiaCoBan(arrNumber[1])} nghìn ${phanChiaCoBan(arrNumber[2])}`;
+                break;
+            case 4:
+                return `${phanChiaCoBan(arrNumber[0])} tỷ ${phanChiaCoBan(arrNumber[1])} triệu ${phanChiaDonViTram(arrNumber[2])} nghìn ${phanChiaCoBan(arrNumber[3])}`;
+                break;
+        }
+    }
+    function phanChiaCoBan(number){
+        let arrNumber = `${number}`.split("");
+        let result = "";
+        switch(arrNumber.length){
+            case 1:
+                result = phanChiaDonVi(number);
+                break;
+            case 2:
+                result = phanChiaDonViChuc(number);
+                break;
+            case 3:
+                result = phanChiaDonViTram(number);
+                break;
+            default:
+                break;
+        }   
+        return result;    
+    }
+    
+    function phanChiaDonViTram(number){
+        let arrNumber = `${number}`.split("");
+        console.log()
+        if(arrNumber.length == 3){
+            return `${phanChiaDonVi(+arrNumber[0])} trăm ${+arrNumber[1]==0 ? `${arrNumber[2]!=0?`linh ${phanChiaDonVi(+arrNumber[2])}`:``}`: phanChiaDonViChuc(+`${arrNumber[1]}${arrNumber[2]}`)}`
+        }
+    }
+
+    function phanChiaDonViChuc(number){
+        let arrNumber = `${number}`.split("");
+        if(arrNumber.length == 2){
+            let donVi = {
+                0: "",
+                1: arrNumber[0] > 1?"mốt":"một",
+                2: "hai",
+                3: "ba",
+                4: "bốn",
+                5: "lăm",
+                6: "sáu",
+                7: "bảy",
+                8: "tám",
+                9: "chín"
+            }
+            let chuc = {
+                1: "mười",
+                2: "hai mươi",
+                3: "ba mươi",
+                4: "bốn mươi",
+                5: "năm mươi",
+                6: "sáu mươi",
+                7: "bảy mươi",
+                8: "tám mươi",
+                9: "chín mươi"
+            }
+            return `${chuc[arrNumber[0]]} ${donVi[arrNumber[1]]}`;
+        }
+    }
+
+    function phanChiaDonVi(number){
+        if(number<10){
+            let donVi = {
+                0: "không",
+                1: "một",
+                2: "hai",
+                3: "ba",
+                4: "bốn",
+                5: "năm",
+                6: "sáu",
+                7: "bảy",
+                8: "tám",
+                9: "chín"
+            }
+            return donVi[number]
+        }
     }
 </script>

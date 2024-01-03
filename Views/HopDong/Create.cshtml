@@ -39,6 +39,32 @@
         .table tbody input{
             border: none
         }
+        .btn-trash{
+            scale: 0.7;
+        }
+        .btn-change{
+            text-align: left !important;
+            border: 1px solid white !important;
+        }
+        .form-control[readonly]{
+            background: none;
+        }
+        #dieu-khoan-thi-hanh .tieu-de-dieu-khoan{
+            font-weight: bold;
+        }
+        .dieu-khoan-thi-hanh{
+            border: 1px solid #ebe6e6;
+            border-radius: 15px;
+            padding: 15px;
+            width: 1187px
+        }
+        .input-title-quy-cach{
+            font-weight: bold;
+            width: 50%;
+        }
+        .list-btn-dieu-khoan button{
+            scale: 0.8;
+        }
     </style>
     <div class="page-wrapper">
         <div class="container-fluid">
@@ -138,37 +164,62 @@
                                 <th style="font-weight: bold; width: 10%">Số lượng</th>
                                 <th style="font-weight: bold; width: 15%">Đơn giá (đồng)</th>
                                 <th style="font-weight: bold; width: 15%">Thành tiền (đồng)</th>
+                                <th class="btn-change"></th>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td><input class="form-control input-ten-hang" value="Vít bắn tôn 1,5cm"/></td>
-                                    <td><input class="form-control input-don-vi" value="Kg"/></td>
-                                    <td><input class="form-control input-so-luong" onchange="onChangeSoLuong(this)" type="number" value="2"/></td>
-                                    <td><input class="form-control input-don-gia" type="number" value="95000"/></td>
-                                    <td><input class="form-control input-thanh-tien" type="number" value="190000"/></td>
+                                <tr id="tr-1">
+                                    <td class="tr-stt">1</td>
+                                    <td><input class="form-control input-ten-hang" oninput="onChangeThanhTien(this,1,'tenHang')" value="Vít bắn tôn 1,5cm"/></td>
+                                    <td><input class="form-control input-don-vi" oninput="onChangeThanhTien(this,1,'donVi')" value="Kg"/></td>
+                                    <td><input class="form-control input-so-luong" oninput="onChangeThanhTien(this,1)" value="2.33"/></td>
+                                    <td><input class="form-control input-don-gia" oninput="onChangeThanhTien(this,1)" value="95000"/></td>
+                                    <td><input readonly class="form-control input-thanh-tien"/></td>
+                                    <td class="btn-change"><button class="btn btn-danger btn-trash" onclick="xoaHang(1)"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                                <tr id="row-total">
+                                    <td colspan="5" style="font-weight: bold;">Tổng cộng tiền hàng chưa VAT</td>
+                                    <td style="font-weight: bold;" id="row-total-td">0</td>
                                 </tr>
                                 <tr>
-                                    <td>2</td>
-                                    <td><input class="form-control input-ten-hang" value="Vít bắn tôn 1,5cm"/></td>
-                                    <td><input class="form-control input-don-vi" value="Kg"/></td>
-                                    <td><input class="form-control input-so-luong" onchange="onChangeSoLuong(this)" type="number" value="2"/></td>
-                                    <td><input class="form-control input-don-gia" type="number" value="95000"/></td>
-                                    <td><input class="form-control input-thanh-tien" type="number" value="190000"/></td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td><input class="form-control input-ten-hang" value="Vít bắn tôn 1,5cm"/></td>
-                                    <td><input class="form-control input-don-vi" value="Kg"/></td>
-                                    <td><input class="form-control input-so-luong" onchange="onChangeSoLuong(this)" type="number" value="2"/></td>
-                                    <td><input class="form-control input-don-gia" type="number" value="95000"/></td>
-                                    <td><input class="form-control input-thanh-tien" type="number" value="190000"/></td>
+                                    <td colspan="6" style="font-weight: bold;">
+                                        Bằng chữ : <span id="chu-so-tong-cong-tien">sdsdsdsd</span>
+                                    </td>
+                                    <td style="border:1px solid white"></td>
                                 </tr>
                                 <tr>
                                     <td colspan="6"><button onclick="themHang(this)" class="btn btn-primary" style="width: 100%;"/>Thêm hàng</button>
+                                    <td class="btn-change"></td>
                                 </tr>
                             </tbody>
                         </table>
+                        @* DIEU KHOAN THI HANH *@
+                        <div id="dieu-khoan-thi-hanh" style="width: 100%;">
+
+                            <div id="container-dieu-khoan-thi-hanh-1" style="display: flex; gap:10px; margin-bottom: 20px;">
+                                <div id="dieu-khoan-thi-hanh-1" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')">
+                                    <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-1">Điều <span>II. </span><input class="input-title-quy-cach" id="title-quy-cach-1" value="Qui cách phẩm chất hàng hóa"/></div>
+                                    
+                                    <div style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-1">
+                                        <textarea id="textarea-noi-dung-dieu-khoan-1" style="width: 100%;">
+                                            <p>- Hàng mới 100%</p>
+                                            <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                                        </textarea>
+                                        <div><button class="btn btn-primary" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-1')"><i class="fas fa-pencil-alt"></i></button></div>
+                                    </div>
+                                    
+                                    <div id="noi-dung-dieu-khoan-1" style="display: block;">
+                                        <p>- Hàng mới 100%</p>
+                                        <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                                    </div>
+                                </div>
+
+                                <div class="list-btn-dieu-khoan">
+                                    <button class="btn btn-danger" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-1')">&#10006;</button>
+                                    <button class="btn btn-primary" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-1')"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+
+                        </div>
                   </div>
                  
                   <div class="border-top">
@@ -216,11 +267,12 @@
     @Html.Partial("layout/Footer")
     <script src="https://cdn.tiny.cloud/1/ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar/tinymce/6/tinymce.min.js"></script>
     <script>
-    initTiniMCE('content-sua-noi-dung');
+    initTiniMCE('textarea-noi-dung-dieu-khoan-1');
     setUpNgayThang();
     function initTiniMCE(idTextarea){
         tinymce.init({
             selector: `textarea#${idTextarea}`,
+            language: 'vi',
             apiKey: 'ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar',
             plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
@@ -230,6 +282,7 @@
             content_css: "../css/tinimce.css"
         });
     }
+    
     //set up ngay thang cho select option
     function setUpNgayThang() {
         let selectNgay = $(".select-ngay");
@@ -264,28 +317,105 @@
         }
     }
     function themHang(param){
-        let tr = $(param).parent().parent();
+        let tr = $("#table-mua-hang tbody #row-total");
         let rows = $("#table-mua-hang tbody tr");
-        let lengthRow = rows.length;
+        let lengthRow = rows.length-2;
         let row = 
-        `<tr>
-            <td>${lengthRow}</td>
-            <td><input class="form-control input-ten-hang" value=""/></td>
-            <td><input class="form-control input-don-vi" value=""/></td>
-            <td><input class="form-control input-so-luong" onchange="onChangeSoLuong()" type="number" value=""/></td>
-            <td><input class="form-control input-don-gia" type="number" value=""/></td>
-            <td><input class="form-control input-thanh-tien" type="number" value=""/></td>
+        `<tr id="tr-${lengthRow}">
+            <td class="tr-stt">${lengthRow}</td>
+            <td><input class="form-control input-ten-hang" oninput="onChangeThanhTien(this,${lengthRow},'tenHang')" value=""/></td>
+            <td><input class="form-control input-don-vi" oninput="onChangeThanhTien(this,${lengthRow},'donVi')" value=""/></td>
+            <td><input class="form-control input-so-luong" oninput="onChangeThanhTien(this,${lengthRow})" value=""/></td>
+            <td><input class="form-control input-don-gia" oninput="onChangeThanhTien(this,${lengthRow})" value=""/></td>
+            <td><input readonly class="form-control input-thanh-tien"/></td>
+            <td class="btn-change"><button class="btn btn-danger btn-trash" onclick="xoaHang(${lengthRow})"><i class="fa fa-trash"></i></button></td>
         </tr>`;
         $(row).insertBefore(tr);
         
     }
-    function onChangeSoLuong(){
+    let invalid = false;
+    function onChangeThanhTien(param,index,string){
+        let soLuong = $($(`#table-mua-hang .input-so-luong`)[index-1]).val();
+        let donGia = $($(`#table-mua-hang .input-don-gia`)[index-1]).val();
+        let tenHang = $($(`#table-mua-hang .input-ten-hang`)[index-1]).val();
+        let donVi = $($(`#table-mua-hang .input-don-vi`)[index-1]).val();
+        let obj = {
+            soLuong: {
+                selector: ".input-so-luong",
+                val: soLuong
+            },
+            donGia: {
+                selector: ".input-don-gia",
+                val: donGia
+            },
+            tenHang: {
+                selector: ".input-ten-hang",
+                val: tenHang
+            },
+            donVi: {
+                selector: ".input-don-vi",
+                val: donVi
+            }
+        }
+        for(let key of Object.keys(obj)){
+            let tr = $($(`#table-mua-hang ${obj[key]["selector"]}`)[index-1]);
+            if(!obj[key]["val"]){
+                $(tr).css("border","1px solid red");
+                invalid = true;
+            }else{
+                $(tr).css("border","none");
+            }
+        }
+        
+        if(!string){
+            $($(`#table-mua-hang .input-thanh-tien`)[index-1]).val(soLuong*donGia);
+            autoFillTongTien();
+        }
+    }
 
+    function nganCachSo(number){
+        let numberStr = `${number}`.split(".");
+        let result = numeral(number).format("0,0");
+        return result;
     }
-    function exportTextarea(textareaId){
-        var content = tinymce.get(textareaId).getContent();
-        console.log(content);
+
+    autoFillTongTien();
+    function autoFillTongTien(){
+        let soLuongRows = $(`#table-mua-hang .input-so-luong`);
+        let donGiaRows = $(`#table-mua-hang .input-don-gia`);
+        let thanhTienRows = $(`#table-mua-hang .input-thanh-tien`);
+        for(let i=0; i<soLuongRows.length; i++){
+            let soLuongVal = $(soLuongRows[i]).val();
+            let donGiaVal = $(donGiaRows[i]).val();
+
+            @* $(soLuongRows[i]).val(nganCachSo(soLuongVal)); *@
+            $(donGiaRows[i]).val(nganCachSo(donGiaVal));
+
+            @* soLuongVal = numeral($(soLuongRows[i]).val()).value(); *@
+            donGiaVal = numeral($(donGiaRows[i]).val()).value();
+
+            let result = nganCachSo(soLuongVal*donGiaVal);
+            $(thanhTienRows[i]).val(result);
+        }
+        let result = 0;
+        for(let i=0; i<thanhTienRows.length; i++){
+            let val = numeral($($(thanhTienRows)[i]).val()).value();
+            result+=val;
+        }
+        result = nganCachSo(result);
+        $("#table-mua-hang #row-total-td").text(result);
+        $("#table-mua-hang #chu-so-tong-cong-tien").text(`${doiSoThanhChu(result)} đồng`)
     }
+    function xoaHang(id){
+        $(`#table-mua-hang #tr-${id}`).remove();
+        let rows = $("#table-mua-hang tbody tr");
+        for(let i=0; i<rows.length; i++){
+            let rowStt = $("#table-mua-hang tbody tr .tr-stt")[i];
+            $(rowStt).text(i+1);
+        }
+        autoFillTongTien();
+    }
+    @* ==================================XU LY TINIMCE(Van ban)========================================== *@
     let idSua = "";
     function truyenNoiDung(selector, style, paragraph){
         let content = $(`#${selector}`).text();
@@ -301,6 +431,73 @@
         $(`#${idSua}`).html(contentSua);
         console.log(contentSua);
         $("#modal-sua-noi-dung .btn-close").click();
+    }
+    function clickXuatNoidung(textareaId){
+        let textareaIdLength = textareaId.split("-");
+        let id = textareaIdLength[textareaIdLength.length-1];
+        let content = tinymce.get(textareaId).getContent();
+        $(`#noi-dung-dieu-khoan-${id}`).html(content);
+        $(`#noi-dung-dieu-khoan-${id}`).css("display","block");
+        $(`#container-textarea-noi-dung-dieu-khoan-${id}`).css("display","none");
+    }
+    function hienThiNoidung(textareaId){
+        let textareaIdLength = textareaId.split("-");
+        let id = textareaIdLength[textareaIdLength.length-1];
+        $(`#noi-dung-dieu-khoan-${id}`).css("display","none");
+        $(`#container-textarea-noi-dung-dieu-khoan-${id}`).css("display","flex");
+    }
+    function xoaDieuKhoan(dieuKhoanId){
+        let dieuKhoanIdLength = dieuKhoanId.split("-");
+        let id = dieuKhoanIdLength[dieuKhoanIdLength.length-1];
+        let tieuDeDieuKhoan = $(`#tieu-de-dieu-khoan-${id}`).text();
+        Swal.fire({
+            icon: "error",
+            title: "Cảnh báo",
+            html: `Xóa sẽ không thể khôi phục. Bạn chắc chắn muốn xóa <strong>${tieuDeDieuKhoan} ?</strong>`,
+            @* showDenyButton: true, *@
+            showCancelButton: true,
+            confirmButtonText: "Xóa",
+            @* denyButtonText: `Don't save` *@
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(`#${dieuKhoanId}`).remove();
+            } else if (result.isDenied) {
+                
+            }
+        });
+    }
+    function themDieuKhoan(dieuKhoanIdInsert){
+        let dieuKhoanIdLength = dieuKhoanIdInsert.split("-");
+        let idInsert = dieuKhoanIdLength[dieuKhoanIdLength.length-1];
+        let id = idInsert+1;
+        let content = 
+        `
+            <div id="container-dieu-khoan-thi-hanh-${id}" style="display: flex; gap:10px; margin-bottom: 20px;">
+                <div id="dieu-khoan-thi-hanh-1" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')">
+                    <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span>II. </span><span id="title-quy-cach-${id}"><input class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-1" /></span></div>
+                    
+                    <div style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
+                        <textarea id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
+                            <p>- Hàng mới 100%</p>
+                            <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                        </textarea>
+                        <div><button class="btn btn-primary" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
+                    </div>
+                    
+                    <div id="noi-dung-dieu-khoan-${id}" style="display: block;">
+                        <p>- Hàng mới 100%</p>
+                        <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                    </div>
+                </div>
+
+                <div class="list-btn-dieu-khoan">
+                    <button class="btn btn-danger" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-${id}')">&#10006;</button>
+                    <button class="btn btn-primary" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-${id}')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        `;
+        $(content).insertAfter(`#container-dieu-khoan-thi-hanh-${idInsert}`);
+        initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
     }
     function xuatHopDong(){
         let obj = 
