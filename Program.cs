@@ -87,17 +87,17 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// app.UseStatusCodePages(async context =>
-// {
-//     var response = context.HttpContext.Response;
-//     if(response.StatusCode==404){
-//         response.Redirect("/404");
-//     }else if(response.StatusCode==500){
-//         response.Redirect("/500");
-//     }
-//     if (response.StatusCode == (int)HttpStatusCode.Unauthorized || response.StatusCode == (int)HttpStatusCode.Forbidden)
-//         response.Redirect("/login");
-// });
+app.UseStatusCodePages(async context =>
+{
+    var response = context.HttpContext.Response;
+    if(response.StatusCode==404){
+        response.Redirect("/404");
+    }else if(response.StatusCode==500){
+        response.Redirect("/500");
+    }
+    if (response.StatusCode == (int)HttpStatusCode.Unauthorized || response.StatusCode == (int)HttpStatusCode.Forbidden)
+        response.Redirect("/login");
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

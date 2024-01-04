@@ -165,4 +165,37 @@
             return donVi[number]
         }
     }
+
+    function doiSoThanhLaMa(number){
+        let obj = {
+            1: "I",
+            2: "II",
+            3: "III",
+            4: "IV",
+            5: "V",
+            6: "VI",
+            7: "VII",
+            8: "VIII",
+            9: "IX",
+            10: "X"
+        }
+        if(number<=39 && number >=1){
+            if(number<=10){
+                return obj[number];
+            }else{
+                let thuong = number/10;
+                let arrThuong = [];
+                for(let i=1; i<=thuong; i++){
+                    arrThuong.push(10);
+                }
+                number % 10 != 0 ? arrThuong.push(number % 10):"";
+                let soLaMa = ""
+                arrThuong.map(item=>{
+                    soLaMa+=obj[item];
+                })
+                return soLaMa
+            }
+        }
+    }
+    
 </script>

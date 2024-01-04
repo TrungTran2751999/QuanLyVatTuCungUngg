@@ -194,28 +194,28 @@
                         </table>
                         @* DIEU KHOAN THI HANH *@
                         <div id="dieu-khoan-thi-hanh" style="width: 100%;">
-
-                            <div id="container-dieu-khoan-thi-hanh-1" style="display: flex; gap:10px; margin-bottom: 20px;">
+                            @* ===================================DIEU II========================================== *@
+                            <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-1" style="display: flex; gap:10px; margin-bottom: 20px;">
                                 <div id="dieu-khoan-thi-hanh-1" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')">
-                                    <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-1">Điều <span>II. </span><input class="input-title-quy-cach" id="title-quy-cach-1" value="Qui cách phẩm chất hàng hóa"/></div>
+                                    <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-1">Điều <span class="stt-dieu-khoan">II. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" id="title-quy-cach-1" value="Qui cách phẩm chất hàng hóa"/></div>
                                     
-                                    <div style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-1">
-                                        <textarea id="textarea-noi-dung-dieu-khoan-1" style="width: 100%;">
+                                    <div style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-1" class="container-textarea-noi-dung-dieu-khoan">
+                                        <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-1" style="width: 100%;">
                                             <p>- Hàng mới 100%</p>
                                             <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
                                         </textarea>
-                                        <div><button class="btn btn-primary" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-1')"><i class="fas fa-pencil-alt"></i></button></div>
+                                        <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-1')"><i class="fas fa-pencil-alt"></i></button></div>
                                     </div>
                                     
-                                    <div id="noi-dung-dieu-khoan-1" style="display: block;">
+                                    <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-1" style="display: block;">
                                         <p>- Hàng mới 100%</p>
                                         <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
                                     </div>
                                 </div>
 
                                 <div class="list-btn-dieu-khoan">
-                                    <button class="btn btn-danger" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-1')">&#10006;</button>
-                                    <button class="btn btn-primary" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-1')"><i class="fas fa-plus"></i></button>
+                                    <button class="btn btn-danger btn-xoa-dieu-khoan" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-1')">&#10006;</button>
+                                    <button class="btn btn-primary btn-them-dieu-khoan" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-1')"><i class="fas fa-plus"></i></button>
                                 </div>
                             </div>
 
@@ -274,9 +274,10 @@
             selector: `textarea#${idTextarea}`,
             language: 'vi',
             apiKey: 'ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar',
-            plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+            plugins: 'advlistai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
             tinycomments_mode: 'embedded',
+            extended_valid_elements: "input[id|name|value|type|class|style]",
             tinycomments_author: 'Author name',
             ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
             content_css: "../css/tinimce.css"
@@ -316,6 +317,7 @@
             $(selectNam[i]).html(options);
         }
     }
+    @* ====================================================BANG MUA HANG=================================================================== *@
     function themHang(param){
         let tr = $("#table-mua-hang tbody #row-total");
         let rows = $("#table-mua-hang tbody tr");
@@ -449,11 +451,12 @@
     function xoaDieuKhoan(dieuKhoanId){
         let dieuKhoanIdLength = dieuKhoanId.split("-");
         let id = dieuKhoanIdLength[dieuKhoanIdLength.length-1];
-        let tieuDeDieuKhoan = $(`#tieu-de-dieu-khoan-${id}`).text();
+        let tieuDeDieuKhoan = $(`#title-quy-cach-${id}`).val();
+        let dieuKhoan = $(`#tieu-de-dieu-khoan-${id}`).text();
         Swal.fire({
             icon: "error",
             title: "Cảnh báo",
-            html: `Xóa sẽ không thể khôi phục. Bạn chắc chắn muốn xóa <strong>${tieuDeDieuKhoan} ?</strong>`,
+            html: `Xóa sẽ không thể khôi phục. Bạn chắc chắn muốn xóa: <strong> ${dieuKhoan}${tieuDeDieuKhoan} ?</strong>`,
             @* showDenyButton: true, *@
             showCancelButton: true,
             confirmButtonText: "Xóa",
@@ -464,41 +467,114 @@
             } else if (result.isDenied) {
                 
             }
-        });
+        }).then(()=>{
+            let listSttDieuKhoan = $(".stt-dieu-khoan");
+            for(let i=0; i<listSttDieuKhoan.length; i++){
+                let stt = doiSoThanhLaMa(i+2);
+                $(listSttDieuKhoan[i]).text(`${stt}. `);
+            }
+        })
+        
     }
+    let stt = 1;
     function themDieuKhoan(dieuKhoanIdInsert){
+        let listContainer = $(".container-dieu-khoan-thi-hanh");
         let dieuKhoanIdLength = dieuKhoanIdInsert.split("-");
         let idInsert = dieuKhoanIdLength[dieuKhoanIdLength.length-1];
-        let id = idInsert+1;
+        let id = listContainer.length+1;
         let content = 
         `
-            <div id="container-dieu-khoan-thi-hanh-${id}" style="display: flex; gap:10px; margin-bottom: 20px;">
-                <div id="dieu-khoan-thi-hanh-1" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')">
-                    <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span>II. </span><span id="title-quy-cach-${id}"><input class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-1" /></span></div>
+            <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-${id}" style="display: flex; gap:10px; margin-bottom: 20px;">
+                <div id="dieu-khoan-thi-hanh-${id}" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')">
+                    <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">II. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" /></div>
                     
-                    <div style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
-                        <textarea id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
-                            <p>- Hàng mới 100%</p>
-                            <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                    <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
+                        <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
+                            
                         </textarea>
-                        <div><button class="btn btn-primary" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
+                        <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
                     </div>
                     
-                    <div id="noi-dung-dieu-khoan-${id}" style="display: block;">
-                        <p>- Hàng mới 100%</p>
-                        <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                    <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
+                        
                     </div>
                 </div>
 
                 <div class="list-btn-dieu-khoan">
-                    <button class="btn btn-danger" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-${id}')">&#10006;</button>
-                    <button class="btn btn-primary" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-${id}')"><i class="fas fa-plus"></i></button>
+                    <button class="btn btn-danger btn-xoa-dieu-khoan" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-${id}')">&#10006;</button>
+                    <button class="btn btn-primary btn-them-dieu-khoan" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-${id}')"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
         `;
         $(content).insertAfter(`#container-dieu-khoan-thi-hanh-${idInsert}`);
+        let listSttDieuKhoan = $(".stt-dieu-khoan");
+        for(let i=0; i<listSttDieuKhoan.length; i++){
+            $(listSttDieuKhoan[i]).text(`${doiSoThanhLaMa(i+2)}. `);
+        }
         initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
     }
+    let dieuKhoans = [
+        {
+            title: "Thời gian và phương thức giao nhận hàng",
+            content: `<p>- Thời gian giao hàng: từ 02 – 06 ngày, kể từ ngày kí kết HĐMB</p>
+	                  <p>- Địa chỉ giao hàng: <input value="{DiaChiGiaoHang}"/></p>
+                      <p>- Bên A kiểm tra hàng nhập kho, phát triển hàng không đúng theo các điểm được quy định tại điều I và II của HĐMB, Công ty chúng tôi thật sự xin lỗi, từ chối không nhận hàng, mọi chi phí phát sinh do chuyển đổi hoặc trả lại đều do bên B thanh toán. </p>
+                      <p>- Bốc xếp: tại đầu kho bên nào thì bên đó chịu.</p>`
+        },
+        {
+            title: "Phương thức thanh toán",
+            content: `<p>- Thanh to&aacute;n bằng đồng tiền Việt Nam theo h&igrave;nh thức chuyển khoản.</p>
+                    <p>B&ecirc;n A sẽ thanh to&aacute;n cho b&ecirc;n B 100% gi&aacute; trị tiền h&agrave;ng theo từng h&oacute;a đơn t&agrave;i ch&iacute;nh GTGT trong thời gian từ 25-30 ng&agrave;y, kể từ ng&agrave;y b&ecirc;n A nhận đủ h&agrave;ng, h&oacute;a đơn t&agrave;i ch&iacute;nh, v&agrave; c&aacute;c giấy tờ li&ecirc;n quan đến l&ocirc; h&agrave;ng từ b&ecirc;n B.</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; + <strong>Tr&aacute;ch nhiệm c&aacute;c b&ecirc;n li&ecirc;n quan</strong></p>
+                    <p>+ <strong>B&ecirc;n A:</strong> Thanh to&aacute;n tiền h&agrave;ng cho b&ecirc;n B theo điều IV của hợp đồng mua b&aacute;n.</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Tạo điều kiện về mặt bằng, nh&acirc;n sự để tiếp nhận h&agrave;ng trong thời gian sớm nhất</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Th&ocirc;ng tin cho b&ecirc;n B biết những thiếu s&oacute;t về h&agrave;ng h&oacute;a khi tiếp nhận.</p>
+                    <p>+ <strong>B&ecirc;n B:</strong> Cung cấp h&agrave;ng đ&uacute;ng thời gian, đủ số lượng, đạt chất lượng theo hợp đồng</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Cấp h&oacute;a đơn t&agrave;i ch&iacute;nh hợp lệ, bi&ecirc;n bản giao nhận h&agrave;ng</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - C&oacute; tr&aacute;ch nhiệm đổi trả lại h&agrave;ng kh&ocirc;ng đ&uacute;ng theo cam kết trong v&ograve;ng 07 ng&agrave;y.</p>`
+        },
+        {
+            title: "Điều khoản chung",
+            content: `<p>- Hai bên cam kết thực hiện đầy đủ các điều khoản đã ghi trong hợp đồng. Nếu có vấn đề vướng mắc hai bên cùng nhau bàn bạc, giải quyết theo luật định và bằng văn bản. Trường hợp hai bên không thống nhất cách giải quyết thì đưa ra Tòa Án/Trọng tài Kinh tế Tỉnh Thừa Thiên Huế giải quyết. Phát quyết của Tòa Án/Trọng tài Kinh tế buộc hai bên phải thi hành.</p>
+	                  <p>- Hợp đồng này mặc nhiên được thanh lý sau khi hai bên thực hiện đầy đủ các điều khoản đã cam kết trong hợp đồng.</p>
+	                  <p>- Hợp đồng có hiệu lực từ ngày ký, được thành lập thành 04 bản, mỗi bên giữ 02 bản, và có giá trị pháp lý như nhau</p>`
+        }
+    ]
+    function autoThemDieuKhoan(){
+        let contents = "";
+        let listContainer = $(".container-dieu-khoan-thi-hanh");
+        for(let i=0; i<dieuKhoans.length; i++){
+            let id = i+2;
+            let content = 
+            `
+                <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-${id}" style="display: flex; gap:10px; margin-bottom: 20px;">
+                    <div id="dieu-khoan-thi-hanh-${id}" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')">
+                        <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">${doiSoThanhLaMa(id+1)}. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" value="${dieuKhoans[i].title}"/></div>
+                        
+                        <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
+                            <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
+                                ${dieuKhoans[i].content}
+                            </textarea>
+                            <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
+                        </div>
+                        
+                        <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
+                            ${dieuKhoans[i].content}
+                        </div>
+                    </div>
+
+                    <div class="list-btn-dieu-khoan">
+                        <button class="btn btn-danger btn-xoa-dieu-khoan" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-${id}')">&#10006;</button>
+                        <button class="btn btn-primary btn-them-dieu-khoan" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-${id}')"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            `;
+            $(content).insertAfter(`#container-dieu-khoan-thi-hanh-${i+1}`);
+            initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
+        }
+    }
+    autoThemDieuKhoan();
+    @* ==============================================XUAT HOP DONG======================================================= *@
     function xuatHopDong(){
         let obj = 
         {   
@@ -507,7 +583,8 @@
         }
         $("#input-hop-dong").val(JSON.stringify(obj));
         $("#btn-submit").click();
-    }
+    }   
+    
 </script>
 </body>
 <html>
