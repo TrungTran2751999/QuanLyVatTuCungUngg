@@ -21,9 +21,9 @@ public class ApiHopdong:Controller{
     }
     [HttpPost]
     public ActionResult XuatHopDong([FromForm] string data){
-        XuatHopDongDTO xuatHopDongDTO = JsonSerializer.Deserialize<XuatHopDongDTO>(data);
-        var result = hopDongSerVice.XuatHopDong(data);
+        CreateHopDongDTO createHopDongDTO = JsonSerializer.Deserialize<CreateHopDongDTO>(data);
+        var result = hopDongSerVice.XuatHopDong(createHopDongDTO);
         
-        return File(result, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "result.docx"); 
+        return File(result, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", createHopDongDTO?.TenFile+".docx"); 
     }
 }

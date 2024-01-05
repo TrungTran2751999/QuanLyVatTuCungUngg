@@ -36,11 +36,8 @@ public class HopDongService : IHopdongSerVice
         this.dbContext = dbContext;
         this.util = util;
     }
-
-
-    public byte[] XuatHopDong(string data)
+    public byte[] XuatHopDong(CreateHopDongDTO xuatHopDongDTO)
     {
-        XuatHopDongDTO xuatHopDongDTO = JsonSerializer.Deserialize<XuatHopDongDTO>(data);
         string hopDongPath = "./wwwroot/document/HopDongMuaBan.docx";
         string tenFileCopy = xuatHopDongDTO.TenFile;
         string hopDongXuat = "./wwwroot/document/"+tenFileCopy;
@@ -57,32 +54,21 @@ public class HopDongService : IHopdongSerVice
                 // Tạo hàng mới
                 TableRow tableRow = new TableRow();
 
-                // Tạo các ô trong hàng
-                for (int col = 0; col < 3; col++)
-                {
-                    TableCell tableCell = new TableCell();
-                    Paragraph cellParagraph = new Paragraph();
-                    Run cellRun = new Run();
-                    cellRun.AppendChild(new Text($"Dòng mới, Cột {col + 1}"));
-
-                    cellParagraph.Append(cellRun);
-                    tableCell.Append(cellParagraph);
-                    tableRow.Append(tableCell);
-                }
+                // var infoNhaCungUng = dbContext.NhaCungUng.
                 
                 foreach (Text textElement in document.MainDocumentPart.Document.Descendants<Text>())
                 {
                     // Console.WriteLine(textElement.Text);
                     textElement.Text = textElement.Text.Replace("{NgayHopDong}", util.DoiNgayThangHienTai("KiHieuHopDong"));
                     textElement.Text = textElement.Text.Replace("{NgayThang}", util.DoiNgayThangHienTai("ChinhXac"));
-                    textElement.Text = textElement.Text.Replace("{TongGiamDoc}", "Ông Dương Quý Dương");
-                    textElement.Text = textElement.Text.Replace("{TaiKhoanHueWaco}", "5511 0000 000 370 tại NH Đầu tư và Phát triển T.T Huế");
-                    textElement.Text = textElement.Text.Replace("{DaiDienNhaCungUng}", "Bà Nguyễn Thị Hường");
-                    textElement.Text = textElement.Text.Replace("{ChucVuNhaCungUng}", "Giám đốc");
-                    textElement.Text = textElement.Text.Replace("{DiaChiNhaCungUng}", "Số 4 Kiệt 272 Điện Biên Phủ, P.Trường An, TP Huế, Tỉnh Thừa Thiên Huế");
-                    textElement.Text = textElement.Text.Replace("{DienThoaiNhaCungUng}", "0234.3839099-0905009055");
-                    textElement.Text = textElement.Text.Replace("{TaiKhoanNhaCungUng}", "1019700320 tại ngân hàng Ngoại thương Việt Nam - CN Thừa Thiên Huế");
-                    textElement.Text = textElement.Text.Replace("{MaSoThueNhaCungUng}", "3301629767");
+                    textElement.Text = textElement.Text.Replace("{TongGiamDoc}", xuatHopDongDTO.DaiDienBenA);
+                    textElement.Text = textElement.Text.Replace("{TaiKhoanHueWaco}", xuatHopDongDTO.TaiKhoanBenA);
+                    textElement.Text = textElement.Text.Replace("{DaiDienNhaCungUng}", xuatHopDongDTO.DaiDienNhaCungUng);
+                    textElement.Text = textElement.Text.Replace("{ChucVuNhaCungUng}", xuatHopDongDTO.ChucVuNhaCungUng);
+                    textElement.Text = textElement.Text.Replace("{DiaChiNhaCungUng}", xuatHopDongDTO.DiaChiNhaCungUng);
+                    textElement.Text = textElement.Text.Replace("{DienThoaiNhaCungUng}", xuatHopDongDTO.DienThoaiNhaCungUng);
+                    textElement.Text = textElement.Text.Replace("{TaiKhoanNhaCungUng}", xuatHopDongDTO.TaiKhoanNhaCungUng);
+                    textElement.Text = textElement.Text.Replace("{MaSoThueNhaCungUng}", xuatHopDongDTO.MaSoThueNhaCungUng);
                 }
                 //them bang mua hang vao table
                 BookmarkStart bookmarkStart = doc.Descendants<BookmarkStart>().FirstOrDefault(b => b.Name == tableHopDong);
@@ -102,6 +88,18 @@ public class HopDongService : IHopdongSerVice
             return result;
         }
     }
-    
+    public string LuuHopDong(CreateHopDongDTO createHopDongDTO)
+    {
+        using(var transaction = dbContext.Database.BeginTransaction()){
+            try{
+                var hopDong = createHopDongDTO.ToModel();
+                
+                transaction.Commit();
+            }catch(Exception e){
+                Console.WriteLine(e);
+                transaction.Rollback();
+            }
+        }
+    }
 }
 

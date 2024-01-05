@@ -212,7 +212,7 @@ public class Util:IUtil{
         }
         return result;
     }
-    public List<TableRow> TaoBangHopDong(List<ListHang> tableHopDongs){
+    public List<TableRow> TaoBangHopDong(List<Hang> tableHopDongs){
         //in body cua bang
         List<TableRow> tableRow = new();
         for(int i=0; i<tableHopDongs.Count; i++){
@@ -224,7 +224,7 @@ public class Util:IUtil{
             Paragraph tenHang = InDoanVan(tableHopDongs[i].TenHang, null, "center", null, 14);
             TableCell cellTenVatTu = CreateTableCellWithBorders(tenHang);
 
-            Paragraph donViTinh = InDoanVan(tableHopDongs[i].DVT, null, "center", null, 14);
+            Paragraph donViTinh = InDoanVan(tableHopDongs[i].DonVi, null, "center", null, 14);
             TableCell cellDonViTinh = CreateTableCellWithBorders(donViTinh);
 
             Paragraph soLuong = InDoanVan(tableHopDongs[i].SoLuong.ToString(), null, "center", null, 14);
@@ -233,7 +233,7 @@ public class Util:IUtil{
             Paragraph donGia = InDoanVan(tableHopDongs[i].DonGia.ToString(), null, "center", null, 14);
             TableCell cellDonGia = CreateTableCellWithBorders(donGia);
             
-            Paragraph thanhTien = InDoanVan(tableHopDongs[i].ThanhTien.ToString(), null, "center", null, 14);
+            Paragraph thanhTien = InDoanVan((tableHopDongs[i].SoLuong*tableHopDongs[i].DonGia).ToString(), null, "center", null, 14);
             TableCell cellThanhTien = CreateTableCellWithBorders(thanhTien);
 
             bodyRow.Append(cellStt, cellTenVatTu, cellSoLuong, cellDonViTinh, cellDonGia, cellThanhTien);

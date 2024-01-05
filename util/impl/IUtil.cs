@@ -12,5 +12,5 @@ public interface IUtil{
     public Task<MemoryStream> ExportBaoGiaToWord(List<VatTuInBaoGia> listVatTu);
     public byte[] ZipFile(ExportFile exportFile);
     public string DoiNgayThangHienTai(string type);
-    public List<TableRow> TaoBangHopDong(List<ListHang> tableHopDongs);
+    public List<TableRow> TaoBangHopDong(List<Hang> tableHopDongs);
 }

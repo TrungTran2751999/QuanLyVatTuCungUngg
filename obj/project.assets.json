@@ -8066,13 +8066,15 @@
       "outputPath": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\COMPUTER\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\COMPUTER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "https://api.nuget.org/v3/index.json": {}
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://www.nuget.org/api/v2/": {}
       },
       "frameworks": {
         "net6.0": {

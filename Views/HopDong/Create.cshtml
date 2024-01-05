@@ -84,26 +84,26 @@
                         <button style="width: 100%;" class="input-background"><img src="../assets/images/logo-huewaco.png" width="40px" height="40px" /></button>
                         <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:18pt">HỢP ĐỒNG MUA BÁN</span></button>
                         <button style="width: 100%;" class="input-background">
-                            <input id="hop-dong" type="text" style="font-weight: bold; width: 100%; text-align: center;" value="Số 04-ngày 17.08/2023/HDMB/HueWACO-HUNGLOCPHAT"/>
+                            <input id="so-hop-dong" type="text" style="font-weight: bold; width: 100%; text-align: center;" value="Số 04-ngày 17.08/2023/HDMB/HueWACO-HUNGLOCPHAT"/>
                         </button>
                         <div>- Căn cứ Luật Dân Sự của Quốc Hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, Số 91/2015/QH13 ngày 24 tháng 11 năm 2015;</div>
                         <div>- Căn cứ Luật Thương Mại của Quốc hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, số 36/2005/QH11 ngày 14 tháng 6 năm 2005;</div>
                         <div>- Căn cứ năng lực và nhu cầu của hai bên.</div>
                         <div>Hôm nay, ngày 
                         <span>
-                            <select class="select-ngay">
+                            <select class="select-ngay" id="select-ngay">
                                 
                             </select>
                         </span> 
                         tháng 
                         <span>
-                            <select class="select-thang">
+                            <select class="select-thang" id="select-thang">
                                
                             </select>
                         </span> 
                         năm 
                         <span>
-                            <select class="select-nam">
+                            <select class="select-nam" id="select-nam">
                                 
                             </select>
                         </span> 
@@ -111,29 +111,29 @@
                         @* BEN A *@
                         <div>
                             <span style="font-weight: bold;">I-Bên A.</span>
-                            <input id="input-ben-a" style="font-weight: bold;width: 70%;" value="CÔNG TY CỔ PHẦN CẤP NƯỚC THỪA THIÊN HUẾ"/>
+                            <input readonly id="input-ben-a" style="font-weight: bold;width: 70%;" value="CÔNG TY CỔ PHẦN CẤP NƯỚC THỪA THIÊN HUẾ"/>
                         </div>
                         <div style="margin-left: 50px;">
                             <div>
-                                <span>Đại diện: </span> <span>Ông</span> <input id="input-ten-dai-dien-a" style="font-weight: bold;" value="Dương Quý Dương" /> <span>Chức vụ: </span> <input id="input-chuc-vu-dai-dien-a" style="font-weight: bold;" value="Tổng Giám đốc" />
+                                <span>Đại diện: </span> <span>Ông</span> <input readonly id="input-ten-dai-dien-a" style="font-weight: bold;" value="Dương Quý Dương" /> <span>Chức vụ: </span> <input readonly id="input-chuc-vu-dai-dien-a" style="font-weight: bold;" value="Tổng Giám đốc" />
                             </div>
                             <div>
-                                <span>Địa chỉ: </span> <input style="width: 80%;" id="input-dia-chi-a" value="103 Bùi Thị Xuân, P Phường Đúc, Tp Huế, tỉnh Thừa Thiên Huế, Việt Nam" />
+                                <span>Địa chỉ: </span> <input readonly style="width: 80%;" id="input-dia-chi-a" value="103 Bùi Thị Xuân, P Phường Đúc, Tp Huế, tỉnh Thừa Thiên Huế, Việt Nam" />
                             </div>
                             <div>
-                                <span>Điện thoại: </span> <input style="width: 15%;" id="input-dien-thoai-a" value="0234.3845673" />
+                                <span>Điện thoại: </span> <input readonly style="width: 15%;" id="input-dien-thoai-a" value="0234.3845673" />
                             </div>
                             <div>
-                                <span>Tài khoản: </span> <input style="width: 60%;" id="input-stk-a" value="5511 0000 000 370 tại NH Đầu tư và Phát triển T.T Huế" />
+                                <span>Tài khoản: </span> <input readonly style="width: 60%;" id="input-stk-a" value="5511 0000 000 370 tại NH Đầu tư và Phát triển T.T Huế" />
                             </div>
                             <div>
-                                <span>Mã số thuế: </span> <input style="width: 15%;" id="input-stk-a" value="3300 101 491" />
+                                <span>Mã số thuế: </span> <input readonly style="width: 15%;" id="input-ma-so-thue-a" value="3300 101 491" />
                             </div>
                         </div>
                         @* BEN B *@
                         <div>
                             <span style="font-weight: bold;">I-Bên B.</span>
-                            <input id="input-ben-a" style="font-weight: bold;width: 70%;" value="CÔNG TY TNHH MTV HƯNG LỘC PHÁT METAL"/>
+                            <input id="input-ben-b" style="font-weight: bold;width: 70%;" value="CÔNG TY TNHH MTV HƯNG LỘC PHÁT METAL"/>
                         </div>
                         <div style="margin-left: 50px;">
                             <div>
@@ -143,13 +143,13 @@
                                 <span>Địa chỉ: </span> <input style="width: 80%;" id="input-dia-chi-b" value="Số 4 Kiệt 272 Điện Biên Phủ, P.Trường An, TP Huế, Tỉnh TT Huế" />
                             </div>
                             <div>
-                                <span>Điện thoại: </span> <input style="width: 50%;" id="input-dien-thoai-a" value="0234.3839099 - 0905009055" />
+                                <span>Điện thoại: </span> <input style="width: 50%;" id="input-dien-thoai-b" value="0234.3839099 - 0905009055" />
                             </div>
                             <div>
-                                <span>Tài khoản: </span> <input style="width: 60%;" id="input-stk-a" value="1019700320 tại ngân hàng Ngoại Thương Việt Nam - CN Huế" />
+                                <span>Tài khoản: </span> <input style="width: 60%;" id="input-stk-b" value="1019700320 tại ngân hàng Ngoại Thương Việt Nam - CN Huế" />
                             </div>
                             <div>
-                                <span>Mã số thuế: </span> <input style="width: 15%;" id="input-stk-a" value="3300 101 491" />
+                                <span>Mã số thuế: </span> <input style="width: 15%;" id="input-ma-so-thue-b" value="3300 101 491" />
                             </div>
                         </div>
                         @*BANG MUA HANG *@
@@ -182,7 +182,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="6" style="font-weight: bold;">
-                                        Bằng chữ : <span id="chu-so-tong-cong-tien">sdsdsdsd</span>
+                                        Bằng chữ : <span id="chu-so-tong-cong-tien"></span>
                                     </td>
                                     <td style="border:1px solid white"></td>
                                 </tr>
@@ -224,7 +224,7 @@
                  
                   <div class="border-top">
                     <div class="card-body">
-                      <button style="width: 100%;" id="update-nha-cung-ung" type="button" class="btn btn-primary">
+                      <button onclick="xuatHopDong()" style="width: 100%;" id="update-nha-cung-ung" type="button" class="btn btn-primary">
                            LẬP HỢP ĐỒNG 
                       </button>
                     </div>
@@ -274,7 +274,7 @@
             selector: `textarea#${idTextarea}`,
             language: 'vi',
             apiKey: 'ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar',
-            plugins: 'advlistai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+            plugins: 'tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
             tinycomments_mode: 'embedded',
             extended_valid_elements: "input[id|name|value|type|class|style]",
@@ -517,7 +517,7 @@
         {
             title: "Thời gian và phương thức giao nhận hàng",
             content: `<p>- Thời gian giao hàng: từ 02 – 06 ngày, kể từ ngày kí kết HĐMB</p>
-	                  <p>- Địa chỉ giao hàng: <input value="{DiaChiGiaoHang}"/></p>
+	                  <p>- Địa chỉ giao hàng: <input id="input-dia-chi-giao-hang" value="{DiaChiGiaoHang}"/></p>
                       <p>- Bên A kiểm tra hàng nhập kho, phát triển hàng không đúng theo các điểm được quy định tại điều I và II của HĐMB, Công ty chúng tôi thật sự xin lỗi, từ chối không nhận hàng, mọi chi phí phát sinh do chuyển đổi hoặc trả lại đều do bên B thanh toán. </p>
                       <p>- Bốc xếp: tại đầu kho bên nào thì bên đó chịu.</p>`
         },
@@ -576,13 +576,56 @@
     autoThemDieuKhoan();
     @* ==============================================XUAT HOP DONG======================================================= *@
     function xuatHopDong(){
+        let objData = {
+            namKiKet: $("#select-nam").val(),
+            thangKiKet: $("#select-thang").val(),
+            ngayKiKet: $("#select-ngay").val(),
+        }
+        let rowMuaHangs = $("#table-mua-hang");
+        @* lay du lieu mua hang *@
+        let listHang = [];
+        for(let i=0; i<rowMuaHangs.length; i++){
+            let obj = {
+                TenHang: $($(".input-ten-hang")[i]).val(),
+                DonVi: $($(".input-don-vi")[i]).val(),
+                SoLuong: $($(".input-so-luong")[i]).val(),
+                DonGia: $($(".input-don-gia")[i]).val(),
+            }
+            listHang.push(obj);
+        }
+        let listHTMLDieuKhoan = $(".container-dieu-khoan-thi-hanh");
+        let listDieuKhoan = [];
+        for(let i=0; i<listHTMLDieuKhoan.length; i++){
+            let obj = {
+                TenDieuKhoan: $($(".tieu-de-dieu-khoan")[i]).text()+$($(".input-title-quy-cach")[i]).val(),
+                NoiDungDieuKhoan: $($(`#textarea-noi-dung-dieu-khoan-${i+1}`)).text().trim()
+            }
+            listDieuKhoan.push(obj);
+        }
         let obj = 
         {   
             TenFile: `HopDongMuaHang${new Date().getTime()}.docx`,
-            ListHang: []
+            DaiDienBenA: $("#input-ben-a").val().trim(),
+            DiaChiBenA: $("#input-dia-chi-a").val().trim(),
+            DienThoaiBenA: $("#input-dien-thoai-a").val().trim(),
+            TaiKhoanBenA: $("#input-ben-a").val().trim(),
+            MaSoThueBenA: $("#input-ma-so-thue-a").val().trim(),
+            SoHopDong: $("#so-hop-dong").val().trim(),
+            NgayKiKet: `${objData.namKiKet}-${objData.thangKiKet}-${objData.ngayKiKet}`,
+            NhaCungUng: $("#input-ben-b").val().trim(),
+            DaiDienNhaCungUng: $("#input-ten-dai-dien-b").val().trim(),
+            ChucVuNhaCungUng: $("#input-ten-dai-dien-b").val().trim(),
+            DiaChiNhaCungUng: $("#input-dia-chi-b").val().trim(),
+            DienThoaiNhaCungUng: $("#input-dien-thoai-b").val().trim(),
+            TaiKhoanNhaCungUng: $("#input-stk-b").val().trim(),
+            MaSoThueNhaCungUng: $("#input-ma-so-thue-b").val().trim(),
+            ListHang: listHang,
+            ListDieuKhoan: listDieuKhoan,
+            DiaChiNhanHang: $("#input-dia-chi-giao-hang").val().trim()
         }
-        $("#input-hop-dong").val(JSON.stringify(obj));
-        $("#btn-submit").click();
+        @* $("#input-hop-dong").val(JSON.stringify(obj));
+        $("#btn-submit").click(); *@
+        console.log(obj);
     }   
     
 </script>
