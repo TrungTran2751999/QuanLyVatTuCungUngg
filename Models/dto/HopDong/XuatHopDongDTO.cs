@@ -64,7 +64,7 @@ public class CreateHopDongDTO{
         };
         return hopDongMuaHang;
     }
-    public List<HopDongMuaHangChiTiet> ToListModelHang(){
+    public List<HopDongMuaHangChiTiet> ToListModelHang(Guid hopDongId){
         var result = ListHang.Select(
                         x=>new HopDongMuaHangChiTiet{
                             TenHang = x.TenHang,
@@ -73,6 +73,7 @@ public class CreateHopDongDTO{
                             DonGia = x.DonGia,
                             CreatedBy = CreatedBy,
                             UpdatedBy = UpdatedBy,
+                            HopDongId = hopDongId,
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         }

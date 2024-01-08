@@ -589,7 +589,7 @@
                 TenHang: $($(".input-ten-hang")[i]).val(),
                 DonVi: $($(".input-don-vi")[i]).val(),
                 SoLuong: $($(".input-so-luong")[i]).val(),
-                DonGia: $($(".input-don-gia")[i]).val(),
+                DonGia: numeral($($(".input-don-gia")[i]).val()).value(),
             }
             listHang.push(obj);
         }
@@ -611,7 +611,7 @@
             TaiKhoanBenA: $("#input-ben-a").val().trim(),
             MaSoThueBenA: $("#input-ma-so-thue-a").val().trim(),
             SoHopDong: $("#so-hop-dong").val().trim(),
-            NgayKiKet: `${objData.namKiKet}-${objData.thangKiKet}-${objData.ngayKiKet}`,
+            NgayKiKet: `${objData.namKiKet}-${objData.thangKiKet<10 ? `0${objData.thangKiKet}` : objData.thangKiKet}-${objData.ngayKiKet<10 ? `0${objData.ngayKiKet}`:""}`,
             NhaCungUng: $("#input-ben-b").val().trim(),
             DaiDienNhaCungUng: $("#input-ten-dai-dien-b").val().trim(),
             ChucVuNhaCungUng: $("#input-ten-dai-dien-b").val().trim(),
@@ -625,7 +625,26 @@
         }
         @* $("#input-hop-dong").val(JSON.stringify(obj));
         $("#btn-submit").click(); *@
-        console.log(obj);
+        $.ajax({
+            url: host+"/api/hop-dong",
+            headers: {
+                "Content-Type": "application/json"
+                },
+            method: "POST",
+            data: JSON.stringify(obj)
+        })
+        .done(()=>{
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Thêm mới nhà cung ứng thất bại !',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        })
+        .fail(()=>{
+
+        })
     }   
     
 </script>

@@ -93,11 +93,19 @@ public class HopDongService : IHopdongSerVice
         using(var transaction = dbContext.Database.BeginTransaction()){
             try{
                 var hopDong = createHopDongDTO.ToModel();
+                dbContext.HopDongMuaHang.Add(hopDong);
+                dbContext.SaveChanges();
+
+                List<HopDongMuaHangChiTiet> listHopDongMuaHang = createHopDongDTO.ToListModelHang(hopDong.Id);
+                dbContext.HopDongMuaHangChiTiet.AddRange(listHopDongMuaHang);
+                dbContext.SaveChanges();
                 
                 transaction.Commit();
+                return "OK";
             }catch(Exception e){
                 Console.WriteLine(e);
                 transaction.Rollback();
+                return "FAIL";
             }
         }
     }

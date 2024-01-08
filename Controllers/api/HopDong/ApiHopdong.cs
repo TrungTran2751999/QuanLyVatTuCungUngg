@@ -20,6 +20,13 @@ public class ApiHopdong:Controller{
         this.vatTuBaoGiaChiTietService = vatTuBaoGiaChiTietService;
     }
     [HttpPost]
+    public ActionResult LapHopDong([FromBody] CreateHopDongDTO createHopDongDTO){
+        var result = hopDongSerVice.LuuHopDong(createHopDongDTO);
+        if(result!="OK") return BadRequest(result);
+        return Ok(result);
+    }
+    [HttpPost]
+    [Route("export")]
     public ActionResult XuatHopDong([FromForm] string data){
         CreateHopDongDTO createHopDongDTO = JsonSerializer.Deserialize<CreateHopDongDTO>(data);
         var result = hopDongSerVice.XuatHopDong(createHopDongDTO);
