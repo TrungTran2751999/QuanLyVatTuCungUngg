@@ -51,12 +51,13 @@ public class CreateHopDongDTO{
     [Required]
     public long UpdatedBy{get;set;}
     public HopDongMuaHang ToModel(){
+        string strListDieuKhoan = JsonSerializer.Serialize(ListDieuKhoan);
         HopDongMuaHang hopDongMuaHang = new(){
             SoHopDong = SoHopDong,
-            NhaCungUngId = NhaCungUngId,
+            NhaCungUngId = 1,
             TenNhaCungUng = NhaCungUng,
             DiaChiNhanHang = DiaChiNhanHang,
-            DieuKhoan = JsonSerializer.Serialize(ListDieuKhoan),
+            DieuKhoan = System.Text.Encoding.UTF8.GetBytes(strListDieuKhoan),
             CreatedBy = CreatedBy,
             UpdatedBy = UpdatedBy,
             CreatedAt = DateTime.Now,
@@ -71,9 +72,9 @@ public class CreateHopDongDTO{
                             DonViTinh = x.DonVi,
                             SoLuong = x.SoLuong,
                             DonGia = x.DonGia,
+                            HopDongId = hopDongId,
                             CreatedBy = CreatedBy,
                             UpdatedBy = UpdatedBy,
-                            HopDongId = hopDongId,
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         }

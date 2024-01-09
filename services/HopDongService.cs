@@ -95,7 +95,7 @@ public class HopDongService : IHopdongSerVice
                 var hopDong = createHopDongDTO.ToModel();
                 dbContext.HopDongMuaHang.Add(hopDong);
                 dbContext.SaveChanges();
-
+            
                 List<HopDongMuaHangChiTiet> listHopDongMuaHang = createHopDongDTO.ToListModelHang(hopDong.Id);
                 dbContext.HopDongMuaHangChiTiet.AddRange(listHopDongMuaHang);
                 dbContext.SaveChanges();

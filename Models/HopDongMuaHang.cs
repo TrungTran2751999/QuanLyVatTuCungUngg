@@ -18,7 +18,7 @@ public class HopDongMuaHang{
     [Column("DiaChiNhanHang")]
     public string? DiaChiNhanHang{get;set;}
     [Column("DieuKhoan")]
-    public string? DieuKhoan{get;set;}
+    public byte[]? DieuKhoan{get;set;}
     [Column("CreatedBy")]
     public long? CreatedBy {get;set;}
     [Column("CreatedAt")]

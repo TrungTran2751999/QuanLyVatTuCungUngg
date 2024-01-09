@@ -85,6 +85,7 @@
                         <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:18pt">HỢP ĐỒNG MUA BÁN</span></button>
                         <button style="width: 100%;" class="input-background">
                             <input id="so-hop-dong" type="text" style="font-weight: bold; width: 100%; text-align: center;" value="Số 04-ngày 17.08/2023/HDMB/HueWACO-HUNGLOCPHAT"/>
+
                         </button>
                         <div>- Căn cứ Luật Dân Sự của Quốc Hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, Số 91/2015/QH13 ngày 24 tháng 11 năm 2015;</div>
                         <div>- Căn cứ Luật Thương Mại của Quốc hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, số 36/2005/QH11 ngày 14 tháng 6 năm 2005;</div>
@@ -167,7 +168,7 @@
                                 <th class="btn-change"></th>
                             </thead>
                             <tbody>
-                                <tr id="tr-1">
+                                <tr id="tr-1" class="row-data">
                                     <td class="tr-stt">1</td>
                                     <td><input class="form-control input-ten-hang" oninput="onChangeThanhTien(this,1,'tenHang')" value="Vít bắn tôn 1,5cm"/></td>
                                     <td><input class="form-control input-don-vi" oninput="onChangeThanhTien(this,1,'donVi')" value="Kg"/></td>
@@ -323,7 +324,7 @@
         let rows = $("#table-mua-hang tbody tr");
         let lengthRow = rows.length-2;
         let row = 
-        `<tr id="tr-${lengthRow}">
+        `<tr id="tr-${lengthRow}" class="row-data">
             <td class="tr-stt">${lengthRow}</td>
             <td><input class="form-control input-ten-hang" oninput="onChangeThanhTien(this,${lengthRow},'tenHang')" value=""/></td>
             <td><input class="form-control input-don-vi" oninput="onChangeThanhTien(this,${lengthRow},'donVi')" value=""/></td>
@@ -409,13 +410,15 @@
         $("#table-mua-hang #chu-so-tong-cong-tien").text(`${doiSoThanhChu(result)} đồng`)
     }
     function xoaHang(id){
-        $(`#table-mua-hang #tr-${id}`).remove();
-        let rows = $("#table-mua-hang tbody tr");
-        for(let i=0; i<rows.length; i++){
-            let rowStt = $("#table-mua-hang tbody tr .tr-stt")[i];
-            $(rowStt).text(i+1);
+        if($(".row-data").length > 1){
+            $(`#table-mua-hang #tr-${id}`).remove();
+            let rows = $("#table-mua-hang tbody tr");
+            for(let i=0; i<rows.length; i++){
+                let rowStt = $("#table-mua-hang tbody tr .tr-stt")[i];
+                $(rowStt).text(i+1);
+            }
+            autoFillTongTien();
         }
-        autoFillTongTien();
     }
     @* ==================================XU LY TINIMCE(Van ban)========================================== *@
     let idSua = "";
@@ -453,27 +456,29 @@
         let id = dieuKhoanIdLength[dieuKhoanIdLength.length-1];
         let tieuDeDieuKhoan = $(`#title-quy-cach-${id}`).val();
         let dieuKhoan = $(`#tieu-de-dieu-khoan-${id}`).text();
-        Swal.fire({
-            icon: "error",
-            title: "Cảnh báo",
-            html: `Xóa sẽ không thể khôi phục. Bạn chắc chắn muốn xóa: <strong> ${dieuKhoan}${tieuDeDieuKhoan} ?</strong>`,
-            @* showDenyButton: true, *@
-            showCancelButton: true,
-            confirmButtonText: "Xóa",
-            @* denyButtonText: `Don't save` *@
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $(`#${dieuKhoanId}`).remove();
-            } else if (result.isDenied) {
-                
-            }
-        }).then(()=>{
-            let listSttDieuKhoan = $(".stt-dieu-khoan");
-            for(let i=0; i<listSttDieuKhoan.length; i++){
-                let stt = doiSoThanhLaMa(i+2);
-                $(listSttDieuKhoan[i]).text(`${stt}. `);
-            }
-        })
+        if($(".container-dieu-khoan-thi-hanh").length > 1){
+            Swal.fire({
+                icon: "error",
+                title: "Cảnh báo",
+                html: `Xóa sẽ không thể khôi phục. Bạn chắc chắn muốn xóa: <strong> ${dieuKhoan}${tieuDeDieuKhoan} ?</strong>`,
+                @* showDenyButton: true, *@
+                showCancelButton: true,
+                confirmButtonText: "Xóa",
+                @* denyButtonText: `Don't save` *@
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(`#${dieuKhoanId}`).remove();
+                } else if (result.isDenied) {
+                    
+                }
+            }).then(()=>{
+                let listSttDieuKhoan = $(".stt-dieu-khoan");
+                for(let i=0; i<listSttDieuKhoan.length; i++){
+                    let stt = doiSoThanhLaMa(i+2);
+                    $(listSttDieuKhoan[i]).text(`${stt}. `);
+                }
+            })
+        }
         
     }
     let stt = 1;
@@ -581,7 +586,7 @@
             thangKiKet: $("#select-thang").val(),
             ngayKiKet: $("#select-ngay").val(),
         }
-        let rowMuaHangs = $("#table-mua-hang");
+        let rowMuaHangs = $("#table-mua-hang tbody .row-data");
         @* lay du lieu mua hang *@
         let listHang = [];
         for(let i=0; i<rowMuaHangs.length; i++){
@@ -605,7 +610,7 @@
         let obj = 
         {   
             TenFile: `HopDongMuaHang${new Date().getTime()}.docx`,
-            DaiDienBenA: $("#input-ben-a").val().trim(),
+            DaiDienBenA: $("#input-ten-dai-dien-a").val().trim(),
             DiaChiBenA: $("#input-dia-chi-a").val().trim(),
             DienThoaiBenA: $("#input-dien-thoai-a").val().trim(),
             TaiKhoanBenA: $("#input-ben-a").val().trim(),
@@ -614,37 +619,216 @@
             NgayKiKet: `${objData.namKiKet}-${objData.thangKiKet<10 ? `0${objData.thangKiKet}` : objData.thangKiKet}-${objData.ngayKiKet<10 ? `0${objData.ngayKiKet}`:""}`,
             NhaCungUng: $("#input-ben-b").val().trim(),
             DaiDienNhaCungUng: $("#input-ten-dai-dien-b").val().trim(),
-            ChucVuNhaCungUng: $("#input-ten-dai-dien-b").val().trim(),
+            ChucVuNhaCungUng: $("#input-chuc-vu-dai-dien-b").val().trim(),
             DiaChiNhaCungUng: $("#input-dia-chi-b").val().trim(),
             DienThoaiNhaCungUng: $("#input-dien-thoai-b").val().trim(),
             TaiKhoanNhaCungUng: $("#input-stk-b").val().trim(),
             MaSoThueNhaCungUng: $("#input-ma-so-thue-b").val().trim(),
             ListHang: listHang,
             ListDieuKhoan: listDieuKhoan,
-            DiaChiNhanHang: $("#input-dia-chi-giao-hang").val().trim()
+            DiaChiNhanHang: $("#input-dia-chi-giao-hang").val()?.trim(),
+            CreatedBy: getCookie("id"),
+            UpdatedBy: getCookie("id")
+        }
+        let validate = {
+            SoHopDong:{
+                selector: "#so-hop-dong",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Số hợp đồng không được bỏ trống"
+                }
+            },
+            DaiDienBenA:{
+                selector: "#input-ten-dai-dien-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Đại diện bên A không được bỏ trống"
+                }
+            },
+            DiaChiBenA:{
+                selector: "#input-dia-chi-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Địa chỉ bên A không được bỏ trống"
+                }
+            },
+            DienThoaiBenA:{
+                selector: "#input-dien-thoai-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Điện thoại bên A không được bỏ trống"
+                }
+            },
+            TaiKhoanBenA:{
+                selector: "#input-stk-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Số tài khoản bên A không được bỏ trống"
+                }
+            },
+            MaSoThueBenA:{
+                selector: "#input-ma-so-thue-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Mã số thuế bên A không được bỏ trống"
+                }
+            },
+            NhaCungUng:{
+                selector: "#input-ben-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Đại diện bên B không được bỏ trống"
+                }
+            },
+            NhaCungUng:{
+                selector: "#input-ben-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Tên công ty bên B không được bỏ trống"
+                }
+            },
+            DaiDienNhaCungUng:{
+                selector: "#input-ten-dai-dien-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Đại diện bên B không được bỏ trống"
+                }
+            },
+            ChucVuNhaCungUng:{
+                selector: "#input-chuc-vu-dai-dien-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Chức vụ bên B không được bỏ trống"
+                }
+            },
+            DiaChiNhaCungUng:{
+                selector: "#input-dia-chi-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Địa chỉ bên B không được bỏ trống"
+                }
+            },
+            DienThoaiNhaCungUng:{
+                selector: "#input-dien-thoai-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Điện thoại bên B không được bỏ trống"
+                }
+            },
+            TaiKhoanNhaCungUng:{
+                selector: "#input-stk-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Tài khoản bên B không được bỏ trống"
+                }
+            },
+            MaSoThueNhaCungUng:{
+                selector: "#input-ma-so-thue-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Mã số thuế bên B không được bỏ trống"
+                }
+            },
+            ListHang: {
+                type:"array",
+                required:{
+                    value: listHang,
+                    message: "Hàng giao không được bỏ trống"
+                }
+            },
+            ListDieuKhoan:{
+                type:"array",
+                required:{
+                    value: listDieuKhoan,
+                    message: "Điều khoản không được bỏ trống"
+                }
+            },
+            DiaChiNhanHang:{
+                type:"string",
+                selector: "#input-dia-chi-giao-hang",
+                required:{
+                    value: "",
+                    message: "Địa chỉ giao hàng không được bỏ trống"
+                }
+            }
         }
         @* $("#input-hop-dong").val(JSON.stringify(obj));
         $("#btn-submit").click(); *@
-        $.ajax({
-            url: host+"/api/hop-dong",
-            headers: {
-                "Content-Type": "application/json"
-                },
-            method: "POST",
-            data: JSON.stringify(obj)
-        })
-        .done(()=>{
-            Swal.fire({
-                position: 'center',
-                icon: 'error',
-                title: 'Thêm mới nhà cung ứng thất bại !',
-                showConfirmButton: false,
-                timer: 1500
+        let message = ""
+        let i=0; 
+        for(let key of Object.keys(obj)){
+            if(validate[key] && validate[key]["required"]["value"].length==0){
+                if(validate[key]["type"]=="string"){
+                    if(!$(validate[key]["selector"]).val()){
+                        message += `<p>${validate[key]["required"]["message"]}</p>`
+                    }
+                }else if(validate[key]["type"]=="array"){
+                    @* message += `<p>${validate[key]["required"]["message"]}</p>` *@
+                        let arr = validate[key]["required"]["value"];
+                        let result = false;
+                        for(let i=0; i<arr.length; i++){
+                            for(let keyArr of Object.keys(arr[i])){
+                                if(!arr[i][keyArr]){
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if(message==""){
+            console.log(obj);
+            @* $.ajax({
+                url: host+"/api/hop-dong",
+                headers: {
+                    "Content-Type": "application/json"
+                    },
+                method: "POST",
+                data: JSON.stringify(obj)
             })
-        })
-        .fail(()=>{
+            .done(()=>{
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Thêm mới nhà cung ứng thành công !',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
+            .fail(()=>{
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Thêm mới nhà cung ứng thất bại !',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }) *@
+        }else{
+            Swal.fire({
+                position: 'center',  
+                icon: 'warning',
+                title: "Cảnh báo!",
+                html: message
+            })
+        }
 
-        })
     }   
     
 </script>
