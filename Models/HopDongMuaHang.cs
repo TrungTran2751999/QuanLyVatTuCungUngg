@@ -15,10 +15,26 @@ public class HopDongMuaHang{
     public NhaCungUngVatTu NhaCungUng{get;set;}
     [Column("TenNhaCungUng")]
     public string? TenNhaCungUng{get;set;}
+    [Column("GioiTinhNhaCungUng")]
+    public bool GioiTinhNhaCungUng{get;set;}
     [Column("DiaChiNhanHang")]
     public string? DiaChiNhanHang{get;set;}
     [Column("DieuKhoan")]
     public byte[]? DieuKhoan{get;set;}
+    [Column("DaiDienNhaCungUng")]
+    public string? DaiDienNhaCungUng{get;set;}
+    [Column("ChucVuNhaCungUng")]
+    public string? ChucVuNhaCungUng{get;set;}
+    [Column("DiaChiNhaCungUng")]
+    public string? DiaChiNhaCungUng{get;set;}
+    [Column("DienThoaiNhaCungUng")]
+    public string? DienThoaiNhaCungUng{get;set;}
+    [Column("TaiKhoanNhaCungUng")]
+    public string? TaiKhoanNhaCungUng{get;set;}
+    [Column("MaSoThue")]
+    public string? MaSoThue{get;set;}
+    [Column("NgayKiKet")]
+    public DateTime NgayKiKet{get;set;}
     [Column("CreatedBy")]
     public long? CreatedBy {get;set;}
     [Column("CreatedAt")]

@@ -10,8 +10,8 @@ namespace app.DTOs;
 public class CreateHopDongDTO{
     [Required]
     public string? TenFile{get;set;}
-    [Required]
-    public long NhaCungUngId{get;set;}
+    // [Required]
+    // public long NhaCungUngId{get;set;}
     [Required]
     public string? DaiDienBenA{get;set;}
     [Required]
@@ -28,6 +28,8 @@ public class CreateHopDongDTO{
     public DateTime NgayKiKet{get;set;}
     [Required]
     public string? NhaCungUng{get;set;}
+    [Required]
+    public bool GioiTinhNhaCungUng{get;set;}
     [Required]
     public string? DaiDienNhaCungUng{get;set;}
     [Required]
@@ -56,8 +58,16 @@ public class CreateHopDongDTO{
             SoHopDong = SoHopDong,
             NhaCungUngId = 1,
             TenNhaCungUng = NhaCungUng,
+            GioiTinhNhaCungUng = GioiTinhNhaCungUng,
             DiaChiNhanHang = DiaChiNhanHang,
             DieuKhoan = System.Text.Encoding.UTF8.GetBytes(strListDieuKhoan),
+            DaiDienNhaCungUng = DaiDienNhaCungUng,
+            ChucVuNhaCungUng = ChucVuNhaCungUng,
+            DiaChiNhaCungUng = DiaChiNhaCungUng,
+            DienThoaiNhaCungUng = DienThoaiNhaCungUng,
+            TaiKhoanNhaCungUng = TaiKhoanNhaCungUng,
+            MaSoThue = MaSoThueNhaCungUng,
+            NgayKiKet = NgayKiKet,
             CreatedBy = CreatedBy,
             UpdatedBy = UpdatedBy,
             CreatedAt = DateTime.Now,

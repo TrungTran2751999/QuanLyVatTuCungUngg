@@ -11,6 +11,7 @@ public interface IUtil{
     public Task<MemoryStream> ExportBaoGiaToExcel(List<VatTuInBaoGia> listVatTu);
     public Task<MemoryStream> ExportBaoGiaToWord(List<VatTuInBaoGia> listVatTu);
     public byte[] ZipFile(ExportFile exportFile);
-    public string DoiNgayThangHienTai(string type);
+    public string DoiNgayThangHienTai(DateTime ngayKiKet, string type);
     public List<TableRow> TaoBangHopDong(List<Hang> tableHopDongs);
+    public Paragraph InDoanVan(string str, string fontStyle, string canLe, string fontFamily, int fontSize);
 }
