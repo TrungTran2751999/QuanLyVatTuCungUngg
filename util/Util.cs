@@ -14,6 +14,7 @@ using System.IO.Compression;
 using EXCEL = OfficeOpenXml;
 using OfficeOpenXml.Style;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using Microsoft.Extensions.ObjectPool;
 // using System.Data.Entity;
 namespace app.Utils;
 public class Util:IUtil{
@@ -195,19 +196,19 @@ public class Util:IUtil{
             return memoryStream.ToArray();
         }
     }
-    public string DoiNgayThangHienTai(string type){
+    public string DoiNgayThangHienTai(DateTime ngayKiKet, string type){
         string result;
         switch (type){
             case "ChinhXac":
-                result = "ngày "+DateTime.Now.Day+" tháng "+DateTime.Now.Month+" năm "+DateTime.Now.Year;
+                result = "ngày "+ngayKiKet.Day+" tháng "+ngayKiKet.Month+" năm "+ngayKiKet.Year;
                 break;
             case "KiHieuHopDong":
-                string ngay = DateTime.Now.Day > 0 ? DateTime.Now.Day.ToString() : "0"+DateTime.Now.Day.ToString();
-                string thang = DateTime.Now.Month > 0 ? DateTime.Now.Month.ToString() : "0"+DateTime.Now.Month.ToString();
-                result = ngay+"."+thang+"/"+DateTime.Now.Year;
+                string ngay = ngayKiKet.Day > 0 ? ngayKiKet.Day.ToString() : "0"+ngayKiKet.Day.ToString();
+                string thang = ngayKiKet.Month > 0 ? ngayKiKet.Month.ToString() : "0"+ngayKiKet.Month.ToString();
+                result = ngay+"."+thang+"/"+ngayKiKet.Year;
                 break;
             default:
-                result = "ngày "+DateTime.Now.Day+" tháng "+DateTime.Now.Month+" năm "+DateTime.Now.Year;
+                result = "ngày "+ngayKiKet.Day+" tháng "+ngayKiKet.Month+" năm "+ngayKiKet.Year;
                 break;
         }
         return result;
@@ -241,7 +242,7 @@ public class Util:IUtil{
         }
         return tableRow;
     }
-    private Table TaoBang(List<string> headers, List<VatTuInBaoGia> listVatTu){
+    public Table TaoBang(List<string> headers, List<VatTuInBaoGia> listVatTu){
         Table table = new Table();
         TableWidth tableWidth = new TableWidth() { Width = "5000", Type = TableWidthUnitValues.Pct };
         table.AppendChild(tableWidth);
@@ -283,7 +284,7 @@ public class Util:IUtil{
         }
         return table;
     }
-    private Paragraph TaoTabDot(int count, string type){
+    public Paragraph TaoTabDot(int count, string type){
         string dots = "";
         for(int i=1; i<=count; i++){
             dots+=".";
@@ -308,7 +309,7 @@ public class Util:IUtil{
         
         return paragraph;
     }
-    private Paragraph KetHopParagraph(List<Paragraph> listParagraph, string canLe, string space){
+    public Paragraph KetHopParagraph(List<Paragraph> listParagraph, string canLe, string space){
         Paragraph result = new Paragraph();
         ParagraphProperties paragraphProperties = new ParagraphProperties();
         int i=0; 
@@ -353,7 +354,7 @@ public class Util:IUtil{
         return result;
 
     }
-    private Run TaoKhoangTrang(string space){
+    public Run TaoKhoangTrang(string space){
         Run run = new Run();
         Text text = new Text(space);
         RunProperties runProperties = new RunProperties(new Color(){Val="#FFFFFF"});
@@ -361,7 +362,7 @@ public class Util:IUtil{
         run.Append(text);
         return run;
     }
-    private Paragraph InDoanVan(string str, string fontStyle, string canLe, string fontFamily, int fontSize){
+    public Paragraph InDoanVan(string str, string fontStyle, string canLe, string fontFamily, int fontSize){
         Paragraph paragraph = new Paragraph();
         Run run = new Run();
         Text text = new Text(str);
@@ -421,7 +422,7 @@ public class Util:IUtil{
         return paragraph;
 
     }
-    private Table CreateTitle(){
+    public Table CreateTitle(){
          Table table = new Table();
          TableWidth tableWidth = new TableWidth() { Width = "5500", Type = TableWidthUnitValues.Pct };
          table.AppendChild(tableWidth);
@@ -442,7 +443,7 @@ public class Util:IUtil{
          return table;
 
     }
-    private Paragraph InDamVaCanGiua(string text, int size){
+    public Paragraph InDamVaCanGiua(string text, int size){
          Paragraph paragraph = new Paragraph();
          ParagraphProperties paragraphProperties = new ParagraphProperties();
          Run run = new Run();
@@ -469,7 +470,7 @@ public class Util:IUtil{
          paragraph.AppendChild(run);
          return paragraph;
     }
-    private void Template(Body body){
+    public void Template(Body body){
          Paragraph paragraph = new Paragraph();
             Run run = new Run();
 
@@ -542,7 +543,7 @@ public class Util:IUtil{
             // table.Append(headerRow, dataRow1, dataRow2);
             // body.AppendChild(table);
     }
-    private TableCell CreateTableCellWithBorders(Paragraph paragraph){
+    public TableCell CreateTableCellWithBorders(Paragraph paragraph){
         // Paragraph paragraph = new Paragraph();
         // Run run = new Run();
         // RunProperties runProperties = new RunProperties();
@@ -587,5 +588,12 @@ public class Util:IUtil{
 
         return cell;
     }
-
+    public Paragraph InDieuKhoan(DieuKhoan dieuKhoanObj){
+        Paragraph dieuKhoan = new Paragraph();
+        Paragraph tieuDe = InDoanVan(dieuKhoanObj.TenDieuKhoan, null, "left", null, 14);
+    }
+    public Paragraph ConvertHtmlToWord(string html){
+        string p = html.Split("<p>")[1].Split("</p>")[0];
+        
+    }
 }
