@@ -59,16 +59,18 @@ public class HopDongService : IHopdongSerVice
                 foreach (Text textElement in document.MainDocumentPart.Document.Descendants<Text>())
                 {
                     // Console.WriteLine(textElement.Text);
-                    textElement.Text = textElement.Text.Replace("{NgayHopDong}", util.DoiNgayThangHienTai("KiHieuHopDong"));
-                    textElement.Text = textElement.Text.Replace("{NgayThang}", util.DoiNgayThangHienTai("ChinhXac"));
+                    textElement.Text = textElement.Text.Replace("{NgayHopDong}", util.DoiNgayThangHienTai(xuatHopDongDTO.NgayKiKet, "KiHieuHopDong"));
+                    textElement.Text = textElement.Text.Replace("{NgayThang}", util.DoiNgayThangHienTai(xuatHopDongDTO.NgayKiKet, "ChinhXac"));
                     textElement.Text = textElement.Text.Replace("{TongGiamDoc}", xuatHopDongDTO.DaiDienBenA);
                     textElement.Text = textElement.Text.Replace("{TaiKhoanHueWaco}", xuatHopDongDTO.TaiKhoanBenA);
+                    textElement.Text = textElement.Text.Replace("{NhaCungUng}", xuatHopDongDTO.NhaCungUng);
                     textElement.Text = textElement.Text.Replace("{DaiDienNhaCungUng}", xuatHopDongDTO.DaiDienNhaCungUng);
                     textElement.Text = textElement.Text.Replace("{ChucVuNhaCungUng}", xuatHopDongDTO.ChucVuNhaCungUng);
                     textElement.Text = textElement.Text.Replace("{DiaChiNhaCungUng}", xuatHopDongDTO.DiaChiNhaCungUng);
                     textElement.Text = textElement.Text.Replace("{DienThoaiNhaCungUng}", xuatHopDongDTO.DienThoaiNhaCungUng);
                     textElement.Text = textElement.Text.Replace("{TaiKhoanNhaCungUng}", xuatHopDongDTO.TaiKhoanNhaCungUng);
                     textElement.Text = textElement.Text.Replace("{MaSoThueNhaCungUng}", xuatHopDongDTO.MaSoThueNhaCungUng);
+                    textElement.Text = textElement.Text.Replace("{DiaChiGiaoHang}", xuatHopDongDTO.DiaChiNhanHang);
                 }
                 //them bang mua hang vao table
                 BookmarkStart bookmarkStart = doc.Descendants<BookmarkStart>().FirstOrDefault(b => b.Name == tableHopDong);
@@ -80,6 +82,18 @@ public class HopDongService : IHopdongSerVice
                             targetTable.Append(row);
                         }
                     }
+                }
+                //them dieu khoan
+                BookmarkStart bookmarkListDieuKhoan = doc.Descendants<BookmarkStart>().FirstOrDefault(b => b.Name == "listdieukhoan");
+                if (bookmarkListDieuKhoan != null){
+                    Paragraph listDieuKhoan = bookmarkListDieuKhoan.Ancestors<Paragraph>().FirstOrDefault();
+                    if(listDieuKhoan != null){
+                        Paragraph paragraph =  util.InDoanVan("okokok", null, "left", null, 14);
+                        
+                    }
+                }
+                foreach (Text textElement in document.MainDocumentPart.Document.Descendants<Text>()){
+                    textElement.Text = textElement.Text.Replace("{ListDieuKhoan}", "");
                 }
                 document.MainDocumentPart.Document.Save(stream);
             }
