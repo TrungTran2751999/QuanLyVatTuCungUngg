@@ -36,6 +36,16 @@ public class HopDongService : IHopdongSerVice
         this.dbContext = dbContext;
         this.util = util;
     }
+    public List<HopDongMuaHang> GetAll(int pageNumber){
+        int limit = 10;
+        int start = limit*(pageNumber-1);
+        List<HopDongMuaHang> listHopDongMuaHang = dbContext.HopDongMuaHang
+                                                    .Skip(start)
+                                                    .Take(limit)
+                                                    .OrderByDescending(x=>x.CreatedAt)
+                                                    .ToList();
+        return listHopDongMuaHang;
+    }
     public byte[] XuatHopDong(CreateHopDongDTO xuatHopDongDTO)
     {
         string hopDongPath = "./wwwroot/document/HopDongMuaBan.docx";
@@ -71,25 +81,34 @@ public class HopDongService : IHopdongSerVice
                     textElement.Text = textElement.Text.Replace("{TaiKhoanNhaCungUng}", xuatHopDongDTO.TaiKhoanNhaCungUng);
                     textElement.Text = textElement.Text.Replace("{MaSoThueNhaCungUng}", xuatHopDongDTO.MaSoThueNhaCungUng);
                     textElement.Text = textElement.Text.Replace("{DiaChiGiaoHang}", xuatHopDongDTO.DiaChiNhanHang);
+                    textElement.Text = textElement.Text.Replace("{TongTienBangChu}", xuatHopDongDTO.ChuSoTongTien);
+                    textElement.Text = textElement.Text.Replace("{SoHopDong}", xuatHopDongDTO.SoHopDong);
+                    textElement.Text = textElement.Text.Replace("{GioiTinhNhaCungUng}", xuatHopDongDTO.GioiTinhNhaCungUng?"Ông":"Bà");
                 }
                 //them bang mua hang vao table
                 BookmarkStart bookmarkStart = doc.Descendants<BookmarkStart>().FirstOrDefault(b => b.Name == tableHopDong);
                 if (bookmarkStart != null){
                     Table targetTable = bookmarkStart.Ancestors<Table>().FirstOrDefault();
                     if (targetTable != null){
-                        List<TableRow> listRow = util.TaoBangHopDong(xuatHopDongDTO.ListHang);
+                        List<TableRow> listRow = util.TaoBangHopDong(xuatHopDongDTO.ListHang, xuatHopDongDTO.TongTien);
                         foreach(TableRow row in listRow){
                             targetTable.Append(row);
                         }
                     }
+                   
                 }
                 //them dieu khoan
                 BookmarkStart bookmarkListDieuKhoan = doc.Descendants<BookmarkStart>().FirstOrDefault(b => b.Name == "listdieukhoan");
                 if (bookmarkListDieuKhoan != null){
                     Paragraph listDieuKhoan = bookmarkListDieuKhoan.Ancestors<Paragraph>().FirstOrDefault();
                     if(listDieuKhoan != null){
-                        Paragraph paragraph =  util.InDoanVan("okokok", null, "left", null, 14);
-                        
+                        List<DieuKhoan> listDieuKhoanDTO = xuatHopDongDTO.ListDieuKhoan;
+                        for(int i=0; i<listDieuKhoanDTO.Count; i++){
+                            List<Paragraph> listParagraphDieuKhoan = util.InDieuKhoan(listDieuKhoanDTO[i], xuatHopDongDTO.DiaChiNhanHang);
+                            for(int j=0; j<listParagraphDieuKhoan.Count; j++){
+                                listDieuKhoan.Append(listParagraphDieuKhoan[j]);
+                            }
+                        }
                     }
                 }
                 foreach (Text textElement in document.MainDocumentPart.Document.Descendants<Text>()){

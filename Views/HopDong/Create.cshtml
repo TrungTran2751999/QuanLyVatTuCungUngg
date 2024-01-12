@@ -265,6 +265,7 @@
         <input type="submit" id="btn-submit"/>
     </form>
     </div>
+    <textarea style="display: none;" id="textarea-convertHTML"></textarea>
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
     <!-- ============================================================== -->
@@ -282,7 +283,7 @@
             language: 'vi',
             apiKey: 'ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar',
             plugins: 'tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
-            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
             tinycomments_mode: 'embedded',
             extended_valid_elements: "input[id|name|value|type|class|style]",
             tinycomments_author: 'Author name',
@@ -290,6 +291,12 @@
             content_css: "../css/tinimce.css"
         });
     }
+
+    @* $(document).on("click",()=>{
+        for(let i=0; i<listAlert.length; i++){
+            $(listAlert[i]).remove();
+        }
+    }) *@
     
     //set up ngay thang cho select option
     function setUpNgayThang() {
@@ -523,19 +530,20 @@
             $(listSttDieuKhoan[i]).text(`${doiSoThanhLaMa(i+2)}. `);
         }
         initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
+        xoaAlertTimiMCE();
     }
     let dieuKhoans = [
         {
             title: "Thời gian và phương thức giao nhận hàng",
             content: `<p>- Thời gian giao hàng: từ 02 – 06 ngày, kể từ ngày kí kết HĐMB</p>
-	                  <p>- Địa chỉ giao hàng: <input id="input-dia-chi-giao-hang" placeholder="Nhập thời gian nhận hàng" value=""/></p>
+	                  <p>- Địa chỉ giao hàng: <input id="input-dia-chi-giao-hang" placeholder="Nhập địa chỉ nhận hàng" value=""/></p>
                       <p>- Bên A kiểm tra hàng nhập kho, phát triển hàng không đúng theo các điểm được quy định tại điều I và II của HĐMB, Công ty chúng tôi thật sự xin lỗi, từ chối không nhận hàng, mọi chi phí phát sinh do chuyển đổi hoặc trả lại đều do bên B thanh toán. </p>
                       <p>- Bốc xếp: tại đầu kho bên nào thì bên đó chịu.</p>`
         },
         {
             title: "Phương thức thanh toán",
             content: `<p>- Thanh to&aacute;n bằng đồng tiền Việt Nam theo h&igrave;nh thức chuyển khoản.</p>
-                    <p>B&ecirc;n A sẽ thanh to&aacute;n cho b&ecirc;n B 100% gi&aacute; trị tiền h&agrave;ng theo từng h&oacute;a đơn t&agrave;i ch&iacute;nh GTGT trong thời gian từ 25-30 ng&agrave;y, kể từ ng&agrave;y b&ecirc;n A nhận đủ h&agrave;ng, h&oacute;a đơn t&agrave;i ch&iacute;nh, v&agrave; c&aacute;c giấy tờ li&ecirc;n quan đến l&ocirc; h&agrave;ng từ b&ecirc;n B.</p>
+                    <p>- B&ecirc;n A sẽ thanh to&aacute;n cho b&ecirc;n B 100% gi&aacute; trị tiền h&agrave;ng theo từng h&oacute;a đơn t&agrave;i ch&iacute;nh GTGT trong thời gian từ 25-30 ng&agrave;y, kể từ ng&agrave;y b&ecirc;n A nhận đủ h&agrave;ng, h&oacute;a đơn t&agrave;i ch&iacute;nh, v&agrave; c&aacute;c giấy tờ li&ecirc;n quan đến l&ocirc; h&agrave;ng từ b&ecirc;n B.</p>
                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; + <strong>Tr&aacute;ch nhiệm c&aacute;c b&ecirc;n li&ecirc;n quan</strong></p>
                     <p>+ <strong>B&ecirc;n A:</strong> Thanh to&aacute;n tiền h&agrave;ng cho b&ecirc;n B theo điều IV của hợp đồng mua b&aacute;n.</p>
                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Tạo điều kiện về mặt bằng, nh&acirc;n sự để tiếp nhận h&agrave;ng trong thời gian sớm nhất</p>
@@ -585,6 +593,12 @@
         }
     }
     autoThemDieuKhoan();
+    //bien doi noi dung tu tinimce sang html
+    function convertTiMCEToHtml(selector){
+        let content = tinymce.get(`${selector}`).getContent();
+        $("#textarea-convertHTML").html(content);
+        return $("#textarea-convertHTML").text();
+    }
     @* ==============================================XUAT HOP DONG======================================================= *@
     function xuatHopDong(){
         let objData = {
@@ -609,7 +623,7 @@
         for(let i=0; i<listHTMLDieuKhoan.length; i++){
             let obj = {
                 TenDieuKhoan: $($(".tieu-de-dieu-khoan")[i]).text()+$($(".input-title-quy-cach")[i]).val(),
-                NoiDungDieuKhoan: $($(`#textarea-noi-dung-dieu-khoan-${i+1}`)).text().trim()
+                NoiDungDieuKhoan: convertTiMCEToHtml(`textarea-noi-dung-dieu-khoan-${i+1}`)
             }
             listDieuKhoan.push(obj);
         }
@@ -634,6 +648,8 @@
             ListHang: listHang,
             ListDieuKhoan: listDieuKhoan,
             DiaChiNhanHang: $("#input-dia-chi-giao-hang").val()?.trim(),
+            TongTien: numeral($("#row-total-td").text()).value(),
+            ChuSoTongTien: $("#chu-so-tong-cong-tien").text(),
             CreatedBy: +getCookie("id"),
             UpdatedBy: +getCookie("id")
         }
@@ -808,7 +824,7 @@
                         </div>`
         if(message=="" && isValid){
             console.log(obj);
-            @* $("#update-nha-cung-ung").attr("disabled",true);
+            $("#update-nha-cung-ung").attr("disabled",true);
             $("#update-nha-cung-ung").html(loading);
             $.ajax({
                 url: host+"/api/hop-dong",
@@ -841,7 +857,7 @@
                     showConfirmButton: false,
                     timer: 1500
                 })
-            }) *@
+            })
         }else{
             Swal.fire({
                 position: 'center',  
@@ -852,6 +868,21 @@
         }
     }
     
+</script>
+<script>
+    //an thong bao preminum cua tinimce
+    function xoaAlertTimiMCE(){
+        let interval = setInterval(()=>{
+            listAlert = $(".tox-tinymce-aux");
+            for(let i=0; i<listAlert.length; i++){
+                $(listAlert[i]).remove();
+            }
+            if(listAlert.length > 0){
+                clearInterval(interval)
+            }
+        },100);
+    }
+    xoaAlertTimiMCE();
 </script>
 </body>
 <html>

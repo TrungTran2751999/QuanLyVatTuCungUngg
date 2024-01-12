@@ -49,6 +49,10 @@ public class CreateHopDongDTO{
     [Required]
     public string? DiaChiNhanHang{get;set;}
     [Required]
+    public decimal TongTien{get;set;}
+    [Required]
+    public string? ChuSoTongTien{get;set;}
+    [Required]
     public long CreatedBy{get;set;}
     [Required]
     public long UpdatedBy{get;set;}
@@ -95,8 +99,8 @@ public class CreateHopDongDTO{
 public class Hang{
     public string? TenHang{get;set;}
     public string? DonVi{get;set;}
-    public decimal? SoLuong{get;set;}
-    public decimal? DonGia{get;set;}
+    public decimal SoLuong{get;set;}
+    public decimal DonGia{get;set;}
 }
 public class DieuKhoan{
     public string? TenDieuKhoan{get;set;}

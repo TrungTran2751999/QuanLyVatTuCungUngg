@@ -2445,8 +2445,6 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "EntityFramework.6.4.4.nupkg.sha512",
-        "EntityFramework.nuspec",
         "Icon.png",
         "build/EntityFramework.DefaultItems.props",
         "build/EntityFramework.props",
@@ -2462,6 +2460,8 @@
         "content/net40/App.config.transform",
         "content/net40/Web.config.install.xdt",
         "content/net40/Web.config.transform",
+        "entityframework.6.4.4.nupkg.sha512",
+        "entityframework.nuspec",
         "lib/net40/EntityFramework.SqlServer.dll",
         "lib/net40/EntityFramework.SqlServer.xml",
         "lib/net40/EntityFramework.dll",
@@ -3138,8 +3138,6 @@
         ".signature.p7s",
         "Icon.png",
         "LICENSE.TXT",
-        "Microsoft.Extensions.DependencyInjection.6.0.0.nupkg.sha512",
-        "Microsoft.Extensions.DependencyInjection.nuspec",
         "THIRD-PARTY-NOTICES.TXT",
         "buildTransitive/netcoreapp2.0/Microsoft.Extensions.DependencyInjection.targets",
         "buildTransitive/netcoreapp3.1/_._",
@@ -3151,6 +3149,8 @@
         "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.xml",
         "lib/netstandard2.1/Microsoft.Extensions.DependencyInjection.dll",
         "lib/netstandard2.1/Microsoft.Extensions.DependencyInjection.xml",
+        "microsoft.extensions.dependencyinjection.6.0.0.nupkg.sha512",
+        "microsoft.extensions.dependencyinjection.nuspec",
         "useSharedDesignerContext.txt"
       ]
     },
@@ -8073,7 +8073,6 @@
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://www.nuget.org/api/v2/": {}
       },
       "frameworks": {

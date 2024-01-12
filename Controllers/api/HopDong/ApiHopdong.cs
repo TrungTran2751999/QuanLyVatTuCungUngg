@@ -19,6 +19,11 @@ public class ApiHopdong:Controller{
         this.hopDongSerVice = baogiaService;
         this.vatTuBaoGiaChiTietService = vatTuBaoGiaChiTietService;
     }
+    [HttpGet]
+    public ActionResult GetAll(int pageNumber=0){
+        var result = hopDongSerVice.GetAll(pageNumber);
+        return Ok(result);
+    }   
     [HttpPost]
     public ActionResult LapHopDong([FromBody] CreateHopDongDTO createHopDongDTO){
         var result = hopDongSerVice.LuuHopDong(createHopDongDTO);

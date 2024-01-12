@@ -15,6 +15,8 @@ using EXCEL = OfficeOpenXml;
 using OfficeOpenXml.Style;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using Microsoft.Extensions.ObjectPool;
+using DocumentFormat.OpenXml.Office.CustomUI;
+using System.Linq;
 // using System.Data.Entity;
 namespace app.Utils;
 public class Util:IUtil{
@@ -213,33 +215,57 @@ public class Util:IUtil{
         }
         return result;
     }
-    public List<TableRow> TaoBangHopDong(List<Hang> tableHopDongs){
+    public List<TableRow> TaoBangHopDong(List<Hang> tableHopDongs, decimal tongTien){
         //in body cua bang
         List<TableRow> tableRow = new();
         for(int i=0; i<tableHopDongs.Count; i++){
             TableRow bodyRow = new TableRow();
 
-            Paragraph stt = InDoanVan((i+1).ToString(), "null", "center", null, 14);
+            Paragraph stt = InDoanVan((i+1).ToString(), "null", "center", null, 13);
             TableCell cellStt = CreateTableCellWithBorders(stt);
 
-            Paragraph tenHang = InDoanVan(tableHopDongs[i].TenHang, null, "center", null, 14);
+            Paragraph tenHang = InDoanVan(tableHopDongs[i].TenHang, null, "center", null, 13);
             TableCell cellTenVatTu = CreateTableCellWithBorders(tenHang);
 
-            Paragraph donViTinh = InDoanVan(tableHopDongs[i].DonVi, null, "center", null, 14);
+            Paragraph donViTinh = InDoanVan(tableHopDongs[i].DonVi, null, "center", null, 13);
             TableCell cellDonViTinh = CreateTableCellWithBorders(donViTinh);
 
-            Paragraph soLuong = InDoanVan(tableHopDongs[i].SoLuong.ToString(), null, "center", null, 14);
+            Paragraph soLuong = InDoanVan(ConvertNumberToString(tableHopDongs[i].SoLuong), null, "center", null, 13);
             TableCell cellSoLuong = CreateTableCellWithBorders(soLuong);
 
-            Paragraph donGia = InDoanVan(tableHopDongs[i].DonGia.ToString(), null, "center", null, 14);
+            Paragraph donGia = InDoanVan(ConvertNumberToString(tableHopDongs[i].DonGia), null, "center", null, 13);
             TableCell cellDonGia = CreateTableCellWithBorders(donGia);
             
-            Paragraph thanhTien = InDoanVan((tableHopDongs[i].SoLuong*tableHopDongs[i].DonGia).ToString(), null, "center", null, 14);
+            Paragraph thanhTien = InDoanVan(ConvertNumberToString(tableHopDongs[i].SoLuong*tableHopDongs[i].DonGia), null, "center", null, 13);
             TableCell cellThanhTien = CreateTableCellWithBorders(thanhTien);
 
-            bodyRow.Append(cellStt, cellTenVatTu, cellSoLuong, cellDonViTinh, cellDonGia, cellThanhTien);
+            bodyRow.Append(cellStt, cellTenVatTu, cellDonViTinh, cellSoLuong, cellDonGia, cellThanhTien);
             tableRow.Add(bodyRow);
         }
+        //merge cot trong bang
+        TableRow bodyRowTotal = new TableRow();
+        List<TableCell> listTableCell = new();
+        for(int i=1; i<=5; i++){
+            Paragraph paragraphCell = InDoanVan(i==1 ? "Tổng cộng tiền hàng chưa VAT":"", "bold", "center", null, 13);
+            TableCell cell = CreateTableCellWithBorders(paragraphCell);
+            TableCellProperties cellProperty = new TableCellProperties();
+            if(i==1){
+                cellProperty.Append(new HorizontalMerge(){
+                    Val = MergedCellValues.Restart
+                });
+            }else{
+                cellProperty.Append(new HorizontalMerge(){
+                    Val = MergedCellValues.Continue
+                });
+            }
+            cell.Append(cellProperty);
+            listTableCell.Add(cell);
+        }
+        Paragraph thanhTienTotal = InDoanVan(ConvertNumberToString(tongTien), "bold", "center", null, 13);
+        TableCell cellThanhTienTotal = CreateTableCellWithBorders(thanhTienTotal);
+
+        bodyRowTotal.Append(listTableCell[0], listTableCell[1], listTableCell[2], listTableCell[3], listTableCell[4], cellThanhTienTotal);
+        tableRow.Add(bodyRowTotal);
         return tableRow;
     }
     public Table TaoBang(List<string> headers, List<VatTuInBaoGia> listVatTu){
@@ -384,19 +410,23 @@ public class Util:IUtil{
         runProperties.Append(size);
 
         //set font style
-        switch (fontStyle){
+       switch (fontStyle){
             case "bold":
-                Bold bold = new Bold();
+                Bold bold = new();
                 runProperties.Append(bold);
                 break;
             case "italic":
-                Italic italic = new Italic();
+                Italic italic = new();
                 runProperties.Append(italic);
+                break;
+            case "underline":
+                Underline underline = new();
+                runProperties.Append(underline);
                 break;
             default:
                 break;
         }
-
+        
         //set can le
         Justification justification = new Justification();
         switch(canLe){
@@ -588,12 +618,70 @@ public class Util:IUtil{
 
         return cell;
     }
-    public Paragraph InDieuKhoan(DieuKhoan dieuKhoanObj){
-        Paragraph dieuKhoan = new Paragraph();
-        Paragraph tieuDe = InDoanVan(dieuKhoanObj.TenDieuKhoan, null, "left", null, 14);
-    }
-    public Paragraph ConvertHtmlToWord(string html){
-        string p = html.Split("<p>")[1].Split("</p>")[0];
+    public List<Paragraph> InDieuKhoan(DieuKhoan dieuKhoanObj, string noiGiaoHang){
+        List<Paragraph> result = new();
+
+        Paragraph tieuDe = InDoanVan(dieuKhoanObj.TenDieuKhoan, "bold", "left", null, 13);
+        List<Paragraph> noiDung = ConvertHtmlToWord(dieuKhoanObj.NoiDungDieuKhoan, noiGiaoHang);
         
+        result.Add(tieuDe);
+        result.AddRange(noiDung);
+        return result;
+    }
+    public List<Paragraph> ConvertHtmlToWord(string html, string noiGiaoHang){
+        List<Paragraph> result = new();
+        string[] listP = html.Split("<p>"); 
+        
+        for(int i=0; i<listP.Length; i++){
+            
+            List<Paragraph> listParagraph = new();
+            listP[i] = listP[i].Replace("</p>","");
+
+            string[] listStrongBegin = listP[i].Split("<strong>");
+            for(int j=0; j<listStrongBegin.Length; j++){
+            
+                string[] deleteStr = new string[] {
+                    "<em>",
+                    "</em>",
+                    "<input id=\"input-dia-chi-giao-hang\" value=\"\" type=\"text\">",
+                    "<span style=\"text-decoration: underline;\">",
+                    "</span>"
+                };
+                
+                for(int z=0; z<deleteStr.Length; z++){
+                    if(z!=2){
+                        listStrongBegin[j] = listStrongBegin[j].Replace(deleteStr[z],"");
+                    }else{
+                        listStrongBegin[j] = listStrongBegin[j].Replace(deleteStr[z], noiGiaoHang);
+                    }
+                }
+                string[] listStrongEnd = listStrongBegin[j].Split("</strong>");
+                if(listStrongEnd[0].Length > 0){
+                    
+                    if(listStrongEnd.Length >1 ){
+                        
+                        Paragraph strongStr = InDoanVan(listStrongEnd[0], "bold", "left", null, 13);
+                        Paragraph normalStrong = InDoanVan(listStrongEnd[1], null, "left", null, 13);
+                        
+                        listParagraph.Add(strongStr);
+                        listParagraph.Add(normalStrong);
+                    }else if(listStrongEnd.Length == 1){
+
+                        Paragraph strongStr = InDoanVan(listStrongEnd[0], null, "left", null, 13);
+                        listParagraph.Add(strongStr);
+                    }
+                }
+            }
+
+            if(listParagraph.Count > 0) result.Add(KetHopParagraph(listParagraph, "left", "i"));
+            
+        }
+        return result;
+    }
+    public string ConvertNumberToString(decimal number){
+        string convertNumber = number.ToString();
+        string soNguyen = int.Parse(convertNumber.Split(".")[0]).ToString("N0").Replace(",",".");
+        string thapPhan = convertNumber.Split(".").Length > 1 ? ","+convertNumber.Split(".")[1] : "";
+        return soNguyen + thapPhan;
     }
 }
