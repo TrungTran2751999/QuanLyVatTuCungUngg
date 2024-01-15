@@ -54,11 +54,11 @@
         <div style="overflow: scroll;">
             <table class="table" id="table-data" data-show-columns="true" style="overflow: scroll;">
                 <thead>
-                    <th>STT</th>
+                    <th style="width: 10px;">STT</th>
                     <th style="min-width: 200px;">SỐ HỢP ĐỒNG</th>
-                    <th style="min-width: 100px;">CÔNG TY BÁN HÀNG</th>
-                    <th style="min-width: 150px;">NGƯỜI ĐẠI DIỆN</th>
-                    <th style="min-width: 150px;">NGÀY KÍ HỢP ĐỒNG</th>
+                    <th style="min-width: 100px;">NHÀ CUNG ỨNG</th>
+                    <th style="min-width: 100px;">NGƯỜI ĐẠI DIỆN</th>
+                    <th style="width: 200px;">NGÀY KÍ HỢP ĐỒNG</th>
                     <th>ACTION</th>
                 </thead>
                 <tbody>
@@ -67,7 +67,7 @@
             </table>
         </div>
        
-        <button class="btn btn-primary" style="width: 20%; margin-left: 40%;">XEM THÊM</button>
+        <button class="btn btn-primary" style="width: 20%; margin-left: 40%;" onclick="intData()">XEM THÊM</button>
 
     </div>
     <!-- ============================================================== -->
@@ -78,11 +78,37 @@
     <!-- ============================================================== -->
     @Html.Partial("layout/Footer")
     <script>
+        let page = 0;
         function intData(){
+            page++
             $.ajax({
-                url: host + "/api/hop-dong"
+                url: host + `/api/hop-dong?pageNumber=${page}`
+            })
+            .done(res=>{
+                let rows = "";
+                let intStt = 10*(page-1);
+                console.log(res)
+                for(let i=0; i<res.length; i++){
+                    let row = 
+                    `
+                        <tr>
+                            <td>${++intStt}</td>
+                            <td><a href=/hop-dong/update?id=${res[i].id}>${res[i].soHopDong}</a></td>
+                            <td>${res[i].tenNhaCungUng}</td>
+                            <td>${res[i].gioiTinhNhaCungUng==0?"Bà":"Ông"} ${res[i].daiDienNhaCungUng}</td>
+                            <td>${convertISOTime(res[i].ngayKiKet, "date")}</td>
+                            <td>
+                                <button style="background-color: red; color: white; padding: 5px 10px"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    rows+=row;
+                }
+                @* $(rows).insertBefore("#table-data tbody") *@
+                $("#table-data tbody").html(rows);
             })
         }
+        intData();
     </script>
 </body>
 <html>

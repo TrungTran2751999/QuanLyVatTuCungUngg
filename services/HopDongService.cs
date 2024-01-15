@@ -40,12 +40,47 @@ public class HopDongService : IHopdongSerVice
         int limit = 10;
         int start = limit*(pageNumber-1);
         List<HopDongMuaHang> listHopDongMuaHang = dbContext.HopDongMuaHang
+                                                    .OrderByDescending(x=>x.CreatedAt)
                                                     .Skip(start)
                                                     .Take(limit)
-                                                    .OrderByDescending(x=>x.CreatedAt)
-                                                    .ToList();
+                                                    .Select(x=>new HopDongMuaHang{
+                                                        Id = x.Id,
+                                                        SoHopDong = x.SoHopDong,
+                                                        TenNhaCungUng = x.TenNhaCungUng,
+                                                        GioiTinhNhaCungUng = x.GioiTinhNhaCungUng,
+                                                        NgayKiKet = x.NgayKiKet,
+                                                        DaiDienNhaCungUng = x.DaiDienNhaCungUng
+                                                    }).ToList();
         return listHopDongMuaHang;
     }
+    public List<HopDongResponse> GetById(Guid id){
+        var result = dbContext.HopDongMuaHang
+                              .Select(x=>new HopDongResponse{
+                                    Id = x.Id,
+                                    SoHopDong = x.SoHopDong,
+                                    NgayKiKet = x.NgayKiKet,
+                                    NhaCungUng = x.TenNhaCungUng,
+                                    GioiTinhNhaCungUng = x.GioiTinhNhaCungUng,
+                                    DaiDienNhaCungUng = x.DaiDienNhaCungUng,
+                                    ChucVuNhaCungUng = x.ChucVuNhaCungUng,
+                                    DiaChiNhaCungUng = x.DiaChiNhaCungUng,
+                                    DienThoaiNhaCungUng = x.DienThoaiNhaCungUng,
+                                    TaiKhoanNhaCungUng = x.TaiKhoanNhaCungUng,
+                                    MaSoThueNhaCungUng = x.MaSoThue,
+                                    ListDieuKhoan = util.ConvertVarbinaryToObj<List<DieuKhoan>>(x.DieuKhoan),
+                                    DiaChiNhanHang = x.DiaChiNhanHang,
+                                    ListHang = dbContext.HopDongMuaHangChiTiet
+                                                        .Where(z=>z.HopDongId==x.Id)
+                                                        .Select(z=>new Hang{
+                                                            TenHang = z.TenHang,
+                                                            DonGia = (decimal)z.DonGia,
+                                                            DonVi = z.DonViTinh,
+                                                            SoLuong = (decimal)z.SoLuong
+                                                        }).ToList()
+                              }).Where(x=>x.Id==id).ToList();
+        return result;
+    }
+    
     public byte[] XuatHopDong(CreateHopDongDTO xuatHopDongDTO)
     {
         string hopDongPath = "./wwwroot/document/HopDongMuaBan.docx";

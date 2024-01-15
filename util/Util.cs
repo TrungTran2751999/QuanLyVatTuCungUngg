@@ -17,6 +17,8 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using Microsoft.Extensions.ObjectPool;
 using DocumentFormat.OpenXml.Office.CustomUI;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
 // using System.Data.Entity;
 namespace app.Utils;
 public class Util:IUtil{
@@ -683,5 +685,13 @@ public class Util:IUtil{
         string soNguyen = int.Parse(convertNumber.Split(".")[0]).ToString("N0").Replace(",",".");
         string thapPhan = convertNumber.Split(".").Length > 1 ? ","+convertNumber.Split(".")[1] : "";
         return soNguyen + thapPhan;
+    }
+
+    public T ConvertVarbinaryToObj<T>(byte[] base64Str)
+    {   
+        // Chuyển mảng byte thành chuỗi JSON sử dụng mã hóa UTF-8
+        string jsonString = Encoding.UTF8.GetString(base64Str);
+        T result = System.Text.Json.JsonSerializer.Deserialize<T>(jsonString);
+        return result;
     }
 }

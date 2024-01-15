@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+@Html.Partial("layout/Header")
+
+<body>
+    @Html.Partial("layout/TopBar")
+    @Html.Partial("layout/LeftBar")
+    <style>
+        .input-background{
+            background-color: white;
+            color: black;
+            border: none;
+        }
+        .input-background:focus{
+            border: none;
+            outline: none;
+        }
+        .container-hop-dong{
+            font-family: 'Times New Roman', Times, serif;
+            width: 100%;
+            padding: 0 150px;
+        }
+        .button-span{
+            width: 40px;
+            height: 40px;
+            background-color: orange;
+        }
+        .input-edit{
+            border: 1px solid rgb(48, 48, 48);
+            padding: 2px;
+        }
+        input{
+            border: none;
+        }
+        .table tbody td, .table thead th{
+            padding: 0px;
+            text-align: center;
+        }
+        .table tbody input{
+            border: none
+        }
+        .btn-trash{
+            scale: 0.7;
+        }
+        .btn-change{
+            text-align: left !important;
+            border: 1px solid white !important;
+        }
+        .form-control[readonly]{
+            background: none;
+        }
+        #dieu-khoan-thi-hanh .tieu-de-dieu-khoan{
+            font-weight: bold;
+        }
+        .dieu-khoan-thi-hanh{
+            border: 1px solid #ebe6e6;
+            border-radius: 15px;
+            padding: 15px;
+            width: 1187px
+        }
+        .input-title-quy-cach{
+            font-weight: bold;
+            width: 50%;
+        }
+        .list-btn-dieu-khoan button{
+            scale: 0.8;
+        }
+    </style>
+    <div class="page-wrapper">
+        <div class="container-fluid">
+      <!-- ============================================================== -->
+      <!-- Start Page Content -->
+      <!-- ============================================================== -->
+      <div class="row">
+        <div class="col-md-6" style="width: 100%;">
+          <div class="card">
+              <div class="card-body">
+                <h4 class="card-title"></h4>
+                <div class="form-group row">
+                
+                  <div class="container-hop-dong">
+                        <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:14pt">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</span></button>
+                        <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:14pt">Độc lập - Tự do- Hạnh phúc</span></button>
+                        <button style="width: 100%;" class="input-background"><img src="../assets/images/logo-huewaco.png" width="40px" height="40px" /></button>
+                        <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:18pt">HỢP ĐỒNG MUA BÁN</span></button>
+                        <button style="width: 100%;" class="input-background">
+                            <input id="so-hop-dong" type="text" style="font-weight: bold; width: 100%; text-align: center;" placeholder="Nhập số hợp đồng vào đây"/>
+
+                        </button>
+                        <div>- Căn cứ Luật Dân Sự của Quốc Hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, Số 91/2015/QH13 ngày 24 tháng 11 năm 2015;</div>
+                        <div>- Căn cứ Luật Thương Mại của Quốc hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, số 36/2005/QH11 ngày 14 tháng 6 năm 2005;</div>
+                        <div>- Căn cứ năng lực và nhu cầu của hai bên.</div>
+                        <div>Hôm nay, ngày 
+                        <span>
+                            <select class="select-ngay" id="select-ngay">
+                                
+                            </select>
+                        </span> 
+                        tháng 
+                        <span>
+                            <select class="select-thang" id="select-thang">
+                               
+                            </select>
+                        </span> 
+                        năm 
+                        <span>
+                            <select class="select-nam" id="select-nam">
+                                
+                            </select>
+                        </span> 
+                        , tại văn phòng Công ty Cổ phần Cấp nước Thừa Thiên Huế, chúng tôi gồm có:</div>
+                        @* BEN A *@
+                        <div>
+                            <span style="font-weight: bold;">I-Bên A.</span>
+                            <input readonly id="input-ben-a" style="font-weight: bold;width: 70%;" value="CÔNG TY CỔ PHẦN CẤP NƯỚC THỪA THIÊN HUẾ"/>
+                        </div>
+                        <div style="margin-left: 50px;">
+                            <div>
+                                <span>Đại diện: </span> <span>Ông</span> <input readonly id="input-ten-dai-dien-a" style="font-weight: bold;" value="Dương Quý Dương" /> <span>Chức vụ: </span> <input readonly id="input-chuc-vu-dai-dien-a" style="font-weight: bold;" value="Tổng Giám đốc" />
+                            </div>
+                            <div>
+                                <span>Địa chỉ: </span> <input readonly style="width: 80%;" id="input-dia-chi-a" value="103 Bùi Thị Xuân, P Phường Đúc, Tp Huế, tỉnh Thừa Thiên Huế, Việt Nam" />
+                            </div>
+                            <div>
+                                <span>Điện thoại: </span> <input readonly style="width: 15%;" id="input-dien-thoai-a" value="0234.3845673" />
+                            </div>
+                            <div>
+                                <span>Tài khoản: </span> <input readonly style="width: 60%;" id="input-stk-a" value="5511 0000 000 370 tại NH Đầu tư và Phát triển T.T Huế" />
+                            </div>
+                            <div>
+                                <span>Mã số thuế: </span> <input readonly style="width: 15%;" id="input-ma-so-thue-a" value="3300 101 491" />
+                            </div>
+                        </div>
+                        @* BEN B *@
+                        <div>
+                            <span style="font-weight: bold;">I-Bên B.</span>
+                            <input id="input-ben-b" style="font-weight: bold;width: 70%;" value="" placeholder="Nhập tên nhà cung ứng"/>
+                        </div>
+                        <div style="margin-left: 50px;">
+                            <div>
+                                <span>Đại diện: </span> 
+                                <span>
+                                    <select id="select-gioi-tinh-dai-dien-ben-b">
+                                        <option value=true>Ông</option>
+                                        <option value=false>Bà</option>
+                                    </select>
+                                </span> 
+                                <input id="input-ten-dai-dien-b" style="font-weight: bold;" value="" placeholder="Nhập tên đại diện nhà cung ứng" /> <span>Chức vụ: </span> <input id="input-chuc-vu-dai-dien-b" style="font-weight: bold;" placeholder="Nhập tên chức vụ" value="" />
+                            </div>
+                            <div>
+                                <span>Địa chỉ: </span> <input style="width: 80%;" id="input-dia-chi-b" placeholder="Nhập tên địa chỉ nhà cung ứng" value="" />
+                            </div>
+                            <div>
+                                <span>Điện thoại: </span> <input style="width: 50%;" id="input-dien-thoai-b" placeholder="Nhập điện thoại nhà cung ứng" value="" />
+                            </div>
+                            <div>
+                                <span>Tài khoản: </span> <input style="width: 60%;" id="input-stk-b" placeholder="Nhập số tài khoản nhà cung ứng" value="" />
+                            </div>
+                            <div>
+                                <span>Mã số thuế: </span> <input style="width: 15%;" placeholder="Nhập mã số thuế nhà cung ứng" id="input-ma-so-thue-b" value="" />
+                            </div>
+                        </div>
+                        @*BANG MUA HANG *@
+                        <div>Sau khi bàn bạc hai bên thỏa thuận ký hợp đồng theo các điều khoản sau: </div>
+                        <div><span style="font-weight: bold;">Điều I. Nội dung hợp đồng</span></div>
+                        <div>Bên A đồng ý mua vật tư do bên B cung cấp với quy cách, số lượng, đơn giá và tổng số tiền như sau:</div>
+                        <table id="table-mua-hang" class="table table-bordered">
+                            <thead>
+                                <th style="font-weight: bold;">TT</th>
+                                <th style="font-weight: bold;">Tên hàng</th>
+                                <th style="font-weight: bold; width: 10%">ĐVT</th>
+                                <th style="font-weight: bold; width: 10%">Số lượng</th>
+                                <th style="font-weight: bold; width: 15%">Đơn giá (đồng)</th>
+                                <th style="font-weight: bold; width: 15%">Thành tiền (đồng)</th>
+                                <th class="btn-change"></th>
+                            </thead>
+                            <tbody>
+                                <tr id="tr-1" class="row-data">
+                                    <td class="tr-stt">1</td>
+                                    <td><input placeholder="Nhập tên hàng" class="form-control input-ten-hang" oninput="onChangeThanhTien(this,1,'tenHang')" value=""/></td>
+                                    <td><input placeholder="Nhập đơn vị" class="form-control input-don-vi" oninput="onChangeThanhTien(this,1,'donVi')" value=""/></td>
+                                    <td><input placeholder="Nhập số lượng" class="form-control input-so-luong" oninput="onChangeThanhTien(this,1)" value=""/></td>
+                                    <td><input placeholder="Nhập đơn giá" class="form-control input-don-gia" oninput="onChangeThanhTien(this,1)" value=""/></td>
+                                    <td><input readonly class="form-control input-thanh-tien"/></td>
+                                    <td class="btn-change"><button class="btn btn-danger btn-trash" onclick="xoaHang(1)"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                                <tr id="row-total">
+                                    <td colspan="5" style="font-weight: bold;">Tổng cộng tiền hàng chưa VAT</td>
+                                    <td style="font-weight: bold;" id="row-total-td">0</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" style="font-weight: bold;">
+                                        Bằng chữ : <span id="chu-so-tong-cong-tien"></span>
+                                    </td>
+                                    <td style="border:1px solid white"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6"><button onclick="themHang(this)" class="btn btn-primary" style="width: 100%;"/>Thêm hàng</button>
+                                    <td class="btn-change"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        @* DIEU KHOAN THI HANH *@
+                        <div id="dieu-khoan-thi-hanh" style="width: 100%;">
+                            @* ===================================DIEU II========================================== *@
+                            <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-1" style="display: flex; gap:10px; margin-bottom: 20px;">
+                                <div id="dieu-khoan-thi-hanh-1" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')">
+                                    <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-1">Điều <span class="stt-dieu-khoan">II. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" id="title-quy-cach-1" value="Qui cách phẩm chất hàng hóa"/></div>
+                                    
+                                    <div style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-1" class="container-textarea-noi-dung-dieu-khoan">
+                                        <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-1" style="width: 100%;">
+                                            <p>- Hàng mới 100%</p>
+                                            <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                                        </textarea>
+                                        <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-1')"><i class="fas fa-pencil-alt"></i></button></div>
+                                    </div>
+                                    
+                                    <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-1" style="display: block;">
+                                        <p>- Hàng mới 100%</p>
+                                        <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                                    </div>
+                                </div>
+
+                                <div class="list-btn-dieu-khoan">
+                                    <button class="btn btn-danger btn-xoa-dieu-khoan" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-1')">&#10006;</button>
+                                    <button class="btn btn-primary btn-them-dieu-khoan" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-1')"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+
+                        </div>
+                  </div>
+                 
+                  <div class="border-top">
+                    <div class="card-body">
+                      <button onclick="xuatHopDong()" style="width: 100%;" id="update-nha-cung-ung" type="button" class="btn btn-primary">
+                           LẬP HỢP ĐỒNG 
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+      @* modal sua noi dung *@
+      <div class="modal fade" id="modal-sua-noi-dung" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Sửa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="content-sua-noi-dung"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" onclick="suaNoiDung()">Sửa</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <form style="display: none;" action="/api/hop-dong/export" method="POST">
+        <input type="text" name="data" id="input-hop-dong"/>
+        <input type="submit" id="btn-submit"/>
+    </form>
+    </div>
+    <textarea style="display: none;" id="textarea-convertHTML"></textarea>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    @Html.Partial("layout/Footer")
+    <script>
+        @* ========INIT DATA============= *@
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        function initData(){
+            $.ajax({
+                url: host + `/api/hop-dong/detail?id=${id}`
+            })
+            .done(res=>{
+                $("")
+            })
+        }
+    </script>
+    <script src="https://cdn.tiny.cloud/1/ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar/tinymce/6/tinymce.min.js"></script>
+    <script>
+    initTiniMCE('textarea-noi-dung-dieu-khoan-1');
+    setUpNgayThang();
+    function initTiniMCE(idTextarea){
+        tinymce.init({
+            selector: `textarea#${idTextarea}`,
+            language: 'vi',
+            apiKey: 'ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar',
+            plugins: 'tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            extended_valid_elements: "input[id|name|value|type|class|style]",
+            tinycomments_author: 'Author name',
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+            content_css: "../css/tinimce.css"
+        });
+    }
+    @* $(document).on("click",()=>{
+        for(let i=0; i<listAlert.length; i++){
+            $(listAlert[i]).remove();
+        }
+    }) *@
+    
+    //set up ngay thang cho select option
+    function setUpNgayThang() {
+        let selectNgay = $(".select-ngay");
+        let selectThang = $(".select-thang");
+        let selectNam = $(".select-nam");
+        let ngayHienTai = new Date().getDate();
+        let thangHienTai = new Date().getMonth()+1;
+        for(let i=0; i<selectNgay.length; i++){
+            let options = ""
+            for(let j=1; j<=31; j++){
+                let option = `<option value="${j}" ${j==ngayHienTai?"selected":""}>${j}</option>`;
+                options+=option;
+            }
+            $(selectNgay[i]).html(options);
+        }
+
+        for(let i=0; i<selectThang.length; i++){
+            let options = ""
+            for(let j=1; j<=12; j++){
+                let option = `<option value="${j}" ${j==thangHienTai?"selected":""}>${j}</option>`;
+                options+=option;
+            }
+            $(selectThang[i]).html(options);
+        }
+        for(let i=0; i<selectNam.length; i++){
+            let options="";
+            let namHienTai = new Date().getFullYear();
+            let optionNamHientai = `<option value=${namHienTai} selected>${namHienTai}</option>`;
+            let optionNamTiepTheo = `<option value=${namHienTai+1}>${namHienTai+1}</option>`;
+            options+=optionNamHientai+=optionNamTiepTheo;
+            $(selectNam[i]).html(options);
+        }
+    }
+    @* ====================================================BANG MUA HANG=================================================================== *@
+    function themHang(param){
+        let tr = $("#table-mua-hang tbody #row-total");
+        let rows = $("#table-mua-hang tbody tr");
+        let lengthRow = rows.length-2;
+        let row = 
+        `<tr id="tr-${lengthRow}" class="row-data">
+            <td class="tr-stt">${lengthRow}</td>
+            <td><input placeholder="Nhập tên hàng" class="form-control input-ten-hang" oninput="onChangeThanhTien(this,${lengthRow},'tenHang')" value=""/></td>
+            <td><input placeholder="Nhập tên đơn vị" class="form-control input-don-vi" oninput="onChangeThanhTien(this,${lengthRow},'donVi')" value=""/></td>
+            <td><input placeholder="Nhập tên số lượng" class="form-control input-so-luong" oninput="onChangeThanhTien(this,${lengthRow})" value=""/></td>
+            <td><input placeholder="Nhập tên đơn giá" class="form-control input-don-gia" oninput="onChangeThanhTien(this,${lengthRow})" value=""/></td>
+            <td><input readonly class="form-control input-thanh-tien"/></td>
+            <td class="btn-change"><button class="btn btn-danger btn-trash" onclick="xoaHang(${lengthRow})"><i class="fa fa-trash"></i></button></td>
+        </tr>`;
+        $(row).insertBefore(tr);
+        
+    }
+    let invalid = false;
+    function onChangeThanhTien(param,index,string){
+        let soLuong = $($(`#table-mua-hang .input-so-luong`)[index-1]).val();
+        let donGia = $($(`#table-mua-hang .input-don-gia`)[index-1]).val();
+        let tenHang = $($(`#table-mua-hang .input-ten-hang`)[index-1]).val();
+        let donVi = $($(`#table-mua-hang .input-don-vi`)[index-1]).val();
+        let obj = {
+            soLuong: {
+                selector: ".input-so-luong",
+                val: soLuong
+            },
+            donGia: {
+                selector: ".input-don-gia",
+                val: donGia
+            },
+            tenHang: {
+                selector: ".input-ten-hang",
+                val: tenHang
+            },
+            donVi: {
+                selector: ".input-don-vi",
+                val: donVi
+            }
+        }
+        for(let key of Object.keys(obj)){
+            let tr = $($(`#table-mua-hang ${obj[key]["selector"]}`)[index-1]);
+            if(!obj[key]["val"]){
+                $(tr).css("border","1px solid red");
+                invalid = true;
+            }else{
+                $(tr).css("border","none");
+            }
+        }
+        
+        if(!string){
+            $($(`#table-mua-hang .input-thanh-tien`)[index-1]).val(soLuong*donGia);
+            autoFillTongTien();
+        }
+    }
+
+    function nganCachSo(number){
+        let numberStr = `${number}`.split(".");
+        let result = numeral(number).format("0,0");
+        return result;
+    }
+
+    autoFillTongTien();
+    function autoFillTongTien(){
+        let soLuongRows = $(`#table-mua-hang .input-so-luong`);
+        let donGiaRows = $(`#table-mua-hang .input-don-gia`);
+        let thanhTienRows = $(`#table-mua-hang .input-thanh-tien`);
+        for(let i=0; i<soLuongRows.length; i++){
+            let soLuongVal = $(soLuongRows[i]).val();
+            let donGiaVal = $(donGiaRows[i]).val();
+
+            @* $(soLuongRows[i]).val(nganCachSo(soLuongVal)); *@
+            $(donGiaRows[i]).val(nganCachSo(donGiaVal));
+
+            @* soLuongVal = numeral($(soLuongRows[i]).val()).value(); *@
+            donGiaVal = numeral($(donGiaRows[i]).val()).value();
+
+            let result = nganCachSo(soLuongVal*donGiaVal);
+            $(thanhTienRows[i]).val(result);
+        }
+        let result = 0;
+        for(let i=0; i<thanhTienRows.length; i++){
+            let val = numeral($($(thanhTienRows)[i]).val()).value();
+            result+=val;
+        }
+        result = nganCachSo(result);
+        $("#table-mua-hang #row-total-td").text(result);
+        $("#table-mua-hang #chu-so-tong-cong-tien").text(`${doiSoThanhChu(result)} đồng`)
+    }
+    function xoaHang(id){
+        if($(".row-data").length > 1){
+            $(`#table-mua-hang #tr-${id}`).remove();
+            let rows = $("#table-mua-hang tbody tr");
+            for(let i=0; i<rows.length; i++){
+                let rowStt = $("#table-mua-hang tbody tr .tr-stt")[i];
+                $(rowStt).text(i+1);
+            }
+            autoFillTongTien();
+        }
+    }
+    @* ==================================XU LY TINIMCE(Van ban)========================================== *@
+    let idSua = "";
+    function truyenNoiDung(selector, style, paragraph){
+        let content = $(`#${selector}`).text();
+        let editor = tinymce.get(`content-sua-noi-dung`);
+        let styleContent = $(`#${selector}`).attr("style");
+        content = `<p style="${styleContent}">${content}</p>`;
+        editor.setContent(content);
+        idSua = selector;
+    }
+    function suaNoiDung(){
+        let contentSua = tinymce.get(`content-sua-noi-dung`).getContent();
+        @* contentSua =contentSua.split(">")[1].split("<")[0]; *@
+        $(`#${idSua}`).html(contentSua);
+        console.log(contentSua);
+        $("#modal-sua-noi-dung .btn-close").click();
+    }
+    function clickXuatNoidung(textareaId){
+        let textareaIdLength = textareaId.split("-");
+        let id = textareaIdLength[textareaIdLength.length-1];
+        let content = tinymce.get(textareaId).getContent();
+        $(`#noi-dung-dieu-khoan-${id}`).html(content);
+        $(`#noi-dung-dieu-khoan-${id}`).css("display","block");
+        $(`#container-textarea-noi-dung-dieu-khoan-${id}`).css("display","none");
+    }
+    function hienThiNoidung(textareaId){
+        let textareaIdLength = textareaId.split("-");
+        let id = textareaIdLength[textareaIdLength.length-1];
+        $(`#noi-dung-dieu-khoan-${id}`).css("display","none");
+        $(`#container-textarea-noi-dung-dieu-khoan-${id}`).css("display","flex");
+    }
+    function xoaDieuKhoan(dieuKhoanId){
+        let dieuKhoanIdLength = dieuKhoanId.split("-");
+        let id = dieuKhoanIdLength[dieuKhoanIdLength.length-1];
+        let tieuDeDieuKhoan = $(`#title-quy-cach-${id}`).val();
+        let dieuKhoan = $(`#tieu-de-dieu-khoan-${id}`).text();
+        if($(".container-dieu-khoan-thi-hanh").length > 1){
+            Swal.fire({
+                icon: "error",
+                title: "Cảnh báo",
+                html: `Xóa sẽ không thể khôi phục. Bạn chắc chắn muốn xóa: <strong> ${dieuKhoan}${tieuDeDieuKhoan} ?</strong>`,
+                @* showDenyButton: true, *@
+                showCancelButton: true,
+                confirmButtonText: "Xóa",
+                @* denyButtonText: `Don't save` *@
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(`#${dieuKhoanId}`).remove();
+                } else if (result.isDenied) {
+                    
+                }
+            }).then(()=>{
+                let listSttDieuKhoan = $(".stt-dieu-khoan");
+                for(let i=0; i<listSttDieuKhoan.length; i++){
+                    let stt = doiSoThanhLaMa(i+2);
+                    $(listSttDieuKhoan[i]).text(`${stt}. `);
+                }
+            })
+        }
+        
+    }
+    let stt = 1;
+    function themDieuKhoan(dieuKhoanIdInsert){
+        let listContainer = $(".container-dieu-khoan-thi-hanh");
+        let dieuKhoanIdLength = dieuKhoanIdInsert.split("-");
+        let idInsert = dieuKhoanIdLength[dieuKhoanIdLength.length-1];
+        let id = listContainer.length+1;
+        let content = 
+        `
+            <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-${id}" style="display: flex; gap:10px; margin-bottom: 20px;">
+                <div id="dieu-khoan-thi-hanh-${id}" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')">
+                    <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">II. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" /></div>
+                    
+                    <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
+                        <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
+                            
+                        </textarea>
+                        <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
+                    </div>
+                    
+                    <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
+                        
+                    </div>
+                </div>
+
+                <div class="list-btn-dieu-khoan">
+                    <button class="btn btn-danger btn-xoa-dieu-khoan" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-${id}')">&#10006;</button>
+                    <button class="btn btn-primary btn-them-dieu-khoan" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-${id}')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        `;
+        $(content).insertAfter(`#container-dieu-khoan-thi-hanh-${idInsert}`);
+        let listSttDieuKhoan = $(".stt-dieu-khoan");
+        for(let i=0; i<listSttDieuKhoan.length; i++){
+            $(listSttDieuKhoan[i]).text(`${doiSoThanhLaMa(i+2)}. `);
+        }
+        initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
+        xoaAlertTimiMCE();
+    }
+    let dieuKhoans = [
+        {
+            title: "Thời gian và phương thức giao nhận hàng",
+            content: `<p>- Thời gian giao hàng: từ 02 – 06 ngày, kể từ ngày kí kết HĐMB</p>
+	                  <p>- Địa chỉ giao hàng: <input id="input-dia-chi-giao-hang" placeholder="Nhập địa chỉ nhận hàng" value=""/></p>
+                      <p>- Bên A kiểm tra hàng nhập kho, phát triển hàng không đúng theo các điểm được quy định tại điều I và II của HĐMB, Công ty chúng tôi thật sự xin lỗi, từ chối không nhận hàng, mọi chi phí phát sinh do chuyển đổi hoặc trả lại đều do bên B thanh toán. </p>
+                      <p>- Bốc xếp: tại đầu kho bên nào thì bên đó chịu.</p>`
+        },
+        {
+            title: "Phương thức thanh toán",
+            content: `<p>- Thanh to&aacute;n bằng đồng tiền Việt Nam theo h&igrave;nh thức chuyển khoản.</p>
+                    <p>- B&ecirc;n A sẽ thanh to&aacute;n cho b&ecirc;n B 100% gi&aacute; trị tiền h&agrave;ng theo từng h&oacute;a đơn t&agrave;i ch&iacute;nh GTGT trong thời gian từ 25-30 ng&agrave;y, kể từ ng&agrave;y b&ecirc;n A nhận đủ h&agrave;ng, h&oacute;a đơn t&agrave;i ch&iacute;nh, v&agrave; c&aacute;c giấy tờ li&ecirc;n quan đến l&ocirc; h&agrave;ng từ b&ecirc;n B.</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; + <strong>Tr&aacute;ch nhiệm c&aacute;c b&ecirc;n li&ecirc;n quan</strong></p>
+                    <p>+ <strong>B&ecirc;n A:</strong> Thanh to&aacute;n tiền h&agrave;ng cho b&ecirc;n B theo điều IV của hợp đồng mua b&aacute;n.</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Tạo điều kiện về mặt bằng, nh&acirc;n sự để tiếp nhận h&agrave;ng trong thời gian sớm nhất</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Th&ocirc;ng tin cho b&ecirc;n B biết những thiếu s&oacute;t về h&agrave;ng h&oacute;a khi tiếp nhận.</p>
+                    <p>+ <strong>B&ecirc;n B:</strong> Cung cấp h&agrave;ng đ&uacute;ng thời gian, đủ số lượng, đạt chất lượng theo hợp đồng</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Cấp h&oacute;a đơn t&agrave;i ch&iacute;nh hợp lệ, bi&ecirc;n bản giao nhận h&agrave;ng</p>
+                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - C&oacute; tr&aacute;ch nhiệm đổi trả lại h&agrave;ng kh&ocirc;ng đ&uacute;ng theo cam kết trong v&ograve;ng 07 ng&agrave;y.</p>`
+        },
+        {
+            title: "Điều khoản chung",
+            content: `<p>- Hai bên cam kết thực hiện đầy đủ các điều khoản đã ghi trong hợp đồng. Nếu có vấn đề vướng mắc hai bên cùng nhau bàn bạc, giải quyết theo luật định và bằng văn bản. Trường hợp hai bên không thống nhất cách giải quyết thì đưa ra Tòa Án/Trọng tài Kinh tế Tỉnh Thừa Thiên Huế giải quyết. Phát quyết của Tòa Án/Trọng tài Kinh tế buộc hai bên phải thi hành.</p>
+	                  <p>- Hợp đồng này mặc nhiên được thanh lý sau khi hai bên thực hiện đầy đủ các điều khoản đã cam kết trong hợp đồng.</p>
+	                  <p>- Hợp đồng có hiệu lực từ ngày ký, được thành lập thành 04 bản, mỗi bên giữ 02 bản, và có giá trị pháp lý như nhau</p>`
+        }
+    ]
+    function autoThemDieuKhoan(){
+        let contents = "";
+        let listContainer = $(".container-dieu-khoan-thi-hanh");
+        for(let i=0; i<dieuKhoans.length; i++){
+            let id = i+2;
+            let content = 
+            `
+                <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-${id}" style="display: flex; gap:10px; margin-bottom: 20px;">
+                    <div id="dieu-khoan-thi-hanh-${id}" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')">
+                        <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">${doiSoThanhLaMa(id+1)}. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" value="${dieuKhoans[i].title}"/></div>
+                        
+                        <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
+                            <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
+                                ${dieuKhoans[i].content}
+                            </textarea>
+                            <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
+                        </div>
+                        
+                        <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
+                            ${dieuKhoans[i].content}
+                        </div>
+                    </div>
+
+                    <div class="list-btn-dieu-khoan">
+                        <button class="btn btn-danger btn-xoa-dieu-khoan" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-${id}')">&#10006;</button>
+                        <button class="btn btn-primary btn-them-dieu-khoan" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-${id}')"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            `;
+            $(content).insertAfter(`#container-dieu-khoan-thi-hanh-${i+1}`);
+            initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
+        }
+    }
+    autoThemDieuKhoan();
+    //bien doi noi dung tu tinimce sang html
+    function convertTiMCEToHtml(selector){
+        let content = tinymce.get(`${selector}`).getContent();
+        $("#textarea-convertHTML").html(content);
+        return $("#textarea-convertHTML").text();
+    }
+    @* ==============================================XUAT HOP DONG======================================================= *@
+    function xuatHopDong(){
+        let objData = {
+            namKiKet: $("#select-nam").val(),
+            thangKiKet: $("#select-thang").val(),
+            ngayKiKet: $("#select-ngay").val(),
+        }
+        let rowMuaHangs = $("#table-mua-hang tbody .row-data");
+        @* lay du lieu mua hang *@
+        let listHang = [];
+        for(let i=0; i<rowMuaHangs.length; i++){
+            let obj = {
+                TenHang: $($(".input-ten-hang")[i]).val(),
+                DonVi: $($(".input-don-vi")[i]).val(),
+                SoLuong: numeral($($(".input-so-luong")[i]).val()).value(),
+                DonGia: numeral($($(".input-don-gia")[i]).val()).value(),
+            }
+            listHang.push(obj);
+        }
+        let listHTMLDieuKhoan = $(".container-dieu-khoan-thi-hanh");
+        let listDieuKhoan = [];
+        for(let i=0; i<listHTMLDieuKhoan.length; i++){
+            let obj = {
+                TenDieuKhoan: $($(".tieu-de-dieu-khoan")[i]).text()+$($(".input-title-quy-cach")[i]).val(),
+                NoiDungDieuKhoan: convertTiMCEToHtml(`textarea-noi-dung-dieu-khoan-${i+1}`)
+            }
+            listDieuKhoan.push(obj);
+        }
+        let obj = 
+        {   
+            TenFile: `HopDongMuaHang${new Date().getTime()}.docx`,
+            DaiDienBenA: $("#input-ten-dai-dien-a").val().trim(),
+            DiaChiBenA: $("#input-dia-chi-a").val().trim(),
+            DienThoaiBenA: $("#input-dien-thoai-a").val().trim(),
+            TaiKhoanBenA: $("#input-stk-a").val().trim(),
+            MaSoThueBenA: $("#input-ma-so-thue-a").val().trim(),
+            SoHopDong: $("#so-hop-dong").val().trim(),
+            NgayKiKet: `${objData.namKiKet}-${objData.thangKiKet<10 ? `0${objData.thangKiKet}` : objData.thangKiKet}-${objData.ngayKiKet<10 ? `0${objData.ngayKiKet}`:objData.ngayKiKet}`,
+            NhaCungUng: $("#input-ben-b").val().trim(),
+            DaiDienNhaCungUng: $("#input-ten-dai-dien-b").val().trim(),
+            GioiTinhNhaCungUng: $("#select-gioi-tinh-dai-dien-ben-b").val().trim()=="true",
+            ChucVuNhaCungUng: $("#input-chuc-vu-dai-dien-b").val().trim(),
+            DiaChiNhaCungUng: $("#input-dia-chi-b").val().trim(),
+            DienThoaiNhaCungUng: $("#input-dien-thoai-b").val().trim(),
+            TaiKhoanNhaCungUng: $("#input-stk-b").val().trim(),
+            MaSoThueNhaCungUng: $("#input-ma-so-thue-b").val().trim(),
+            ListHang: listHang,
+            ListDieuKhoan: listDieuKhoan,
+            DiaChiNhanHang: $("#input-dia-chi-giao-hang").val()?.trim(),
+            TongTien: numeral($("#row-total-td").text()).value(),
+            ChuSoTongTien: $("#chu-so-tong-cong-tien").text(),
+            CreatedBy: +getCookie("id"),
+            UpdatedBy: +getCookie("id")
+        }
+        let validate = {
+            SoHopDong:{
+                selector: "#so-hop-dong",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Số hợp đồng không được bỏ trống"
+                }
+            },
+            DaiDienBenA:{
+                selector: "#input-ten-dai-dien-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Đại diện bên A không được bỏ trống"
+                }
+            },
+            DiaChiBenA:{
+                selector: "#input-dia-chi-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Địa chỉ bên A không được bỏ trống"
+                }
+            },
+            DienThoaiBenA:{
+                selector: "#input-dien-thoai-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Điện thoại bên A không được bỏ trống"
+                }
+            },
+            TaiKhoanBenA:{
+                selector: "#input-stk-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Số tài khoản bên A không được bỏ trống"
+                }
+            },
+            MaSoThueBenA:{
+                selector: "#input-ma-so-thue-a",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Mã số thuế bên A không được bỏ trống"
+                }
+            },
+            NhaCungUng:{
+                selector: "#input-ben-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Đại diện bên nhà cung ứng không được bỏ trống"
+                }
+            },
+            NhaCungUng:{
+                selector: "#input-ben-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Tên công ty bên nhà cung ứng không được bỏ trống"
+                }
+            },
+            DaiDienNhaCungUng:{
+                selector: "#input-ten-dai-dien-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Đại diện bên nhà cung ứng không được bỏ trống"
+                }
+            },
+            ChucVuNhaCungUng:{
+                selector: "#input-chuc-vu-dai-dien-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Chức vụ bên nhà cung ứng không được bỏ trống"
+                }
+            },
+            DiaChiNhaCungUng:{
+                selector: "#input-dia-chi-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Địa chỉ bên nhà cung ứng không được bỏ trống"
+                }
+            },
+            DienThoaiNhaCungUng:{
+                selector: "#input-dien-thoai-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Điện thoại bên nhà cung ứng không được bỏ trống"
+                }
+            },
+            TaiKhoanNhaCungUng:{
+                selector: "#input-stk-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Tài khoản bên nhà cung ứng không được bỏ trống"
+                }
+            },
+            MaSoThueNhaCungUng:{
+                selector: "#input-ma-so-thue-b",
+                type:"string",
+                required:{
+                    value: "",
+                    message: "Mã số thuế bên nhà cung ứng không được bỏ trống"
+                }
+            },
+            ListHang: {
+                type:"array",
+                required:{
+                    value: listHang,
+                    message: "Hàng giao không được bỏ trống"
+                }
+            },
+            ListDieuKhoan:{
+                type:"array",
+                required:{
+                    value: listDieuKhoan,
+                    message: "Điều khoản không được bỏ trống"
+                }
+            },
+            DiaChiNhanHang:{
+                type:"string",
+                selector: "#input-dia-chi-giao-hang",
+                required:{
+                    value: "",
+                    message: "Địa chỉ giao hàng không được bỏ trống"
+                }
+            }
+        }
+        
+        let message = ""
+        let i=0; 
+        let isValid = true;
+        for(let key of Object.keys(obj)){
+            if(validate[key]){
+                if(validate[key]["type"]=="string"){
+                    if(validate[key] && validate[key]["required"]["value"].length==0){
+                        if(!$(validate[key]["selector"]).val()){
+                            message += `<p>${validate[key]["required"]["message"]}</p>`
+                        }
+                    }
+                }else if(validate[key]["type"]=="array"){
+                    let arr = validate[key]["required"]["value"];
+                    let result = false;
+                    for(let i=0; i<arr.length; i++){
+                        for(let keyArr of Object.keys(arr[i])){
+                            if(!arr[i][keyArr]){
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        if(!isValid){
+                            message += "<p>Nội dung mua hàng hoặc nội dung điều khoản có thể bị trống</p>"
+                            break;
+                        } 
+                    }
+                }   
+            }
+        }
+        let loading = `<div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>`
+        if(message=="" && isValid){
+            console.log(obj);
+            $("#update-nha-cung-ung").attr("disabled",true);
+            $("#update-nha-cung-ung").html(loading);
+            $.ajax({
+                url: host+"/api/hop-dong",
+                headers: {
+                    "Content-Type": "application/json"
+                    },
+                method: "POST",
+                data: JSON.stringify(obj)
+            })
+            .done(()=>{
+                $("#update-nha-cung-ung").attr("disabled",false);
+                $("#update-nha-cung-ung").text("LẬP HỢP ĐỒNG");
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Thêm mới nhà cung ứng thành công !',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                $("#input-hop-dong").val(JSON.stringify(obj));
+                $("#btn-submit").click();
+            })
+            .fail(()=>{
+                $("#update-nha-cung-ung").attr("disabled",false);
+                $("#update-nha-cung-ung").html("LẬP HỢP ĐỒNG");
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Thêm mới nhà cung ứng thất bại !',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
+        }else{
+            Swal.fire({
+                position: 'center',  
+                icon: 'warning',
+                title: "Cảnh báo!",
+                html: message
+            })
+        }
+    }
+    
+</script>
+<script>
+    //an thong bao preminum cua tinimce
+    function xoaAlertTimiMCE(){
+        let interval = setInterval(()=>{
+            listAlert = $(".tox-tinymce-aux");
+            for(let i=0; i<listAlert.length; i++){
+                $(listAlert[i]).remove();
+            }
+            if(listAlert.length > 0){
+                clearInterval(interval)
+            }
+        },100);
+    }
+    xoaAlertTimiMCE();
+</script>
+</body>
+<html>

@@ -15,4 +15,5 @@ public interface IUtil{
     public List<TableRow> TaoBangHopDong(List<Hang> tableHopDongs, decimal total);
     public Paragraph InDoanVan(string str, string fontStyle, string canLe, string fontFamily, int fontSize);
     public List<Paragraph> InDieuKhoan(DieuKhoan dieuKhoanObj, string noiGiaoHang);
+    public T ConvertVarbinaryToObj<T>(byte[] base64Str);
 }

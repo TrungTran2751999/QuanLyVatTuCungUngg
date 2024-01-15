@@ -91,6 +91,18 @@
                 break;
         }
     }
+    function convertISOTime(time, type){
+        let date = time.split("T")[0];
+        let hour = time.split("T")[1];
+        let result;
+        if(type=="date"){
+            result = date.split("-").reverse().join("-")
+        }else{
+            result = date.split("-").reverse().join("-") + " " + hour;
+        }
+        return result;
+        
+    }
     function phanChiaCoBan(number){
         let arrNumber = `${number}`.split("");
         let result = "";

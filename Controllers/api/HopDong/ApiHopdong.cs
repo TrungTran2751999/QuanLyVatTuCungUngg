@@ -20,10 +20,16 @@ public class ApiHopdong:Controller{
         this.vatTuBaoGiaChiTietService = vatTuBaoGiaChiTietService;
     }
     [HttpGet]
-    public ActionResult GetAll(int pageNumber=0){
+    public ActionResult GetAll(int pageNumber=1){
         var result = hopDongSerVice.GetAll(pageNumber);
         return Ok(result);
-    }   
+    }
+    [HttpGet]
+    [Route("detail")]
+    public ActionResult GetById(Guid id){
+        var result = hopDongSerVice.GetById(id);
+        return Ok(result);
+    }
     [HttpPost]
     public ActionResult LapHopDong([FromBody] CreateHopDongDTO createHopDongDTO){
         var result = hopDongSerVice.LuuHopDong(createHopDongDTO);

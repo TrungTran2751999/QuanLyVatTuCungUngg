@@ -5,8 +5,11 @@ using System.Text.Json;
 using app.Models;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using app.Utils;
+using System.Text;
+using Newtonsoft.Json;
 namespace app.DTOs;
-
+[Serializable]
 public class CreateHopDongDTO{
     [Required]
     public string? TenFile{get;set;}
@@ -46,6 +49,7 @@ public class CreateHopDongDTO{
     public List<Hang>? ListHang{get;set;}
     [Required]
     public List<DieuKhoan>? ListDieuKhoan{get;set;}
+    public string? ListDieuKhoanStr{get;set;}
     [Required]
     public string? DiaChiNhanHang{get;set;}
     [Required]
@@ -57,7 +61,7 @@ public class CreateHopDongDTO{
     [Required]
     public long UpdatedBy{get;set;}
     public HopDongMuaHang ToModel(){
-        string strListDieuKhoan = JsonSerializer.Serialize(ListDieuKhoan);
+        string strListDieuKhoan = JsonConvert.SerializeObject(ListDieuKhoan);
         HopDongMuaHang hopDongMuaHang = new(){
             SoHopDong = SoHopDong,
             NhaCungUngId = 1,
