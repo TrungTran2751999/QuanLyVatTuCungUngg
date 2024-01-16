@@ -85,7 +85,6 @@
                         <button style="width: 100%;" class="input-background"><span style="font-weight: bold; font-size:18pt">HỢP ĐỒNG MUA BÁN</span></button>
                         <button style="width: 100%;" class="input-background">
                             <input id="so-hop-dong" type="text" style="font-weight: bold; width: 100%; text-align: center;" placeholder="Nhập số hợp đồng vào đây"/>
-
                         </button>
                         <div>- Căn cứ Luật Dân Sự của Quốc Hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, Số 91/2015/QH13 ngày 24 tháng 11 năm 2015;</div>
                         <div>- Căn cứ Luật Thương Mại của Quốc hội Nước Cộng Hòa xã hội chủ nghĩa Việt Nam, số 36/2005/QH11 ngày 14 tháng 6 năm 2005;</div>
@@ -175,7 +174,7 @@
                                 <th class="btn-change"></th>
                             </thead>
                             <tbody>
-                                <tr id="tr-1" class="row-data">
+                                @* <tr id="tr-1" class="row-data">
                                     <td class="tr-stt">1</td>
                                     <td><input placeholder="Nhập tên hàng" class="form-control input-ten-hang" oninput="onChangeThanhTien(this,1,'tenHang')" value=""/></td>
                                     <td><input placeholder="Nhập đơn vị" class="form-control input-don-vi" oninput="onChangeThanhTien(this,1,'donVi')" value=""/></td>
@@ -183,7 +182,7 @@
                                     <td><input placeholder="Nhập đơn giá" class="form-control input-don-gia" oninput="onChangeThanhTien(this,1)" value=""/></td>
                                     <td><input readonly class="form-control input-thanh-tien"/></td>
                                     <td class="btn-change"><button class="btn btn-danger btn-trash" onclick="xoaHang(1)"><i class="fa fa-trash"></i></button></td>
-                                </tr>
+                                </tr> *@
                                 <tr id="row-total">
                                     <td colspan="5" style="font-weight: bold;">Tổng cộng tiền hàng chưa VAT</td>
                                     <td style="font-weight: bold;" id="row-total-td">0</td>
@@ -195,7 +194,7 @@
                                     <td style="border:1px solid white"></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="6"><button onclick="themHang(this)" class="btn btn-primary" style="width: 100%;"/>Thêm hàng</button>
+                                    <td colspan="6"><button id="btn-them-hang" onclick="themHang(this)" class="btn btn-primary" style="width: 100%;"/>Thêm hàng</button>
                                     <td class="btn-change"></td>
                                 </tr>
                             </tbody>
@@ -203,7 +202,7 @@
                         @* DIEU KHOAN THI HANH *@
                         <div id="dieu-khoan-thi-hanh" style="width: 100%;">
                             @* ===================================DIEU II========================================== *@
-                            <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-1" style="display: flex; gap:10px; margin-bottom: 20px;">
+                            @* <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-1" style="display: flex; gap:10px; margin-bottom: 20px;">
                                 <div id="dieu-khoan-thi-hanh-1" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')">
                                     <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-1">Điều <span class="stt-dieu-khoan">II. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" id="title-quy-cach-1" value="Qui cách phẩm chất hàng hóa"/></div>
                                     
@@ -225,7 +224,7 @@
                                     <button class="btn btn-danger btn-xoa-dieu-khoan" onclick="xoaDieuKhoan('container-dieu-khoan-thi-hanh-1')">&#10006;</button>
                                     <button class="btn btn-primary btn-them-dieu-khoan" onclick="themDieuKhoan('container-dieu-khoan-thi-hanh-1')"><i class="fas fa-plus"></i></button>
                                 </div>
-                            </div>
+                            </div> *@
 
                         </div>
                   </div>
@@ -274,19 +273,23 @@
     <!-- ============================================================== -->
     @Html.Partial("layout/Footer")
     <script>
-        @* ========INIT DATA============= *@
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
-
-        function initData(){
-            $.ajax({
-                url: host + `/api/hop-dong/detail?id=${id}`
-            })
-            .done(res=>{
-                $("")
-            })
+        //an thong bao preminum cua tinimce
+        function xoaAlertTimiMCE(){
+            let interval = setInterval(()=>{
+                listAlert = $(".tox-tinymce-aux");
+                for(let i=0; i<listAlert.length; i++){
+                    $(listAlert[i]).remove();
+                }
+                if(listAlert.length > 0){
+                    clearInterval(interval)
+                }
+            },100);
         }
+        xoaAlertTimiMCE();
     </script>
+
     <script src="https://cdn.tiny.cloud/1/ipaf1tr37wfipq9n2hqeqd5u43x2ifhaixpymru0h2uc10ar/tinymce/6/tinymce.min.js"></script>
     <script>
     initTiniMCE('textarea-noi-dung-dieu-khoan-1');
@@ -353,11 +356,11 @@
         `<tr id="tr-${lengthRow}" class="row-data">
             <td class="tr-stt">${lengthRow}</td>
             <td><input placeholder="Nhập tên hàng" class="form-control input-ten-hang" oninput="onChangeThanhTien(this,${lengthRow},'tenHang')" value=""/></td>
-            <td><input placeholder="Nhập tên đơn vị" class="form-control input-don-vi" oninput="onChangeThanhTien(this,${lengthRow},'donVi')" value=""/></td>
-            <td><input placeholder="Nhập tên số lượng" class="form-control input-so-luong" oninput="onChangeThanhTien(this,${lengthRow})" value=""/></td>
-            <td><input placeholder="Nhập tên đơn giá" class="form-control input-don-gia" oninput="onChangeThanhTien(this,${lengthRow})" value=""/></td>
+            <td><input placeholder="Nhập đơn vị" class="form-control input-don-vi" oninput="onChangeThanhTien(this,${lengthRow},'donVi')" value=""/></td>
+            <td><input placeholder="Nhập số lượng" class="form-control input-so-luong" oninput="onChangeThanhTien(this,${lengthRow})" value=""/></td>
+            <td><input placeholder="Nhập đơn giá" class="form-control input-don-gia" oninput="onChangeThanhTien(this,${lengthRow})" value=""/></td>
             <td><input readonly class="form-control input-thanh-tien"/></td>
-            <td class="btn-change"><button class="btn btn-danger btn-trash" onclick="xoaHang(${lengthRow})"><i class="fa fa-trash"></i></button></td>
+            <td class="btn-change"><button class="btn btn-danger btn-trash btn-xoa-hang" onclick="xoaHang(${lengthRow})"><i class="fa fa-trash"></i></button></td>
         </tr>`;
         $(row).insertBefore(tr);
         
@@ -545,53 +548,27 @@
         initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
         xoaAlertTimiMCE();
     }
-    let dieuKhoans = [
-        {
-            title: "Thời gian và phương thức giao nhận hàng",
-            content: `<p>- Thời gian giao hàng: từ 02 – 06 ngày, kể từ ngày kí kết HĐMB</p>
-	                  <p>- Địa chỉ giao hàng: <input id="input-dia-chi-giao-hang" placeholder="Nhập địa chỉ nhận hàng" value=""/></p>
-                      <p>- Bên A kiểm tra hàng nhập kho, phát triển hàng không đúng theo các điểm được quy định tại điều I và II của HĐMB, Công ty chúng tôi thật sự xin lỗi, từ chối không nhận hàng, mọi chi phí phát sinh do chuyển đổi hoặc trả lại đều do bên B thanh toán. </p>
-                      <p>- Bốc xếp: tại đầu kho bên nào thì bên đó chịu.</p>`
-        },
-        {
-            title: "Phương thức thanh toán",
-            content: `<p>- Thanh to&aacute;n bằng đồng tiền Việt Nam theo h&igrave;nh thức chuyển khoản.</p>
-                    <p>- B&ecirc;n A sẽ thanh to&aacute;n cho b&ecirc;n B 100% gi&aacute; trị tiền h&agrave;ng theo từng h&oacute;a đơn t&agrave;i ch&iacute;nh GTGT trong thời gian từ 25-30 ng&agrave;y, kể từ ng&agrave;y b&ecirc;n A nhận đủ h&agrave;ng, h&oacute;a đơn t&agrave;i ch&iacute;nh, v&agrave; c&aacute;c giấy tờ li&ecirc;n quan đến l&ocirc; h&agrave;ng từ b&ecirc;n B.</p>
-                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; + <strong>Tr&aacute;ch nhiệm c&aacute;c b&ecirc;n li&ecirc;n quan</strong></p>
-                    <p>+ <strong>B&ecirc;n A:</strong> Thanh to&aacute;n tiền h&agrave;ng cho b&ecirc;n B theo điều IV của hợp đồng mua b&aacute;n.</p>
-                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Tạo điều kiện về mặt bằng, nh&acirc;n sự để tiếp nhận h&agrave;ng trong thời gian sớm nhất</p>
-                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Th&ocirc;ng tin cho b&ecirc;n B biết những thiếu s&oacute;t về h&agrave;ng h&oacute;a khi tiếp nhận.</p>
-                    <p>+ <strong>B&ecirc;n B:</strong> Cung cấp h&agrave;ng đ&uacute;ng thời gian, đủ số lượng, đạt chất lượng theo hợp đồng</p>
-                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - Cấp h&oacute;a đơn t&agrave;i ch&iacute;nh hợp lệ, bi&ecirc;n bản giao nhận h&agrave;ng</p>
-                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - C&oacute; tr&aacute;ch nhiệm đổi trả lại h&agrave;ng kh&ocirc;ng đ&uacute;ng theo cam kết trong v&ograve;ng 07 ng&agrave;y.</p>`
-        },
-        {
-            title: "Điều khoản chung",
-            content: `<p>- Hai bên cam kết thực hiện đầy đủ các điều khoản đã ghi trong hợp đồng. Nếu có vấn đề vướng mắc hai bên cùng nhau bàn bạc, giải quyết theo luật định và bằng văn bản. Trường hợp hai bên không thống nhất cách giải quyết thì đưa ra Tòa Án/Trọng tài Kinh tế Tỉnh Thừa Thiên Huế giải quyết. Phát quyết của Tòa Án/Trọng tài Kinh tế buộc hai bên phải thi hành.</p>
-	                  <p>- Hợp đồng này mặc nhiên được thanh lý sau khi hai bên thực hiện đầy đủ các điều khoản đã cam kết trong hợp đồng.</p>
-	                  <p>- Hợp đồng có hiệu lực từ ngày ký, được thành lập thành 04 bản, mỗi bên giữ 02 bản, và có giá trị pháp lý như nhau</p>`
-        }
-    ]
-    function autoThemDieuKhoan(){
+    
+    function autoThemDieuKhoan(dieuKhoans){
         let contents = "";
         let listContainer = $(".container-dieu-khoan-thi-hanh");
         for(let i=0; i<dieuKhoans.length; i++){
-            let id = i+2;
+            let id = i+1;
             let content = 
             `
                 <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-${id}" style="display: flex; gap:10px; margin-bottom: 20px;">
                     <div id="dieu-khoan-thi-hanh-${id}" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')">
-                        <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">${doiSoThanhLaMa(id+1)}. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" value="${dieuKhoans[i].title}"/></div>
+                        <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">${doiSoThanhLaMa(id+1)}. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" value="${dieuKhoans[i].tenDieuKhoan.split(".")[1]?.trim()}"/></div>
                         
                         <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
                             <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
-                                ${dieuKhoans[i].content}
+                                ${dieuKhoans[i].noiDungDieuKhoan}
                             </textarea>
                             <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
                         </div>
                         
                         <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
-                            ${dieuKhoans[i].content}
+                            ${dieuKhoans[i].noiDungDieuKhoan}
                         </div>
                     </div>
 
@@ -601,11 +578,14 @@
                     </div>
                 </div>
             `;
-            $(content).insertAfter(`#container-dieu-khoan-thi-hanh-${i+1}`);
-            initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
+            contents+=content
+            $(`#dieu-khoan-thi-hanh`).html(contents);
+        }
+        for(let i=0; i<dieuKhoans.length; i++){
+            initTiniMCE(`textarea-noi-dung-dieu-khoan-${i+1}`);
         }
     }
-    autoThemDieuKhoan();
+    
     //bien doi noi dung tu tinimce sang html
     function convertTiMCEToHtml(selector){
         let content = tinymce.get(`${selector}`).getContent();
@@ -642,6 +622,7 @@
         }
         let obj = 
         {   
+            Id: id,
             TenFile: `HopDongMuaHang${new Date().getTime()}.docx`,
             DaiDienBenA: $("#input-ten-dai-dien-a").val().trim(),
             DiaChiBenA: $("#input-dia-chi-a").val().trim(),
@@ -840,7 +821,7 @@
             $("#update-nha-cung-ung").attr("disabled",true);
             $("#update-nha-cung-ung").html(loading);
             $.ajax({
-                url: host+"/api/hop-dong",
+                url: host+"/api/hop-dong/update",
                 headers: {
                     "Content-Type": "application/json"
                     },
@@ -853,7 +834,7 @@
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    title: 'Thêm mới nhà cung ứng thành công !',
+                    title: 'Cập nhật nhà cung ứng thành công !',
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -866,7 +847,7 @@
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
-                    title: 'Thêm mới nhà cung ứng thất bại !',
+                    title: 'Cập nhật nhà cung ứng thất bại !',
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -883,19 +864,54 @@
     
 </script>
 <script>
-    //an thong bao preminum cua tinimce
-    function xoaAlertTimiMCE(){
-        let interval = setInterval(()=>{
-            listAlert = $(".tox-tinymce-aux");
-            for(let i=0; i<listAlert.length; i++){
-                $(listAlert[i]).remove();
+    @* ========INIT DATA============= *@
+
+    function initData(){
+        $.ajax({
+            url: host + `/api/hop-dong/detail?id=${id}`
+        })
+        .done(res=>{
+            $("#so-hop-dong").val(res.soHopDong);
+            $("#select-ngay").val(new Date(res.ngayKiKet).getDate());
+            $("#select-thang").val(new Date(res.ngayKiKet).getMonth()+1);
+            $("#select-nam").val(new Date(res.ngayKiKet).getFullYear());
+            $("#input-ben-b").val(res.nhaCungUng);
+            $("#select-gioi-tinh-dai-dien-ben-b").val(`${res.gioiTinhNhaCungUng}`);
+            $("#input-chuc-vu-dai-dien-b").val(res.chucVuNhaCungUng);
+            $("#input-ten-dai-dien-b").val(res.daiDienNhaCungUng);
+            $("#input-dia-chi-b").val(res.diaChiNhaCungUng);
+            $("#input-dien-thoai-b").val(res.dienThoaiNhaCungUng);
+            $("#input-stk-b").val(res.taiKhoanNhaCungUng);
+            $("#input-ma-so-thue-b").val(res.maSoThueNhaCungUng);
+            //input list hang
+            let tableMuaHang = $("#table-mua-hang");
+            let listHang = res.listHang;
+            let tr = $("#table-mua-hang tbody #row-total");
+            let rows = ""
+
+            for(let i=0; i<listHang.length; i++){
+                let row = `
+                    <tr id="tr-${i+1}" class="row-data">
+                        <td class="tr-stt">${i+1}</td>
+                        <td><input placeholder="Nhập tên hàng" class="form-control input-ten-hang" oninput="onChangeThanhTien(this,${i+1},'tenHang')" value="${res.listHang[i].tenHang}"/></td>
+                        <td><input placeholder="Nhập đơn vị" class="form-control input-don-vi" oninput="onChangeThanhTien(this,${i+1},'donVi')" value="${res.listHang[i].donVi}"/></td>
+                        <td><input placeholder="Nhập số lượng" class="form-control input-so-luong" oninput="onChangeThanhTien(this,${i+1})" value="${numeral(res.listHang[i].soLuong).value()}"/></td>
+                        <td><input placeholder="Nhập đơn giá" class="form-control input-don-gia" oninput="onChangeThanhTien(this,${i+1})" value="${nganCachSo(res.listHang[i].donGia)}"/></td>
+                        <td><input readonly class="form-control input-thanh-tien" value="${nganCachSo(res.listHang[i].donGia*res.listHang[i].soLuong)}"/></td>
+                        <td class="btn-change"><button class="btn btn-danger btn-trash btn-xoa-hang" onclick="xoaHang(${i+1})"><i class="fa fa-trash"></i></button></td>
+                    </tr>`;
+                rows+=row;
             }
-            if(listAlert.length > 0){
-                clearInterval(interval)
-            }
-        },100);
+           
+            $(rows).insertBefore(tr);
+            $("#btn-them-hang").click();
+            let rowTotal = $("#table-mua-hang tbody tr");
+            $($(".btn-xoa-hang")[rowTotal.length-3-1]).click();
+            //input list dieu khoan
+            autoThemDieuKhoan(res.listDieuKhoan);
+        })
     }
-    xoaAlertTimiMCE();
+    initData();
 </script>
 </body>
 <html>

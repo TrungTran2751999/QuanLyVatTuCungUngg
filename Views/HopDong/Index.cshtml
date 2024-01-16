@@ -104,8 +104,8 @@
                     `;
                     rows+=row;
                 }
-                @* $(rows).insertBefore("#table-data tbody") *@
-                $("#table-data tbody").html(rows);
+                $(rows).insertBefore("#table-data tbody")
+                @* $("#table-data tbody").html(rows); *@
             })
         }
         intData();

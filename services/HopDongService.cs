@@ -24,6 +24,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 using app.Utils;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using ZstdSharp.Unsafe;
 
 // using System.Data.Entity;
 namespace app.Services;
@@ -53,7 +54,7 @@ public class HopDongService : IHopdongSerVice
                                                     }).ToList();
         return listHopDongMuaHang;
     }
-    public List<HopDongResponse> GetById(Guid id){
+    public HopDongResponse GetById(Guid id){
         var result = dbContext.HopDongMuaHang
                               .Select(x=>new HopDongResponse{
                                     Id = x.Id,
@@ -77,7 +78,7 @@ public class HopDongService : IHopdongSerVice
                                                             DonVi = z.DonViTinh,
                                                             SoLuong = (decimal)z.SoLuong
                                                         }).ToList()
-                              }).Where(x=>x.Id==id).ToList();
+                              }).Where(x=>x.Id==id).FirstOrDefault();
         return result;
     }
     
@@ -156,7 +157,7 @@ public class HopDongService : IHopdongSerVice
             return result;
         }
     }
-    public string LuuHopDong(CreateHopDongDTO createHopDongDTO)
+    public async Task<string> LuuHopDong(CreateHopDongDTO createHopDongDTO)
     {
         using(var transaction = dbContext.Database.BeginTransaction()){
             try{
@@ -167,6 +168,32 @@ public class HopDongService : IHopdongSerVice
                 List<HopDongMuaHangChiTiet> listHopDongMuaHang = createHopDongDTO.ToListModelHang(hopDong.Id);
                 dbContext.HopDongMuaHangChiTiet.AddRange(listHopDongMuaHang);
                 dbContext.SaveChanges();
+                
+                transaction.Commit();
+                return "OK";
+            }catch(Exception e){
+                Console.WriteLine(e);
+                transaction.Rollback();
+                return "FAIL";
+            }
+        }
+    }
+
+    public async Task<string> CapNhatHopDong(CreateHopDongDTO createHopDongDTO)
+    {
+        using(var transaction = dbContext.Database.BeginTransaction()){
+            try{
+
+                var hopDong = dbContext.HopDongMuaHang.Where(x=>x.Id==createHopDongDTO.Id).FirstOrDefault();
+                if(hopDong==null) return "NOT OK"; 
+
+                hopDong = createHopDongDTO.ToModelUpdate(hopDong, createHopDongDTO);
+                
+                dbContext.SaveChanges();
+            
+                // List<HopDongMuaHangChiTiet> listHopDongMuaHang = createHopDongDTO.ToListModelHang(hopDong.Id);
+                // dbContext.HopDongMuaHangChiTiet.AddRange(listHopDongMuaHang);
+                // dbContext.SaveChanges();
                 
                 transaction.Commit();
                 return "OK";

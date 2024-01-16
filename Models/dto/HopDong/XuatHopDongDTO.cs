@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 namespace app.DTOs;
 [Serializable]
 public class CreateHopDongDTO{
+    public Guid? Id{get;set;}
     [Required]
     public string? TenFile{get;set;}
     // [Required]
@@ -98,6 +99,25 @@ public class CreateHopDongDTO{
                         }
                      ).ToList();
         return result;
+    }
+    public HopDongMuaHang ToModelUpdate(HopDongMuaHang model, CreateHopDongDTO createHopDongDTO){
+        string strListDieuKhoan = JsonConvert.SerializeObject(createHopDongDTO.ListDieuKhoan);
+        model.SoHopDong = createHopDongDTO.SoHopDong;
+        model.NhaCungUngId = 1;
+        model.TenNhaCungUng = createHopDongDTO.NhaCungUng;
+        model.GioiTinhNhaCungUng = createHopDongDTO.GioiTinhNhaCungUng;
+        model.DiaChiNhanHang = createHopDongDTO.DiaChiNhanHang;
+        model.DieuKhoan = System.Text.Encoding.UTF8.GetBytes(strListDieuKhoan);
+        model.DaiDienNhaCungUng = createHopDongDTO.DiaChiNhaCungUng;
+        model.ChucVuNhaCungUng = createHopDongDTO.ChucVuNhaCungUng;
+        model.DiaChiNhaCungUng = createHopDongDTO.DiaChiNhaCungUng;
+        model.DienThoaiNhaCungUng = createHopDongDTO.DienThoaiNhaCungUng;
+        model.TaiKhoanNhaCungUng = createHopDongDTO.TaiKhoanNhaCungUng;
+        model.MaSoThue = createHopDongDTO.MaSoThueNhaCungUng;
+        model.NgayKiKet = createHopDongDTO.NgayKiKet;
+        model.UpdatedBy = createHopDongDTO.UpdatedBy;
+        model.UpdatedAt = DateTime.Now;
+        return model;
     }
 }
 public class Hang{

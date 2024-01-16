@@ -31,8 +31,8 @@ public class ApiHopdong:Controller{
         return Ok(result);
     }
     [HttpPost]
-    public ActionResult LapHopDong([FromBody] CreateHopDongDTO createHopDongDTO){
-        var result = hopDongSerVice.LuuHopDong(createHopDongDTO);
+    public async Task<ActionResult> LapHopDong([FromBody] CreateHopDongDTO createHopDongDTO){
+        var result = await hopDongSerVice.LuuHopDong(createHopDongDTO);
         if(result!="OK") return BadRequest(result);
         return Ok(result);
     }
@@ -43,5 +43,12 @@ public class ApiHopdong:Controller{
         var result = hopDongSerVice.XuatHopDong(createHopDongDTO);
         
         return File(result, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", createHopDongDTO?.TenFile+".docx"); 
+    }
+    [HttpPost]
+    [Route("update")]
+    public async Task<ActionResult> CapNhatHopDong([FromBody] CreateHopDongDTO createHopDongDTO){
+        var result = await hopDongSerVice.CapNhatHopDong(createHopDongDTO);
+        if(result!="OK") return BadRequest(result);
+        return Ok(result);
     }
 }
