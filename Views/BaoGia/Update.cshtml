@@ -115,7 +115,7 @@
                 </tbody>
             </table>
         </div>
-    
+
         @* <div id="caption-tong-hop" style="display:none; width: 100%;">BÁO GIÁ</div> *@
         @* ========================================TABLE TONG HOP================================================ *@
             <button onclick="quayLai()" id="btn-quay-lai" class="btn btn-danger" style="display: none;">QUAY LẠI</button>
@@ -149,6 +149,53 @@
         @* <ul id="pagination" class="pagination"></ul> *@
         
     </div>
+    @* ===============modal lap hop dong=================== *@
+    <div class="modal fade" id="modal-lap-hop-dong" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">LẬP HỢP ĐỒNG</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table style="margin: 0 auto;" id="table-filter">
+                    <tbody>
+                        <tr style="margin-bottom: 10px;">
+                            <td style="font-weight: bold; font-size: 8pt">NHÀ CUNG ỨNG: </td>
+                            <td>
+                                <select style="width: 100%;" class="form-select" id="select-nha-cung-ung">
+                                    <option value="" disabled selected>---CHỌN NHÀ CUNG ỨNG---</option>
+                                    
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="margin-bottom: 10px;">
+                            <td style="font-weight: bold; font-size: 8pt">NGÀY KÍ KẾT: </td>
+                            <td>
+                                <input id="ngay-ki-ket" class="form-control" type="date" value=""/>
+                            </td>
+                        </tr>
+                        <tr style="margin-bottom: 10px;">
+                            <td style="font-weight: bold; font-size: 8pt">ĐỊA CHỈ NHẬN HÀNG: </td>
+                            <td>
+                                <input id="dia-chi-nhan-hang" class="form-control" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" onclick="lapHopDong()">Xác nhận</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <button id="btn-modal-lap-hop-dong" data-bs-toggle="modal" data-bs-target="#modal-lap-hop-dong" style="display: none;"></button>
+    <form action="/hop-dong/create" method="POST">
+        <input id="input-hop-dong" name="data"/>
+        <input type="submit" id="submit-hop-dong" />
+    </form>
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
     <!-- ============================================================== -->
@@ -368,11 +415,13 @@
         $("#table-data").on("contextmenu",(e)=>{
             e.preventDefault();
             Swal.fire({
-                title: "Bạn muốn lập báo giá?",
-                showDenyButton: false,
+                icon: "question",
+                title: "Thông báo",
+                text: "Bạn muốn cập nhật báo giá hay lập hợp đồng ?",
+                showDenyButton: true,
                 showCancelButton: true,
-                confirmButtonText: "Tổng hợp",
-                denyButtonText: ``,
+                confirmButtonText: "Cập nhật báo giá",
+                denyButtonText: `Lập hợp đồng`,
                 cancelButtonText: "Hủy"
             }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
@@ -382,10 +431,78 @@
                 if(result) callApiLapBaoGia();
             } else if (result.isDenied) {
                 @* exportToExcel() *@
+                //do du lieu nha cung ung vao droplist
+                $.ajax({
+                    url: host + `/api/bao-gia/nha-cung-ung?baoGiaId=${id}`
+                })
+                .done(res=>{
+                    let rows = ""
+                    for(let i=0; i<res.length; i++){
+                        let row = `
+                            <option value="${res[i].idNhaCungUng}">${res[i].tenNhaCungUng}</option>
+                        `;
+                        rows+=row;
+                    }
+                    $("#select-nha-cung-ung").append(rows);
+                })
+                $("#btn-modal-lap-hop-dong").click();
             }
             });
             //lay du lieu tu table tong hop xuat file excel va luu du lieu vao database
         })
+        //LAP HOP DONG========================================================================
+        let ngay = new Date().getDate() >= 10 ? new Date().getDate() : `0${new Date().getDate()}`;
+        let thang = new Date().getMonth()+1 >= 10 ? new Date().getMonth()+1 : `0${new Date().getMonth()+1}`;
+        let nam = new Date().getFullYear();
+        let toDay = `${nam}-${thang}-${ngay}`;
+       
+        $("#ngay-ki-ket").val(toDay)
+        function lapHopDong(){
+            let obj = {
+                BaoGiaId: id,
+                NhaCungUngId: $("#select-nha-cung-ung").val(),
+                NgayKiKet: $("#ngay-ki-ket").val(),
+                DiaChiNhanHang: $("#dia-chi-nhan-hang").val()
+            }
+            let validate = {
+                BaoGiaId: "Báo giá id",
+                NhaCungUngId: "Nhà cung ứng",
+                NgayKiKet: "Ngày kí kết",
+                DiaChiNhanHang: "Địa chỉ nhận hàng"
+            }
+            let messageErr = ""
+            for(let key of Object.keys(obj)){
+                if(!obj[key]){
+                    messageErr+=validate[key] + " không được bỏ trống\n"
+                }
+            }
+            if(messageErr) return alert(messageErr);
+            $.ajax({
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                url: host + "/api/bao-gia/hop-dong",
+                method: "POST",
+                data: JSON.stringify(obj)
+            })
+            .done(res=>{
+                for(let key of Object.keys(res)){
+                    let value = res[key]
+                    key = key.charAt(0).toUpperCase() + key.slice(1);
+                    res[key] = value
+                }
+                for(let i=0; i<res.listHang.length; i++){
+                    for(let key of Object.keys(res.listHang[i])){
+                        let value = res.listHang[i][key]
+                        key = key.charAt(0).toUpperCase() + key.slice(1);
+                        res.listHang[i][key] = value
+                    }
+                }
+                $("#input-hop-dong").val(JSON.stringify(res))
+                $("#submit-hop-dong").click();
+            })
+        }
+        
         let isTongHop = false
         function lapTongHop(){
             //validate du lieu truoc khi tong hop

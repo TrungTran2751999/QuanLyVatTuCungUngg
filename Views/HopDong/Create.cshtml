@@ -884,5 +884,52 @@
     }
     xoaAlertTimiMCE();
 </script>
+<script>
+    @* ==========================INIT DATA========================================= *@
+    let data = @Html.Raw(Json.Serialize(ViewBag.result));
+    @* lay du lieu tu bao gia de khoi tao gia tri cho hop dong *@
+    console.log(data)
+    function initData(){
+        if(data.nhaCungUng){
+            let ngay = +data.ngayKiKet.split("T")[0].split("-")[2];
+            let thang = +data.ngayKiKet.split("T")[0].split("-")[1];
+            let nam = +data.ngayKiKet.split("T")[0].split("-")[0];
+            $("#so-hop-dong").val(data.soHopDong);
+            $("#select-ngay").val(ngay);
+            $("#select-thang").val(thang);
+            $("#select-nam").val(nam);
+            $("#input-ben-b").val(data.nhaCungUng.toUpperCase());
+            $("#select-gioi-tinh-dai-dien-ben-b").val(`${data.gioiTinhNhaCungUng}`);
+            $("#input-ten-dai-dien-b").val(data.daiDienNhaCungUng);
+            $("#input-chuc-vu-dai-dien-b").val(data.chucVuNhaCungUng);
+            $("#input-dia-chi-b").val(data.diaChiNhaCungUng);
+            $("#input-dien-thoai-b").val(data.dienThoaiNhaCungUng);
+            $("#input-stk-b").val(data.taiKhoanNhaCungUng);
+            $("#input-ma-so-thue-b").val(data.maSoThueNhaCungUng);
+            $("#input-dia-chi-giao-hang").val(data.diaChiNhanHang);
+            let tableMuaHang = $("#table-mua-hang");
+            let listHang = data.listHang;
+            let tr = $("#table-mua-hang tbody #row-total");
+            let rows = ""
+            $($("#table-mua-hang tbody .row-data")[0]).remove();
+            for(let i=0; i<listHang.length; i++){
+                let row = `
+                    <tr id="tr-${i+1}" class="row-data">
+                        <td class="tr-stt">${i+1}</td>
+                        <td><input placeholder="Nhập tên hàng" class="form-control input-ten-hang" oninput="onChangeThanhTien(this,${i+1},'tenHang')" value="${data.listHang[i].tenHang}"/></td>
+                        <td><input placeholder="Nhập đơn vị" class="form-control input-don-vi" oninput="onChangeThanhTien(this,${i+1},'donVi')" value="${data.listHang[i].donVi}"/></td>
+                        <td><input placeholder="Nhập số lượng" class="form-control input-so-luong" oninput="onChangeThanhTien(this,${i+1})" value="${numeral(data.listHang[i].soLuong).value()}"/></td>
+                        <td><input placeholder="Nhập đơn giá" class="form-control input-don-gia" oninput="onChangeThanhTien(this,${i+1})" value="${nganCachSo(data.listHang[i].donGia)}"/></td>
+                        <td><input readonly class="form-control input-thanh-tien" value="${nganCachSo(data.listHang[i].donGia*data.listHang[i].soLuong)}"/></td>
+                        <td class="btn-change"><button class="btn btn-danger btn-trash btn-xoa-hang" onclick="xoaHang(${i+1})"><i class="fa fa-trash"></i></button></td>
+                    </tr>`;
+                rows+=row;
+            }
+            $($(".btn-trash")[0]).click();
+            $(rows).insertBefore(tr);
+        }
+    }
+    initData()
+</script>
 </body>
 <html>

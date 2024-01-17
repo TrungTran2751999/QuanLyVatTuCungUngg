@@ -10,9 +10,21 @@
             background-color: #34b7eb;
             color: black;
             font-size: 16px;
+            padding: 0px;
+            text-align: center;
+            border: 1px solid #d7d7d7;
+            text-align: center;
+            vertical-align: middle;
         }
         #table-data tr td{
-            color: black
+            color: black;
+            text-align: center;
+            border: 1px solid #d7d7d7;
+            padding-top: 0px;
+            vertical-align: middle;
+        }
+        #table-data{
+            background-color: white;
         }
     </style>
     <div class="page-wrapper">
@@ -40,7 +52,7 @@
             <table class="table" id="table-data" data-show-columns="true">
                 <thead>
                     <th>STT</th>
-                    <th>MÃ BÁO GIÁ</th>
+                    <th style="min-width: 250px;">MÃ BÁO GIÁ</th>
                     <th style="min-width: 250px;">NGƯỜI TẠO</th>
                     <th style="min-width: 250px;">NGÀY TẠO</th>
                     <th style="min-width: 250px;">NGÀY CẬP NHẬT</th>
@@ -49,6 +61,7 @@
                     
                 </tbody>
             </table>
+            <button class="btn btn-primary" style="width: 20%; margin-left: 40%;" onclick="initData()">XEM THÊM</button>
         </div>
     </div>
     <!-- ============================================================== -->
@@ -90,27 +103,30 @@
         }
 
         //======INIT DATA==========
-        $.ajax({
-            url: host + "/api/bao-gia?isDeleted=false"
-        })
-        .done(res=>{
-            let rows = ""
-            for(let i=0; i<res.length; i++){
-                let row = `
-                <tr class="${res[i].id}">
-                    <td>${i+1}</td>
-                    <td><a href="/bao-gia/cap-nhat?id=${res[i].id}">${res[i].maBaoGia}</a></td>
-                    <td data-id="${res[i].userId}">${res[i].userBaoGia}</td>  
-                    <td>${convertDateTime(res[i].createdTime, "true")}</td>
-                    <td>${convertDateTime(res[i].updatedTime, "true")}</td>
-                </tr>`;
-                rows+=row;
-            }
-            $("#table-data tbody").append(rows);
-        })
-        .fail(err=>{
-            console.log(err);
-        })
+        let page = 0;
+        function initData(){
+            page++;
+            $.ajax({
+                url: host + `/api/bao-gia?isDeleted=false&page=${page}`
+            })
+            .done(res=>{
+                let countRow = $("#table-data tbody tr").length;
+                let rows = ""
+                for(let i=0; i<res.length; i++){
+                    let row = `
+                    <tr class="${res[i].id}">
+                        <td>${++countRow}</td>
+                        <td><a href="/bao-gia/cap-nhat?id=${res[i].id}">${res[i].maBaoGia}</a></td>
+                        <td data-id="${res[i].userId}">${res[i].userBaoGia}</td>  
+                        <td>${convertDateTime(res[i].createdTime, "true")}</td>
+                        <td>${convertDateTime(res[i].updatedTime, "true")}</td>
+                    </tr>`;
+                    rows+=row;
+                }
+                $("#table-data tbody").append(rows);
+            })
+        }
+        initData();
     </script>
 </body>
 <html>

@@ -18,13 +18,24 @@ public class ApiBaoGia:Controller{
         this.baogiaService = baogiaService;
         this.vatTuBaoGiaChiTietService = vatTuBaoGiaChiTietService;
     }
-    public async Task<IActionResult> GetAll(bool isDeleted){
-        var listResult = await baogiaService.GetAll(isDeleted);
+    public async Task<IActionResult> GetAll(bool isDeleted, int page){
+        var listResult = await baogiaService.GetAll(isDeleted, page);
         return Ok(listResult);
     }
     [Route("detail")]
     public async Task<IActionResult> GetById(Guid id){
         var result = await baogiaService.GetById(id);
+        return Ok(result); 
+    }
+    [Route("nha-cung-ung")]
+    public async Task<IActionResult> GetListNhaCungUng(Guid baoGiaId){
+        var result = await baogiaService.GetListNhaCungUng(baoGiaId);
+        return Ok(result); 
+    }
+    [Route("hop-dong")]
+    [HttpPost]
+    public async Task<IActionResult> GetListVatTuAndNhaCungUng(BaoGiaLapHopDongParam lapHopDongParam){
+        var result = await baogiaService.GetListVatTuAndNhaCungUng(lapHopDongParam);
         return Ok(result); 
     }
     [HttpPost]

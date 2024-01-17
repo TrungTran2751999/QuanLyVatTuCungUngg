@@ -38,8 +38,10 @@ public class BaoGiaService : IBaogiaService
         this.util = util;
     }
 
-    public async Task<List<BaoGiaResponse>?> GetAll(bool isDeleted)
+    public async Task<List<BaoGiaResponse>?> GetAll(bool isDeleted, int page)
     {
+        int limit = 10;
+        int start = limit*(page-1);
         var listResult = await (from baoGia in dbContext.BaoGia 
                                join userVT in dbContext.UserVatTus on baoGia.CreatedAt equals userVT.Id
                                select new BaoGiaResponse{
@@ -50,11 +52,10 @@ public class BaoGiaService : IBaogiaService
                                   UserBaoGia = userVT.UserName,
                                   UserId = userVT.Id
                                }).OrderByDescending(x=>x.UpdatedTime)
-                               .Skip(0).Take(10)
+                               .Skip(start).Take(limit)
                                .ToListAsync();
         return listResult;
     }
-
     public async Task<List<NhaCungUngListVatTu>> GetById(Guid BaoGiaId)
     {
         var result = await dbContext.BaoGiaChiTiet
@@ -83,7 +84,52 @@ public class BaoGiaService : IBaogiaService
     
         return result;
     }
-
+    public async Task<List<NhaCungUngListVatTu>> GetListNhaCungUng(Guid baoGiaId){
+        var listResult = await dbContext.BaoGiaChiTiet
+                                        .Where(x=>x.BaoGiaId==baoGiaId)
+                                        .Select(x=>new NhaCungUngListVatTu{
+                                            BaoGiaChiTietId = x.Id,
+                                            IdNhaCungUng = x.NhaCungUngId,
+                                            TenNhaCungUng = x.TenNhaCungUng 
+                                        }).ToListAsync();
+        return listResult;
+    }
+    public async Task<HopDongResponse> GetListVatTuAndNhaCungUng(BaoGiaLapHopDongParam lapHopDongParam){
+        var nhaCungUng = await dbContext.NhaCungUng.Where(x=>x.Id==lapHopDongParam.NhaCungUngId).FirstOrDefaultAsync();
+        Guid baoGiaChiTietId = await dbContext.BaoGiaChiTiet
+                                        .Where(x=>x.BaoGiaId==lapHopDongParam.BaoGiaId && nhaCungUng.Id==lapHopDongParam.NhaCungUngId)
+                                        .Select(x=>x.Id)
+                                        .FirstOrDefaultAsync();
+        string dienThoai = "";
+        if(nhaCungUng?.DienThoai!=null && nhaCungUng?.DienThoaiDiDong!=null){
+            dienThoai = nhaCungUng?.DienThoai +" - "+nhaCungUng.DienThoaiDiDong;
+        }else if(nhaCungUng?.DienThoai!=null){
+            dienThoai = nhaCungUng?.DienThoai;
+        }else if(nhaCungUng?.DienThoaiDiDong!=null){
+            dienThoai = nhaCungUng.DienThoaiDiDong;
+        }
+        var result = new HopDongResponse{
+            SoHopDong = util.DoiNgayThangHienTai(lapHopDongParam.NgayKiKet, "KiHieuHopDong") + "/HĐMB/HueWACO-"+nhaCungUng?.TenVietTat,
+            NgayKiKet = lapHopDongParam.NgayKiKet,
+            NhaCungUng = nhaCungUng?.TenNhaCungUng,
+            GioiTinhNhaCungUng = (bool)nhaCungUng?.GioiTinhNguoiDaiDien,
+            DaiDienNhaCungUng = nhaCungUng.NguoiDaiDien,
+            ChucVuNhaCungUng = nhaCungUng.ChucVu,
+            DiaChiNhaCungUng = nhaCungUng.DiaChi,
+            DienThoaiNhaCungUng = dienThoai,
+            TaiKhoanNhaCungUng = nhaCungUng.SoTaiKhoan,
+            MaSoThueNhaCungUng = nhaCungUng.MaSoThue,
+            ListHang = await dbContext.BaoGiaChitietVatTu 
+                                .Where(x=>x.BaoGiaChiTietId==baoGiaChiTietId)
+                                .Select(x=>new Hang{
+                                    TenHang = x.TenVatTu,
+                                    DonVi = x.DonViTinh,
+                                    SoLuong = (decimal)x.SoLuongBaoGia
+                                }).ToListAsync(),
+            DiaChiNhanHang = lapHopDongParam.DiaChiNhanHang
+        };
+        return result;
+    }
     public async Task<string> SaveBaoGia(BaoGiaCreateDTO baoGiaCreate)
     {
         List<long> listVatTuId = new();

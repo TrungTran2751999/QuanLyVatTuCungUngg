@@ -186,14 +186,15 @@ public class HopDongService : IHopdongSerVice
 
                 var hopDong = dbContext.HopDongMuaHang.Where(x=>x.Id==createHopDongDTO.Id).FirstOrDefault();
                 if(hopDong==null) return "NOT OK"; 
-
                 hopDong = createHopDongDTO.ToModelUpdate(hopDong, createHopDongDTO);
                 
+                var listHopDongChiTiet = dbContext.HopDongMuaHangChiTiet.Where(x=>x.HopDongId==hopDong.Id).ToList();
+                dbContext.RemoveRange(listHopDongChiTiet);
+
+                List<HopDongMuaHangChiTiet> listHopDongMuaHang = createHopDongDTO.ToListModelHang(hopDong.Id);
+                dbContext.HopDongMuaHangChiTiet.AddRange(listHopDongMuaHang);
+                
                 dbContext.SaveChanges();
-            
-                // List<HopDongMuaHangChiTiet> listHopDongMuaHang = createHopDongDTO.ToListModelHang(hopDong.Id);
-                // dbContext.HopDongMuaHangChiTiet.AddRange(listHopDongMuaHang);
-                // dbContext.SaveChanges();
                 
                 transaction.Commit();
                 return "OK";

@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace app.Services;
 
 public interface IBaogiaService{
-    Task<List<BaoGiaResponse>?> GetAll(bool isDeleted);
+    Task<List<BaoGiaResponse>?> GetAll(bool isDeleted, int page);
     Task<List<NhaCungUngListVatTu>> GetById(Guid id);
+    Task<List<NhaCungUngListVatTu>> GetListNhaCungUng(Guid baoGiaId);
+    public Task<HopDongResponse> GetListVatTuAndNhaCungUng(BaoGiaLapHopDongParam lapHopDomgParam);
     Task<byte[]> LapBaoGia(string data);
     Task<string> SaveBaoGia(BaoGiaCreateDTO baoGiaCreate);
     Task<string> XoaBaoGiaByPhieuDeNghi(List<Guid> listId, IDbContextTransaction transaction);
