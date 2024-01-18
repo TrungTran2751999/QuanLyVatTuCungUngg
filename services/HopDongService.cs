@@ -25,6 +25,7 @@ using System.Data;
 using app.Utils;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using ZstdSharp.Unsafe;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
 
 // using System.Data.Entity;
 namespace app.Services;
@@ -204,6 +205,87 @@ public class HopDongService : IHopdongSerVice
                 return "FAIL";
             }
         }
+    }
+
+    public async Task<List<HopDongMuaHang>> FilterHopDong(HopDongFilter filter)
+    {
+        string condition(){
+            if(filter)
+        }
+        //filter theo tu khoa
+        Func<HopDongMuaHang, bool> funcCondition = ;
+        List<HopDongMuaHang> listResult = new ();
+        if(filter.Search != "" && filter.Search!=null){
+            listResult = dbContext.HopDongMuaHang.Where(delegate (HopDongMuaHang x)
+                            {
+                                if(
+                                    util.RemoveDauTiengViet(x.TenNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                                    util.RemoveDauTiengViet(x.SoHopDong.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                                    util.RemoveDauTiengViet(x.DiaChiNhanHang.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                                    util.RemoveDauTiengViet(x.DaiDienNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                                    util.RemoveDauTiengViet(x.DienThoaiNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                                    util.RemoveDauTiengViet(x.TaiKhoanNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                                    util.RemoveDauTiengViet(x.MaSoThue.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower()))
+                                ){
+                                    return true;
+                                }else{
+                                    return false;
+                                }
+                            }).AsEnumerable()
+                            .Select(x=>new HopDongMuaHang{
+                                Id = x.Id,
+                                SoHopDong = x.SoHopDong,
+                                TenNhaCungUng = x.TenNhaCungUng,
+                                GioiTinhNhaCungUng = x.GioiTinhNhaCungUng,
+                                NgayKiKet = x.NgayKiKet,
+                                DaiDienNhaCungUng = x.DaiDienNhaCungUng
+                            })
+                            .OrderByDescending(x=>x.NgayKiKet)
+                            .ToList();
+            
+            if(listResult.Count==0) return listResult;
+        }
+        // //filter theo ngay ki ket
+        // if(filter.NgayKiKetBatDau!=null && filter.NgayKiKetKetThuc!=null){
+        //     var list = dbContext.HopDongMuaHang
+        //                           .Where(x=>x.NgayKiKet >= filter.NgayKiKetBatDau && x.NgayKiKet <= filter.NgayKiKetKetThuc)
+        //                           .OrderByDescending(x=>x.NgayKiKet)
+        //                           .ToList();
+        //     if(listResult.Count)
+        //     if(list.Count==0) return list;
+        //     listResult.AddRange(list);
+        // }else if(filter.NgayKiKetBatDau!=null){
+        //     var list = dbContext.HopDongMuaHang
+        //                           .Where(x=>x.NgayKiKet >= filter.NgayKiKetBatDau)
+        //                           .Select(x=>new HopDongMuaHang{
+        //                                 Id = x.Id,
+        //                                 SoHopDong = x.SoHopDong,
+        //                                 TenNhaCungUng = x.TenNhaCungUng,
+        //                                 GioiTinhNhaCungUng = x.GioiTinhNhaCungUng,
+        //                                 NgayKiKet = x.NgayKiKet,
+        //                                 DaiDienNhaCungUng = x.DaiDienNhaCungUng
+        //                            })
+        //                           .OrderByDescending(x=>x.NgayKiKet)
+        //                           .ToList();
+        //     if(list.Count==0) return list;
+        //     listResult.AddRange(list);
+        // }else if(filter.NgayKiKetKetThuc!=null){
+        //     var list = dbContext.HopDongMuaHang
+        //                           .Where(x=>x.NgayKiKet <= filter.NgayKiKetKetThuc)
+        //                           .Select(x=>new HopDongMuaHang{
+        //                                 Id = x.Id,
+        //                                 SoHopDong = x.SoHopDong,
+        //                                 TenNhaCungUng = x.TenNhaCungUng,
+        //                                 GioiTinhNhaCungUng = x.GioiTinhNhaCungUng,
+        //                                 NgayKiKet = x.NgayKiKet,
+        //                                 DaiDienNhaCungUng = x.DaiDienNhaCungUng
+        //                            })
+        //                           .OrderByDescending(x=>x.NgayKiKet)
+        //                           .ToList();
+        //     if(list.Count==0) return list;
+        //     listResult.AddRange(list);                           
+        // }
+        return listResult.DistinctBy(x=>x.Id).OrderByDescending(x=>x.NgayKiKet).ToList();
     }
 }
 

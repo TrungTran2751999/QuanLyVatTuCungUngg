@@ -32,6 +32,16 @@
     let host = "http://localhost:5221";
 </script>
 <script>
+    function decodeJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            Array.from(window.atob(base64))
+            .map((char) => '%' + ('00' + char.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        return JSON.parse(jsonPayload);
+    }
     function convertDateTime(isoTime, time){
         @* let getDate = isoTime.split("T")[0].split("-").reverse().join("/"); *@
         let getDate = new Date(isoTime).getDate()< 10 ? `0${new Date(isoTime).getDate()}` : new Date(isoTime).getDate();

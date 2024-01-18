@@ -51,4 +51,10 @@ public class ApiHopdong:Controller{
         if(result!="OK") return BadRequest(result);
         return Ok(result);
     }
+    [HttpPost]
+    [Route("filter")]
+    public async Task<ActionResult> Filter([FromBody] HopDongFilter hopDongFilter){
+        var result = await hopDongSerVice.FilterHopDong(hopDongFilter);
+        return Ok(result);
+    }
 }

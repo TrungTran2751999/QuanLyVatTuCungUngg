@@ -871,6 +871,7 @@
             url: host + `/api/hop-dong/detail?id=${id}`
         })
         .done(res=>{
+            console.log(res)
             $("#so-hop-dong").val(res.soHopDong);
             $("#select-ngay").val(new Date(res.ngayKiKet).getDate());
             $("#select-thang").val(new Date(res.ngayKiKet).getMonth()+1);
@@ -902,13 +903,14 @@
                     </tr>`;
                 rows+=row;
             }
-           
+
             $(rows).insertBefore(tr);
             $("#btn-them-hang").click();
             let rowTotal = $("#table-mua-hang tbody tr");
             $($(".btn-xoa-hang")[rowTotal.length-3-1]).click();
             //input list dieu khoan
             autoThemDieuKhoan(res.listDieuKhoan);
+            $("#input-dia-chi-giao-hang").val(res.diaChiNhanHang);
         })
     }
     initData();

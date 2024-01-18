@@ -96,15 +96,17 @@ public class BaoGiaService : IBaogiaService
     }
     public async Task<HopDongResponse> GetListVatTuAndNhaCungUng(BaoGiaLapHopDongParam lapHopDongParam){
         var nhaCungUng = await dbContext.NhaCungUng.Where(x=>x.Id==lapHopDongParam.NhaCungUngId).FirstOrDefaultAsync();
+
         Guid baoGiaChiTietId = await dbContext.BaoGiaChiTiet
-                                        .Where(x=>x.BaoGiaId==lapHopDongParam.BaoGiaId && nhaCungUng.Id==lapHopDongParam.NhaCungUngId)
+                                        .Where(x=>x.BaoGiaId==lapHopDongParam.BaoGiaId && x.NhaCungUngId==lapHopDongParam.NhaCungUngId)
                                         .Select(x=>x.Id)
                                         .FirstOrDefaultAsync();
+        Console.WriteLine(baoGiaChiTietId);
         string dienThoai = "";
-        if(nhaCungUng?.DienThoai!=null && nhaCungUng?.DienThoaiDiDong!=null){
-            dienThoai = nhaCungUng?.DienThoai +" - "+nhaCungUng.DienThoaiDiDong;
+        if(nhaCungUng.DienThoai!=null && nhaCungUng?.DienThoaiDiDong!=null){
+            dienThoai = nhaCungUng.DienThoai +" - "+nhaCungUng.DienThoaiDiDong;
         }else if(nhaCungUng?.DienThoai!=null){
-            dienThoai = nhaCungUng?.DienThoai;
+            dienThoai = nhaCungUng.DienThoai;
         }else if(nhaCungUng?.DienThoaiDiDong!=null){
             dienThoai = nhaCungUng.DienThoaiDiDong;
         }

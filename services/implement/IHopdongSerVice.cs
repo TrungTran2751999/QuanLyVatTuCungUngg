@@ -11,4 +11,5 @@ public interface IHopdongSerVice{
     public byte[] XuatHopDong(CreateHopDongDTO data);
     public Task<string> LuuHopDong(CreateHopDongDTO data);
     public Task<string> CapNhatHopDong(CreateHopDongDTO data);
+    public Task<List<HopDongMuaHang>> FilterHopDong(HopDongFilter hopDongFilter);
 }

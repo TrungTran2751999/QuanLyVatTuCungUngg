@@ -48,18 +48,27 @@
                 </div>
             </div>
         </div> *@
+        <div style="width: 100%; display: flex;" id="container-filter">
+            <input oninput="search(this)" placeholder="Tìm kiếm theo mã phiếu, thời gian lập phiếu, tên bộ phận, diễn giải, người yêu cầu" type="search" id="search" class="form-control"/>
+            <div class="filter" style="display: flex;">
+                <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status">CHƯA DUYỆT X</button>
+                <button onclick="xoaFilter('time-phieu-from;time-phieu-to',this)" class="btn btn-info btn-filter" style="width: 200px; display: none;" id="show-time">24/11/2023 X</button>
+                <button onclick="xoaFilter('filter-select',this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-select"></button>
+            </div>
+            <button class="btn- btn-primary" style="width: 10%;" data-bs-toggle="modal" data-bs-target="#filter">BỘ LỌC</button>
+        </div>
         <a href="/hop-dong/create">
             <button class="btn btn-primary" style="width: 100%;">TẠO HỢP ĐỒNG</button>
         </a>
         <div style="overflow: scroll;">
             <table class="table" id="table-data" data-show-columns="true" style="overflow: scroll;">
                 <thead>
-                    <th style="width: 10px;">STT</th>
-                    <th style="min-width: 200px;">SỐ HỢP ĐỒNG</th>
-                    <th style="min-width: 100px;">NHÀ CUNG ỨNG</th>
-                    <th style="min-width: 100px;">NGƯỜI ĐẠI DIỆN</th>
-                    <th style="width: 200px;">NGÀY KÍ HỢP ĐỒNG</th>
-                    <th>ACTION</th>
+                    <th style="min-width: 10px;">STT</th>
+                    <th style="min-width: 250px;">SỐ HỢP ĐỒNG</th>
+                    <th style="min-width: 150px;">NHÀ CUNG ỨNG</th>
+                    <th style="min-width: 120px;">NGƯỜI ĐẠI DIỆN</th>
+                    <th style="min-width: 200px;">NGÀY KÍ HỢP ĐỒNG</th>
+                    <th style="min-width: 50px;">ACTION</th>
                 </thead>
                 <tbody>
                     
@@ -67,7 +76,7 @@
             </table>
         </div>
        
-        <button class="btn btn-primary" style="width: 20%; margin-left: 40%;" onclick="intData()">XEM THÊM</button>
+        <button id="btn-xem-them" class="btn btn-primary" style="width: 20%; margin-left: 40%;" onclick="intData()">XEM THÊM</button>
 
     </div>
     <!-- ============================================================== -->
@@ -76,9 +85,42 @@
     <!-- ============================================================== -->
     <!-- footer -->
     <!-- ============================================================== -->
+    <!-- Filter -->
+    <div class="modal fade" id="filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="static`BackdropLabel">BỘ LỌC</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table style="margin: 0 auto;" id="table-filter">
+                <tbody>
+                    <tr>
+                        <td style="font-weight: bold;">THỜI GIAN KÍ KẾT: </td>
+                        <td>
+                            <label>TỪ:</label>
+                            <input style="width: 100%;" type="date" id="time-phieu-from" class="form-control"/>
+                        </td>
+                        <td>
+                            <label>ĐẾN:</label>
+                            <input style="width: 100%;" type="date" id="time-phieu-to" class="form-control"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ĐÓNG</button>
+            <button type="button" class="btn btn-primary" onclick="filter()">XÁC NHẬN</button>
+        </div>
+        </div>
+    </div>
+    </div>
     @Html.Partial("layout/Footer")
     <script>
         let page = 0;
+        let arr = [];
         function intData(){
             page++
             $.ajax({
@@ -87,7 +129,6 @@
             .done(res=>{
                 let rows = "";
                 let intStt = 10*(page-1);
-                console.log(res)
                 for(let i=0; i<res.length; i++){
                     let row = 
                     `
@@ -104,11 +145,114 @@
                     `;
                     rows+=row;
                 }
-                $(rows).insertBefore("#table-data tbody")
+                $("#table-data tbody").append(rows)
+                arr = arr.concat(res)
                 @* $("#table-data tbody").html(rows); *@
             })
         }
         intData();
+        @* ===========================FILTER========================= *@
+        let filterVal = {time:"", status:"", search:"", select:""};
+        
+        function filter(){
+            let timeFrom = $("#time-phieu-from").val() ? $("#time-phieu-from").val().split("-").reverse().join("/") : null;
+            let timeTo = $("#time-phieu-to").val() ? $("#time-phieu-to").val().split("-").reverse().join("/") : null;;
+            let rows = $("#table-data tbody tr");
+            
+            filterVal.time = timeFrom||timeTo ? `${timeFrom}-${timeTo}`:null;
+            filterVal.search = $("#search").val()||null;
+            filterVal.select = $("#filter-select").val()||null;
+            for(let key of Object.keys(filterVal)){
+                if(key!="search" && filterVal[key]){
+                    let str = filterVal[key]+" "+"X";
+                    $(`#show-${key}`).text(str);
+                    $(`#show-${key}`).css("display","");
+                }
+            }
+            
+            let paramFilter = {
+                Search: $("#search").val()?.trim(),
+                NgayKiKetBatDau: $("#time-phieu-from").val()||null,
+                NgayKiKetKetThuc: $("#time-phieu-to").val()||null,
+            }
+        
+            //loc
+            $.ajax({
+                url: host + "/api/hop-dong/filter",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                method: "POST",
+                data: JSON.stringify(paramFilter)
+            })
+            .done(res=>{
+                let isFilter = false;
+                for(let key of Object.keys(paramFilter)){
+                    if(paramFilter[key]){
+                        isFilter = true;
+                        break;
+                    }
+                }
+                if(isFilter){
+                    $("#btn-xem-them").css("display","none")
+                }else{
+                    $("#btn-xem-them").css("display","block")
+                    res = arr
+                }
+
+                let rows = "";
+                for(let i=0; i<res.length; i++){
+                    let row = `
+                    <tr>
+                        <td>${i+1}</td>
+                        <td><a href=/hop-dong/update?id=${res[i].id}>${res[i].soHopDong}</a></td>
+                        <td>${res[i].tenNhaCungUng}</td>
+                        <td>${res[i].gioiTinhNhaCungUng==0?"Bà":"Ông"} ${res[i].daiDienNhaCungUng}</td>
+                        <td>${convertISOTime(res[i].ngayKiKet, "date")}</td>
+                        <td>
+                            <button style="background-color: red; color: white; padding: 5px 10px"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    `
+                    rows+=row;
+                }
+                $("#table-data tbody").html(rows);
+            })
+            $(`#filter .btn-close`).click();
+        }
+        function search(){
+            searchDebonce()
+        }
+        let decounce = (func, delay)=>{
+            let timerId;
+            return function () {
+                clearTimeout(timerId)
+                timerId = setTimeout(() => func.apply(this, arguments), delay)
+            };
+        }
+        let searchDebonce = decounce(filter, 900)
+        function xoaFilter(value, element){
+            filterVal[value] = "";
+            $(element).css("display","none");
+            //reset input loc
+            let valueArr = value.split(";");
+            for(let i=0; i<valueArr.length; i++){
+                $(`#${valueArr[i]}`).val("");
+            }
+            filter();
+            resetStt();
+        }
+        function resetStt(){
+            let stt = $("#table-data tbody tr .row-stt");
+            let rows = $("#table-data tbody tr");
+            let t = 1;
+            for(let i=0; i<rows.length; i++){
+                if($(rows[i]).css("display")!="none"){
+                    $(stt[i]).text(t);
+                    t++;
+                }
+            }
+        }
     </script>
 </body>
 <html>
