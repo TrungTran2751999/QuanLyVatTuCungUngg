@@ -82,9 +82,10 @@ public class HopDongService : IHopdongSerVice
                               }).Where(x=>x.Id==id).FirstOrDefault();
         return result;
     }
-    
-    public byte[] XuatHopDong(CreateHopDongDTO xuatHopDongDTO)
+    public XuatHopDongRes XuatHopDong(CreateHopDongDTO xuatHopDongDTO)
     {
+        XuatHopDongRes result = new();
+        
         string hopDongPath = "./wwwroot/document/HopDongMuaBan.docx";
         string tenFileCopy = xuatHopDongDTO.TenFile;
         string hopDongXuat = "./wwwroot/document/"+tenFileCopy;
@@ -153,12 +154,14 @@ public class HopDongService : IHopdongSerVice
                 }
                 document.MainDocumentPart.Document.Save(stream);
             }
-            byte[] result = File.ReadAllBytes(hopDongXuat);
+            byte[] contentFile = File.ReadAllBytes(hopDongXuat);
+            result.tenFile = xuatHopDongDTO.SoHopDong;
+            result.file = contentFile;
             File.Delete(hopDongXuat);
             return result;
         }
     }
-    public async Task<string> LuuHopDong(CreateHopDongDTO createHopDongDTO)
+    public async Task<HopDongMuaHang> LuuHopDong(CreateHopDongDTO createHopDongDTO)
     {
         using(var transaction = dbContext.Database.BeginTransaction()){
             try{
@@ -171,15 +174,14 @@ public class HopDongService : IHopdongSerVice
                 dbContext.SaveChanges();
                 
                 transaction.Commit();
-                return "OK";
+                return hopDong;
             }catch(Exception e){
                 Console.WriteLine(e);
                 transaction.Rollback();
-                return "FAIL";
+                return null;
             }
         }
     }
-
     public async Task<string> CapNhatHopDong(CreateHopDongDTO createHopDongDTO)
     {
         using(var transaction = dbContext.Database.BeginTransaction()){
@@ -206,32 +208,68 @@ public class HopDongService : IHopdongSerVice
             }
         }
     }
-
-    public async Task<List<HopDongMuaHang>> FilterHopDong(HopDongFilter filter)
-    {
-        string condition(){
-            if(filter)
+    public async Task<List<HopDongMuaHang>> FilterHopDong(HopDongFilter filter){
+        bool condition(HopDongMuaHang x){
+            if(filter.Search!="" && filter.Search!=null){
+                 if(
+                    util.RemoveDauTiengViet(x.TenNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                    util.RemoveDauTiengViet(x.SoHopDong.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                    util.RemoveDauTiengViet(x.DiaChiNhanHang.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                    util.RemoveDauTiengViet(x.DaiDienNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                    util.RemoveDauTiengViet(x.DienThoaiNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                    util.RemoveDauTiengViet(x.TaiKhoanNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
+                    util.RemoveDauTiengViet(x.MaSoThue.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower()))
+                ){
+                    if(filter.NgayKiKetBatDau!=null && filter.NgayKiKetKetThuc!=null){
+                        if(filter.NgayKiKetBatDau <= x.NgayKiKet && filter.NgayKiKetKetThuc >= x.NgayKiKet){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }else if(filter.NgayKiKetBatDau!=null){
+                        if(filter.NgayKiKetBatDau <= x.NgayKiKet){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }else if(filter.NgayKiKetKetThuc!=null){
+                        if(filter.NgayKiKetKetThuc >= x.NgayKiKet){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }else{
+                if(filter.NgayKiKetBatDau!=null && filter.NgayKiKetKetThuc!=null){
+                    if(filter.NgayKiKetBatDau <= x.NgayKiKet && filter.NgayKiKetKetThuc >= x.NgayKiKet){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else if(filter.NgayKiKetBatDau!=null){
+                    if(filter.NgayKiKetBatDau <= x.NgayKiKet){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else if(filter.NgayKiKetKetThuc!=null){
+                    if(filter.NgayKiKetKetThuc >= x.NgayKiKet){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+            }
+            return false;
+            
         }
         //filter theo tu khoa
-        Func<HopDongMuaHang, bool> funcCondition = ;
         List<HopDongMuaHang> listResult = new ();
-        if(filter.Search != "" && filter.Search!=null){
-            listResult = dbContext.HopDongMuaHang.Where(delegate (HopDongMuaHang x)
-                            {
-                                if(
-                                    util.RemoveDauTiengViet(x.TenNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
-                                    util.RemoveDauTiengViet(x.SoHopDong.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
-                                    util.RemoveDauTiengViet(x.DiaChiNhanHang.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
-                                    util.RemoveDauTiengViet(x.DaiDienNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
-                                    util.RemoveDauTiengViet(x.DienThoaiNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
-                                    util.RemoveDauTiengViet(x.TaiKhoanNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower())) ||
-                                    util.RemoveDauTiengViet(x.MaSoThue.ToLower()).Contains(util.RemoveDauTiengViet(filter.Search.ToLower()))
-                                ){
-                                    return true;
-                                }else{
-                                    return false;
-                                }
-                            }).AsEnumerable()
+        
+            listResult = dbContext.HopDongMuaHang.Where(condition)
+                            .AsEnumerable()
                             .Select(x=>new HopDongMuaHang{
                                 Id = x.Id,
                                 SoHopDong = x.SoHopDong,
@@ -242,49 +280,7 @@ public class HopDongService : IHopdongSerVice
                             })
                             .OrderByDescending(x=>x.NgayKiKet)
                             .ToList();
-            
             if(listResult.Count==0) return listResult;
-        }
-        // //filter theo ngay ki ket
-        // if(filter.NgayKiKetBatDau!=null && filter.NgayKiKetKetThuc!=null){
-        //     var list = dbContext.HopDongMuaHang
-        //                           .Where(x=>x.NgayKiKet >= filter.NgayKiKetBatDau && x.NgayKiKet <= filter.NgayKiKetKetThuc)
-        //                           .OrderByDescending(x=>x.NgayKiKet)
-        //                           .ToList();
-        //     if(listResult.Count)
-        //     if(list.Count==0) return list;
-        //     listResult.AddRange(list);
-        // }else if(filter.NgayKiKetBatDau!=null){
-        //     var list = dbContext.HopDongMuaHang
-        //                           .Where(x=>x.NgayKiKet >= filter.NgayKiKetBatDau)
-        //                           .Select(x=>new HopDongMuaHang{
-        //                                 Id = x.Id,
-        //                                 SoHopDong = x.SoHopDong,
-        //                                 TenNhaCungUng = x.TenNhaCungUng,
-        //                                 GioiTinhNhaCungUng = x.GioiTinhNhaCungUng,
-        //                                 NgayKiKet = x.NgayKiKet,
-        //                                 DaiDienNhaCungUng = x.DaiDienNhaCungUng
-        //                            })
-        //                           .OrderByDescending(x=>x.NgayKiKet)
-        //                           .ToList();
-        //     if(list.Count==0) return list;
-        //     listResult.AddRange(list);
-        // }else if(filter.NgayKiKetKetThuc!=null){
-        //     var list = dbContext.HopDongMuaHang
-        //                           .Where(x=>x.NgayKiKet <= filter.NgayKiKetKetThuc)
-        //                           .Select(x=>new HopDongMuaHang{
-        //                                 Id = x.Id,
-        //                                 SoHopDong = x.SoHopDong,
-        //                                 TenNhaCungUng = x.TenNhaCungUng,
-        //                                 GioiTinhNhaCungUng = x.GioiTinhNhaCungUng,
-        //                                 NgayKiKet = x.NgayKiKet,
-        //                                 DaiDienNhaCungUng = x.DaiDienNhaCungUng
-        //                            })
-        //                           .OrderByDescending(x=>x.NgayKiKet)
-        //                           .ToList();
-        //     if(list.Count==0) return list;
-        //     listResult.AddRange(list);                           
-        // }
         return listResult.DistinctBy(x=>x.Id).OrderByDescending(x=>x.NgayKiKet).ToList();
     }
 }

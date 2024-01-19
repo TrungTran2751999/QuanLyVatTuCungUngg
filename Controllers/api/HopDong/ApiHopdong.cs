@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System.IO;
+using app.Utils;
 namespace app.Controllers;
 
 [ApiController]
@@ -33,7 +34,7 @@ public class ApiHopdong:Controller{
     [HttpPost]
     public async Task<ActionResult> LapHopDong([FromBody] CreateHopDongDTO createHopDongDTO){
         var result = await hopDongSerVice.LuuHopDong(createHopDongDTO);
-        if(result!="OK") return BadRequest(result);
+        if(result==null) return BadRequest(result);
         return Ok(result);
     }
     [HttpPost]
@@ -41,8 +42,7 @@ public class ApiHopdong:Controller{
     public ActionResult XuatHopDong([FromForm] string data){
         CreateHopDongDTO createHopDongDTO = JsonSerializer.Deserialize<CreateHopDongDTO>(data);
         var result = hopDongSerVice.XuatHopDong(createHopDongDTO);
-        
-        return File(result, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", createHopDongDTO?.TenFile+".docx"); 
+        return File(result.file, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", result.tenFile+".docx"); 
     }
     [HttpPost]
     [Route("update")]

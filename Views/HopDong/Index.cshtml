@@ -49,7 +49,7 @@
             </div>
         </div> *@
         <div style="width: 100%; display: flex;" id="container-filter">
-            <input oninput="search(this)" placeholder="Tìm kiếm theo mã phiếu, thời gian lập phiếu, tên bộ phận, diễn giải, người yêu cầu" type="search" id="search" class="form-control"/>
+            <input oninput="search(this)" placeholder="Tìm kiếm theo số hợp đồng, nhà cung ứng, người đại diện, địa chỉ nhận hàng, điện thoại, tài khoản, mã số thuế" type="search" id="search" class="form-control"/>
             <div class="filter" style="display: flex;">
                 <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status">CHƯA DUYỆT X</button>
                 <button onclick="xoaFilter('time-phieu-from;time-phieu-to',this)" class="btn btn-info btn-filter" style="width: 200px; display: none;" id="show-time">24/11/2023 X</button>
@@ -68,7 +68,7 @@
                     <th style="min-width: 150px;">NHÀ CUNG ỨNG</th>
                     <th style="min-width: 120px;">NGƯỜI ĐẠI DIỆN</th>
                     <th style="min-width: 200px;">NGÀY KÍ HỢP ĐỒNG</th>
-                    <th style="min-width: 50px;">ACTION</th>
+                    <th style="min-width: 50px; display:none">ACTION</th>
                 </thead>
                 <tbody>
                     
@@ -138,7 +138,7 @@
                             <td>${res[i].tenNhaCungUng}</td>
                             <td>${res[i].gioiTinhNhaCungUng==0?"Bà":"Ông"} ${res[i].daiDienNhaCungUng}</td>
                             <td>${convertISOTime(res[i].ngayKiKet, "date")}</td>
-                            <td>
+                            <td style="display:none">
                                 <button style="background-color: red; color: white; padding: 5px 10px"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
@@ -209,7 +209,7 @@
                         <td>${res[i].tenNhaCungUng}</td>
                         <td>${res[i].gioiTinhNhaCungUng==0?"Bà":"Ông"} ${res[i].daiDienNhaCungUng}</td>
                         <td>${convertISOTime(res[i].ngayKiKet, "date")}</td>
-                        <td>
+                        <td style="display:none">
                             <button style="background-color: red; color: white; padding: 5px 10px"><i class="fa fa-trash"></i></button>
                         </td>
                     </tr>

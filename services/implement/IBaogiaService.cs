@@ -15,4 +15,5 @@ public interface IBaogiaService{
     Task<string> XoaBaoGiaByPhieuDeNghi(List<Guid> listId, IDbContextTransaction transaction);
     Task<string> XoaBaoGiaByBaoGiaId(Guid baoGiaId, IDbContextTransaction transaction);
     Task<string> CapNhatBaoGia(BaoGiaUpdateDTO baoGiaUpdate); 
+    Task<List<BaoGiaResponse>> Filter(BaoGiaFilter baoGiaFilter);
 }

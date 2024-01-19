@@ -101,7 +101,11 @@ public class BaoGiaService : IBaogiaService
                                         .Where(x=>x.BaoGiaId==lapHopDongParam.BaoGiaId && x.NhaCungUngId==lapHopDongParam.NhaCungUngId)
                                         .Select(x=>x.Id)
                                         .FirstOrDefaultAsync();
-        Console.WriteLine(baoGiaChiTietId);
+        long countHopDongPerMonth = dbContext.HopDongMuaHang
+                                             .Count(x=>
+                                                x.NgayKiKet.Month == lapHopDongParam.NgayKiKet.Month &&
+                                                x.NgayKiKet.Year == lapHopDongParam.NgayKiKet.Year) + 1;
+        string sttHopDong = "Số "+ countHopDongPerMonth +"-"+util.DoiNgayThangHienTai(lapHopDongParam.NgayKiKet, "KiHieuHopDong");
         string dienThoai = "";
         if(nhaCungUng.DienThoai!=null && nhaCungUng?.DienThoaiDiDong!=null){
             dienThoai = nhaCungUng.DienThoai +" - "+nhaCungUng.DienThoaiDiDong;
@@ -111,7 +115,7 @@ public class BaoGiaService : IBaogiaService
             dienThoai = nhaCungUng.DienThoaiDiDong;
         }
         var result = new HopDongResponse{
-            SoHopDong = util.DoiNgayThangHienTai(lapHopDongParam.NgayKiKet, "KiHieuHopDong") + "/HĐMB/HueWACO-"+nhaCungUng?.TenVietTat,
+            SoHopDong = sttHopDong + "/HĐMB/HueWACO-"+nhaCungUng?.TenVietTat,
             NgayKiKet = lapHopDongParam.NgayKiKet,
             NhaCungUng = nhaCungUng?.TenNhaCungUng,
             GioiTinhNhaCungUng = (bool)nhaCungUng?.GioiTinhNguoiDaiDien,
@@ -363,6 +367,11 @@ public class BaoGiaService : IBaogiaService
         }
         exportFile.names = names;
         return util.ZipFile(exportFile);
+    }
+    public Task<List<BaoGiaResponse>> Filter(BaoGiaFilter baoGiaFilter){
+        if(baoGiaFilter.Search!=null){
+            if(baoGiaFilter.)
+        }
     }
 }
 

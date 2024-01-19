@@ -108,7 +108,7 @@ public class CreateHopDongDTO{
         model.GioiTinhNhaCungUng = createHopDongDTO.GioiTinhNhaCungUng;
         model.DiaChiNhanHang = createHopDongDTO.DiaChiNhanHang;
         model.DieuKhoan = System.Text.Encoding.UTF8.GetBytes(strListDieuKhoan);
-        model.DaiDienNhaCungUng = createHopDongDTO.DiaChiNhaCungUng;
+        model.DaiDienNhaCungUng = createHopDongDTO.DaiDienNhaCungUng;
         model.ChucVuNhaCungUng = createHopDongDTO.ChucVuNhaCungUng;
         model.DiaChiNhaCungUng = createHopDongDTO.DiaChiNhaCungUng;
         model.DienThoaiNhaCungUng = createHopDongDTO.DienThoaiNhaCungUng;

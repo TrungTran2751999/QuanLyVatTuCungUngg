@@ -65,7 +65,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IVatTuBaoGiaChiTietService, VatTuBaoGiaChiTietService>();
 builder.Services.AddScoped<IUtil, Util>();
 builder.Services.AddScoped<IHopdongSerVice, HopDongService>();
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

@@ -11,4 +11,10 @@ public class BaoGiaResponse{
     public DateTime? UpdatedTime{get;set;}
     public string? UserBaoGia{get;set;}
     public long? UserId{get;set;}
+    public BaoGiaChiTietResponse? BaoGiaChiTietRes{get;set;}
+}
+public class BaoGiaChiTietResponse{
+    public Guid? Id{get;set;}
+    public long NhaCungUngId{get;set;}
+    public string TenNhaCungUng{get;set;}
 }

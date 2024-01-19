@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Nn/6MZWPqv6AKilwAl9alFIy7vCHhceQM3tx+tv7KtE=",
+  "Hash": "NSCMY2kwIy9MrNoWocLtvufqcMTrtLW77wJQZyRp4zA=",
   "Source": "app",
   "BasePath": "_content/app",
   "Mode": "Default",
@@ -950,6 +950,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\assets\\images\\favicon.png"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\assets\\images\\logo-huewaco.png",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "assets/images/logo-huewaco.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\assets\\images\\logo-huewaco.png"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\assets\\images\\logo-icon.png",
@@ -13481,6 +13498,23 @@
       "OriginalItemSpec": "wwwroot\\assets\\libs\\toastr\\toastr.js"
     },
     {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\css\\autocomplete.css",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "css/autocomplete.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\autocomplete.css"
+    },
+    {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\css\\bootstrap-table-sticky-header.css",
       "SourceId": "app",
       "SourceType": "Discovered",
@@ -13564,6 +13598,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\css\\tinimce.css",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "css/tinimce.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\tinimce.css"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\dist\\css\\icons\\font-awesome\\css\\fa-brands.css",
@@ -16626,6 +16677,23 @@
       "OriginalItemSpec": "wwwroot\\dist\\js\\waves.js"
     },
     {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\document\\HopDongMuaBan.docx",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "document/HopDongMuaBan.docx",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\document\\HopDongMuaBan.docx"
+    },
+    {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\document\\mau-tai-lieu-huong-dan-su-dung.pdf",
       "SourceId": "app",
       "SourceType": "Discovered",
@@ -16658,6 +16726,40 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\accounting.js",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "js/accounting.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\accounting.js"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\autocomplete.js",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "js/autocomplete.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\autocomplete.js"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\bootstrap-table-sticky-header.min.js",
@@ -16743,6 +16845,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\multiple-droplist.js"
+    },
+    {
+      "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\numeral.js",
+      "SourceId": "app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\",
+      "BasePath": "_content/app",
+      "RelativePath": "js/numeral.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\numeral.js"
     },
     {
       "Identity": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\wwwroot\\js\\pagination.js",
