@@ -69,4 +69,10 @@ public class ApiBaoGia:Controller{
         if(result!="OK") return BadRequest(result);
         return Ok(result);
     }
+    [HttpPost]
+    [Route("filter")]
+    public async Task<ActionResult> Filter([FromBody] BaoGiaFilter baoGiaFilter){
+        var result = await baogiaService.Filter(baoGiaFilter);
+        return Ok(result);
+    }
 }

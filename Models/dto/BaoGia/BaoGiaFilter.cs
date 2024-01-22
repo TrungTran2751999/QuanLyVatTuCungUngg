@@ -5,7 +5,7 @@ using app.Models;
 namespace app.DTOs;
 
 public class BaoGiaFilter{
-    public DateTime NgayTaoBaoGiaStart{get;set;}
-    public DateTime NgayTaoBaoGiaKetThuc{get;set;}
+    public DateTime? NgayTaoBaoGiaStart{get;set;}
+    public DateTime? NgayTaoBaoGiaKetThuc{get;set;}
     public string? Search{get;set;}
 }

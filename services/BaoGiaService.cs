@@ -23,6 +23,11 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 using app.Utils;
+using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
+using ZstdSharp.Unsafe;
+using Org.BouncyCastle.Crypto.Parameters;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 // using System.Data.Entity;
 namespace app.Services;
@@ -368,10 +373,96 @@ public class BaoGiaService : IBaogiaService
         exportFile.names = names;
         return util.ZipFile(exportFile);
     }
-    public Task<List<BaoGiaResponse>> Filter(BaoGiaFilter baoGiaFilter){
-        if(baoGiaFilter.Search!=null){
-            if(baoGiaFilter.)
+    public async Task<List<BaoGiaResponse>> Filter(BaoGiaFilter baoGiaFilter){
+        List<BaoGiaResponse> listResult = new();
+        bool condition(BaoGiaResponse x){
+            if(baoGiaFilter.Search!=null){
+                if(util.RemoveDauTiengViet(x.MaBaoGia.ToLower()).Contains(util.RemoveDauTiengViet(baoGiaFilter.Search.ToLower())) ||
+                   util.RemoveDauTiengViet(x.BaoGiaChiTietRes.TenNhaCungUng.ToLower()).Contains(util.RemoveDauTiengViet(baoGiaFilter.Search).ToLower())
+                ){
+                    if(baoGiaFilter.NgayTaoBaoGiaStart!=null && baoGiaFilter.NgayTaoBaoGiaKetThuc!=null){
+                        if(baoGiaFilter.NgayTaoBaoGiaStart?.Date <= x.CreatedTime?.Date && baoGiaFilter.NgayTaoBaoGiaKetThuc?.Date >= x.CreatedTime?.Date){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }else if(baoGiaFilter.NgayTaoBaoGiaStart?.Date!=null){
+                        if(baoGiaFilter.NgayTaoBaoGiaStart?.Date <= x.CreatedTime?.Date){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }else if(baoGiaFilter.NgayTaoBaoGiaKetThuc?.Date!=null){
+                        if(baoGiaFilter.NgayTaoBaoGiaKetThuc?.Date >= x.CreatedTime?.Date){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }else{
+                if(baoGiaFilter.NgayTaoBaoGiaStart?.Date!=null && baoGiaFilter.NgayTaoBaoGiaKetThuc?.Date!=null){
+                    if(baoGiaFilter.NgayTaoBaoGiaStart?.Date <= x.CreatedTime?.Date && baoGiaFilter.NgayTaoBaoGiaKetThuc?.Date >= x.CreatedTime?.Date){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else if(baoGiaFilter.NgayTaoBaoGiaStart?.Date!=null){
+                    if(baoGiaFilter.NgayTaoBaoGiaStart?.Date <= x.CreatedTime?.Date){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else if(baoGiaFilter.NgayTaoBaoGiaKetThuc?.Date!=null){
+                    if(baoGiaFilter.NgayTaoBaoGiaKetThuc?.Date >= x.CreatedTime?.Date){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return false;
         }
+        listResult = dbContext.BaoGia.Join(dbContext.BaoGiaChiTiet,
+                                           baoGia=>baoGia.Id,
+                                           baoGiachitiet=>baoGiachitiet.BaoGiaId,
+                                           (baoGia, baoGiachitiet)=>new BaoGiaResponse{
+                                            Id = baoGia.Id,
+                                            MaBaoGia = baoGia.MaBaoGia,
+                                            CreatedTime = baoGia.CreatedTime,
+                                            UpdatedTime = baoGia.UpdatedTime,
+                                            BaoGiaChiTietRes = new BaoGiaChiTietResponse{
+                                                Id = baoGiachitiet.Id,
+                                                BaoGiaId = baoGia.Id,
+                                                NhaCungUngId = baoGiachitiet.NhaCungUngId,
+                                                TenNhaCungUng = baoGiachitiet.TenNhaCungUng
+                                            },
+                                            UserBaoGia = dbContext.UserVatTus.Where(x=>x.Id==baoGia.CreatedAt).Select(x=>x.UserName).FirstOrDefault()
+                                           })
+                                           .Where(condition)
+                                           .ToList();
+        
+        List<BaoGiaResponse> listResultFinal = new();
+        listResultFinal = listResult.Select(x=>new BaoGiaResponse{
+                                Id = x.Id,
+                                MaBaoGia = x.MaBaoGia,
+                                CreatedTime = x.CreatedTime,
+                                UpdatedTime = x.UpdatedTime,
+                                UserBaoGia  = x.UserBaoGia,
+                                ListBaoGiaChiTietRes = dbContext.BaoGiaChiTiet.Where(z=>z.BaoGiaId==x.Id)
+                                                                 .Select(x=>new BaoGiaChiTietResponse{
+                                                                    Id = x.Id,
+                                                                    NhaCungUngId = x.NhaCungUngId,
+                                                                    TenNhaCungUng = x.TenNhaCungUng
+                                                                 })
+                                                                 .ToList()
+                          })
+                          .DistinctBy(x=>x.Id)
+                          .OrderByDescending(x=>x.CreatedTime)
+                          .ToList();
+        return listResultFinal;
     }
 }
 

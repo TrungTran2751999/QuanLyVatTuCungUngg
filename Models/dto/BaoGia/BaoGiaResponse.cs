@@ -12,9 +12,11 @@ public class BaoGiaResponse{
     public string? UserBaoGia{get;set;}
     public long? UserId{get;set;}
     public BaoGiaChiTietResponse? BaoGiaChiTietRes{get;set;}
+    public List<BaoGiaChiTietResponse>? ListBaoGiaChiTietRes{get;set;}
 }
 public class BaoGiaChiTietResponse{
     public Guid? Id{get;set;}
+    public Guid? BaoGiaId{get;set;}
     public long NhaCungUngId{get;set;}
-    public string TenNhaCungUng{get;set;}
+    public string? TenNhaCungUng{get;set;}
 }

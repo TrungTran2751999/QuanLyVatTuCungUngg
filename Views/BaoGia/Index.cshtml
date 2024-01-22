@@ -49,7 +49,7 @@
             </div>
         </div> *@
         <div style="width: 100%; display: flex;" id="container-filter">
-            <input oninput="search(this)" placeholder="Tìm kiếm" type="search" id="search" class="form-control"/>
+            <input oninput="search(this)" placeholder="Tìm kiếm theo mã báo giá, tên nhà cung ứng" type="search" id="search" class="form-control"/>
             <div class="filter" style="display: flex;">
                 <button onclick="xoaFilter('status', this)" class="btn btn-info btn-filter" style="width: 130px; display: none;" id="show-status">CHƯA DUYỆT X</button>
                 <button onclick="xoaFilter('time-phieu-from;time-phieu-to',this)" class="btn btn-info btn-filter" style="width: 200px; display: none;" id="show-time">24/11/2023 X</button>
@@ -65,12 +65,13 @@
                     <th style="min-width: 250px;">NGƯỜI TẠO</th>
                     <th style="min-width: 250px;">NGÀY TẠO</th>
                     <th style="min-width: 250px;">NGÀY CẬP NHẬT</th>
+                    <th id="th-row-nha-cung-ung" style="min-width: 250px; display:none">NHÀ CUNG ỨNG</th>
                 </thead>
                 <tbody>
                     
                 </tbody>
             </table>
-            <button class="btn btn-primary" style="width: 20%; margin-left: 40%;" onclick="initData()">XEM THÊM</button>
+            <button id="btn-xem-them" class="btn btn-primary" style="width: 20%; margin-left: 40%;" onclick="initData()">XEM THÊM</button>
         </div>
     </div>
     <!-- ============================================================== -->
@@ -90,7 +91,7 @@
             <table style="margin: 0 auto;" id="table-filter">
                 <tbody>
                     <tr>
-                        <td style="font-weight: bold;">THỜI GIAN KÍ KẾT: </td>
+                        <td style="font-weight: bold; width: 100px">THỜI GIAN TẠO BÁO GIÁ: </td>
                         <td>
                             <label>TỪ:</label>
                             <input style="width: 100%;" type="date" id="time-phieu-from" class="form-control"/>
@@ -144,12 +145,14 @@
 
         //======INIT DATA==========
         let page = 0;
+        let arr = [];
         function initData(){
             page++;
             $.ajax({
                 url: host + `/api/bao-gia?isDeleted=false&page=${page}`
             })
             .done(res=>{
+                arr = arr.concat(res);
                 let countRow = $("#table-data tbody tr").length;
                 let rows = ""
                 for(let i=0; i<res.length; i++){
@@ -187,14 +190,14 @@
             }
             
             let paramFilter = {
-                Search: $("#search").val()?.trim(),
-                NgayKiKetBatDau: $("#time-phieu-from").val()||null,
-                NgayKiKetKetThuc: $("#time-phieu-to").val()||null,
+                Search: $("#search").val()?.trim() || null,
+                NgayTaoBaoGiaStart: $("#time-phieu-from").val()||null,
+                NgayTaoBaoGiaKetThuc: $("#time-phieu-to").val()||null,
             }
         
             //loc
             $.ajax({
-                url: host + "/api/hop-dong/filter",
+                url: host + "/api/bao-gia/filter",
                 "headers": {
                     "Content-Type": "application/json"
                 },
@@ -209,26 +212,33 @@
                         break;
                     }
                 }
+                
                 if(isFilter){
-                    $("#btn-xem-them").css("display","none")
+                    $("#btn-xem-them").css("display","none");
+                    $("#th-row-nha-cung-ung").css("display","block");
                 }else{
-                    $("#btn-xem-them").css("display","block")
+                    $("#btn-xem-them").css("display","block");
+                    $("#th-row-nha-cung-ung").css("display","none");
                     res = arr
                 }
-
+                
                 let rows = "";
                 for(let i=0; i<res.length; i++){
                     let row = `
-                    <tr>
+                    <tr class="${res[i].id}">
                         <td>${i+1}</td>
-                        <td><a href=/hop-dong/update?id=${res[i].id}>${res[i].soHopDong}</a></td>
-                        <td>${res[i].tenNhaCungUng}</td>
-                        <td>${res[i].gioiTinhNhaCungUng==0?"Bà":"Ông"} ${res[i].daiDienNhaCungUng}</td>
-                        <td>${convertISOTime(res[i].ngayKiKet, "date")}</td>
-                        <td>
-                            <button style="background-color: red; color: white; padding: 5px 10px"><i class="fa fa-trash"></i></button>
-                        </td>
-                    </tr>
+                        <td><a href="/bao-gia/cap-nhat?id=${res[i].id}">${res[i].maBaoGia}</a></td>
+                        <td data-id="${res[i].userId}">${res[i].userBaoGia}</td>  
+                        <td>${convertDateTime(res[i].createdTime, "true")}</td>
+                        <td>${convertDateTime(res[i].updatedTime, "true")}</td>
+                        ${res[i].listBaoGiaChiTietRes ?
+                        `<td style="display:${res[i].listBaoGiaChiTietRes?.length>0 ? "block":"none"}">
+                            ${res[i].listBaoGiaChiTietRes.map(item=>{
+                                return `<p>${item.tenNhaCungUng}</p>`
+                            }).join("")}
+                        </td>`
+                        :""}
+                    </tr>;
                     `
                     rows+=row;
                 }
