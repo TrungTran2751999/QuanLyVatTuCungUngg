@@ -637,6 +637,7 @@ public class Util:IUtil{
         for(int i=0; i<listP.Length; i++){
             
             List<Paragraph> listParagraph = new();
+            //xoa the p
             listP[i] = listP[i].Replace("</p>","");
 
             string[] listStrongBegin = listP[i].Split("<strong>");

@@ -290,12 +290,50 @@
         xoaAlertTimiMCE();
     </script>
 
-    <script src="https://cdn.tiny.cloud/1/mq8lv34wzfih5vbujazc453l989b30ywas6u8l45hwfpg8jj/tinymce/6/tinymce.min.js"></script>
+    @* <script src="https://cdn.tiny.cloud/1/mq8lv34wzfih5vbujazc453l989b30ywas6u8l45hwfpg8jj/tinymce/6/tinymce.min.js"></script> *@
+    <script src="../lib/quill/quill.js">></script>
+    <link href="../lib/quill/quill.css" rel="stylesheet">
     <script>
-    initTiniMCE('textarea-noi-dung-dieu-khoan-1');
+    let arrQuill = [];
+    
     setUpNgayThang();
+    function getValQuill(idTextarea){
+        for(let i=0; i<arrQuill.length; i++){
+            if(Object.keys(arrQuill[i])[0]==idTextarea){
+                return arrQuill[i][idTextarea]
+                break
+            }
+        }
+    }
     function initTiniMCE(idTextarea){
-        tinymce.init({
+        let id = idTextarea.split("-").reverse()[0];
+        let toolbarOption = [
+            [{header:[1,2,3,4,5,6,false]}],
+            ["bold","italic","underline","strike"],
+            [{list:"ordered"},{list:"bullet"}],
+            [{script:"super"},{script:"sub"}],
+            [{indent:"+1"},{indent:"-1"}],
+            [{align:[]}],
+            [{size:["small","large","huge",false]}],
+            ["image","link","video","formula"],
+            [{color:[]},{background:[]}],
+            [{font:[]}],
+            ["code-block"]
+        ];
+        let quill = new Quill(`#${idTextarea}`, {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOption
+            }
+        });
+        arrQuill.push({[idTextarea]:quill});
+        
+        for(let i=0; i<$(".ql-container").length; i++){
+            $($(".ql-container")[i]).css("height","auto");
+        }
+        
+        let content = $(`#noi-dung-dieu-khoan-${id}`).html();
+        @* tinymce.init({
             selector: `textarea#${idTextarea}`,
             language: 'vi',
             apiKey: 'mq8lv34wzfih5vbujazc453l989b30ywas6u8l45hwfpg8jj',
@@ -306,7 +344,7 @@
             tinycomments_author: 'Author name',
             ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
             content_css: "../css/tinimce.css"
-        });
+        }); *@
     }
     @* $(document).on("click",()=>{
         for(let i=0; i<listAlert.length; i++){
@@ -463,13 +501,41 @@
         let contentSua = tinymce.get(`content-sua-noi-dung`).getContent();
         @* contentSua =contentSua.split(">")[1].split("<")[0]; *@
         $(`#${idSua}`).html(contentSua);
-        console.log(contentSua);
         $("#modal-sua-noi-dung .btn-close").click();
     }
+    let init = true;
     function clickXuatNoidung(textareaId){
         let textareaIdLength = textareaId.split("-");
         let id = textareaIdLength[textareaIdLength.length-1];
-        let content = tinymce.get(textareaId).getContent();
+        let quill = getValQuill(textareaId)
+        let content = quill.root.innerHTML;
+        let valid = true;
+        if(init==false){
+            if($(`#${textareaId}`).attr("isHasInput")=="true"){
+                let value = $("#input-dia-chi-giao-hang").val();
+                if(!value){
+                    console.log("FALSE");
+                    valid = false
+                }else{
+                    console.log("TRUE");
+                    let arrP = content.split("<p>");
+                    arrP[2] = `- Địa chỉ giao hàng: ${value.trim()}</p>`
+                    quill.root.innerHTML = arrP.join("<p>");
+                    $(`#noi-dung-dieu-khoan-${id}`).html(arrP.join("<p>"));
+                    $(`#noi-dung-dieu-khoan-${id}`).css("display","block");
+                    $(`#container-textarea-noi-dung-dieu-khoan-${id}`).css("display","none");
+                    return;
+                }
+            }
+        }
+        if(!valid){
+            Swal.fire({
+                title: "Cảnh báo !",
+                text: "Tồn tại trường nhập để trống",
+                icon: "error"
+            });
+            return;
+        }
         $(`#noi-dung-dieu-khoan-${id}`).html(content);
         $(`#noi-dung-dieu-khoan-${id}`).css("display","block");
         $(`#container-textarea-noi-dung-dieu-khoan-${id}`).css("display","none");
@@ -523,13 +589,16 @@
                     <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">II. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" /></div>
                     
                     <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
-                        <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
-                            
-                        </textarea>
+                        <div class="textarea-noi-dung-dieu-khoan" style="width: 100%;">
+                            <div isHasInput=false id="textarea-noi-dung-dieu-khoan-${id}">
+
+                            </div>
+                        </div>
+
                         <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
                     </div>
                     
-                    <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
+                    <div class="noi-dung-dieu-khoan ql-editor" id="noi-dung-dieu-khoan-${id}" style="display: block;">
                         
                     </div>
                 </div>
@@ -558,16 +627,20 @@
             `
                 <div class="container-dieu-khoan-thi-hanh" id="container-dieu-khoan-thi-hanh-${id}" style="display: flex; gap:10px; margin-bottom: 20px;">
                     <div id="dieu-khoan-thi-hanh-${id}" class="dieu-khoan-thi-hanh" ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')">
-                        <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">${doiSoThanhLaMa(id+1)}. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" value="${dieuKhoans[i].tenDieuKhoan.split(".")[1]?.trim()}"/></div>
+                         <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">${doiSoThanhLaMa(id+1)}. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" value="${dieuKhoans[i].tenDieuKhoan.split(".")[1]?.trim()}"/></div>
                         
                         <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
-                            <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
-                                ${dieuKhoans[i].noiDungDieuKhoan}
-                            </textarea>
+                            <div class="textarea-noi-dung-dieu-khoan">
+                                <div isHasInput=false id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
+                                    ${dieuKhoans[i].noiDungDieuKhoan}
+                                </div>
+                                
+                            </div>
+                            
                             <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
                         </div>
-                        
-                        <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
+
+                        <div class="noi-dung-dieu-khoan ql-editor" id="noi-dung-dieu-khoan-${id}" style="display: block;">
                             ${dieuKhoans[i].noiDungDieuKhoan}
                         </div>
                     </div>
@@ -583,12 +656,23 @@
         }
         for(let i=0; i<dieuKhoans.length; i++){
             initTiniMCE(`textarea-noi-dung-dieu-khoan-${i+1}`);
+            if(i==1){
+                let str = `<div style="display:flex" id="container-input-dia-chi-giao-hang">
+                                <label>Địa chỉ giao hàng: </label>
+                                <input class="form-control" id="input-dia-chi-giao-hang" placeholder="Nhập địa chỉ nhận hàng" value=""/>
+                            </div>`;
+                $($(`.textarea-noi-dung-dieu-khoan`)[i]).append(str);
+                $(`#textarea-noi-dung-dieu-khoan-${i+1}`).attr("isHasInput", true);
+            }
+            $(`#tieu-de-dieu-khoan-${i+1}`).dblclick();
+            $($(".btn-xuat-dieu-khoan")[i]).click();
         }
+        init = false
     }
     
     //bien doi noi dung tu tinimce sang html
     function convertTiMCEToHtml(selector){
-        let content = tinymce.get(`${selector}`).getContent();
+        let content = getValQuill(selector).root.innerHTML;
         $("#textarea-convertHTML").html(content);
         return $("#textarea-convertHTML").text();
     }
@@ -817,7 +901,6 @@
                             <span class="visually-hidden">Loading...</span>
                         </div>`
         if(message=="" && isValid){
-            console.log(obj);
             $("#update-nha-cung-ung").attr("disabled",true);
             $("#update-nha-cung-ung").html(loading);
             $.ajax({
@@ -871,7 +954,6 @@
             url: host + `/api/hop-dong/detail?id=${id}`
         })
         .done(res=>{
-            console.log(res)
             $("#so-hop-dong").val(res.soHopDong);
             $("#select-ngay").val(new Date(res.ngayKiKet).getDate());
             $("#select-thang").val(new Date(res.ngayKiKet).getMonth()+1);
@@ -914,6 +996,7 @@
         })
     }
     initData();
+
 </script>
 </body>
 <html>

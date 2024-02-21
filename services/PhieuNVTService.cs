@@ -209,7 +209,7 @@ public class PhieuNVTService : IPhieuNVTService
                                                 SoLuong = joinItem?.SoLuong??phieuChuaduyet.so_luong,
                                                 GhiChu = phieuChuaduyet.gc_td1,
                                                 MaPhieu = phieuChuaduyet.stt_rec
-                                           };
+                                           }; 
             listPhieuChiTiet.AddRange(listPhieuDeNghiNhanVatTu);
         }
         List<VatTu> listVatTu = dbContextQLVT.VatTu.ToList();

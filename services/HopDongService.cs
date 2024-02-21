@@ -149,6 +149,7 @@ public class HopDongService : IHopdongSerVice
                         }
                     }
                 }
+                //xoa danh dau {ListDieuKhoan}
                 foreach (Text textElement in document.MainDocumentPart.Document.Descendants<Text>()){
                     textElement.Text = textElement.Text.Replace("{ListDieuKhoan}", "");
                 }

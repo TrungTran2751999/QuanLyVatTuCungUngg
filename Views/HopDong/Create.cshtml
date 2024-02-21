@@ -208,14 +208,17 @@
                                     <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-1')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-1">Điều <span class="stt-dieu-khoan">II. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" id="title-quy-cach-1" value="Qui cách phẩm chất hàng hóa"/></div>
                                     
                                     <div style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-1" class="container-textarea-noi-dung-dieu-khoan">
-                                        <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-1" style="width: 100%;">
-                                            <p>- Hàng mới 100%</p>
-                                            <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
-                                        </textarea>
+                                        <div class="textarea-noi-dung-dieu-khoan" style="width: 100%;">
+                                            <div id="textarea-noi-dung-dieu-khoan-1">
+                                                <p>- Hàng mới 100%</p>
+                                                <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
+                                            </div>
+                                        </div>
+                                        
                                         <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-1')"><i class="fas fa-pencil-alt"></i></button></div>
                                     </div>
                                     
-                                    <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-1" style="display: block;">
+                                    <div class="noi-dung-dieu-khoan ql-editor" id="noi-dung-dieu-khoan-1" style="display: block;">
                                         <p>- Hàng mới 100%</p>
                                         <p>- Chất lượng hàng hóa theo tiêu chuẩn</p>
                                     </div>
@@ -273,12 +276,61 @@
     <!-- footer -->
     <!-- ============================================================== -->
     @Html.Partial("layout/Footer")
-    <script src="https://cdn.tiny.cloud/1/mq8lv34wzfih5vbujazc453l989b30ywas6u8l45hwfpg8jj/tinymce/6/tinymce.min.js"></script>
+    @* <script src="https://cdn.tiny.cloud/1/mq8lv34wzfih5vbujazc453l989b30ywas6u8l45hwfpg8jj/tinymce/6/tinymce.min.js"></script> *@
+    <script src="../lib/quill/quill.js">></script>
+    <link href="../lib/quill/quill.css" rel="stylesheet">
     <script>
+    let arrQuill = [];
+    
     initTiniMCE('textarea-noi-dung-dieu-khoan-1');
     setUpNgayThang();
+    
+    
+    function getValQuill(idTextarea){
+        for(let i=0; i<arrQuill.length; i++){
+            if(Object.keys(arrQuill[i])[0]==idTextarea){
+                return arrQuill[i][idTextarea]
+                break
+            }
+        }
+    }
+
     function initTiniMCE(idTextarea){
-        tinymce.init({
+        let id = idTextarea.split("-").reverse()[0];
+        let toolbarOption = [
+            [{header:[1,2,3,4,5,6,false]}],
+            ["bold","italic","underline","strike"],
+            [{list:"ordered"},{list:"bullet"}],
+            [{script:"super"},{script:"sub"}],
+            [{indent:"+1"},{indent:"-1"}],
+            [{align:[]}],
+            [{size:["small","large","huge",false]}],
+            ["image","link","video","formula"],
+            [{color:[]},{background:[]}],
+            [{font:[]}],
+            ["code-block"]
+        ];
+        let quill = new Quill(`#${idTextarea}`, {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOption
+            }
+        });
+        arrQuill.push({[idTextarea]:quill});
+        
+        for(let i=0; i<$(".ql-container").length; i++){
+            $($(".ql-container")[i]).css("height","auto");
+        }
+        
+        let content = $(`#noi-dung-dieu-khoan-${id}`).html();
+        
+        @* let quill = new Quill(`#${idTextarea}`, {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOption
+            }
+        }); *@
+        @* tinymce.init({
             selector: `textarea#${idTextarea}`,
             language: 'vi',
             apiKey: 'mq8lv34wzfih5vbujazc453l989b30ywas6u8l45hwfpg8jj',
@@ -289,7 +341,7 @@
             tinycomments_author: 'Author name',
             ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
             content_css: "../css/tinimce.css"
-        });
+        }); *@
     }
 
     @* $(document).on("click",()=>{
@@ -447,13 +499,41 @@
         let contentSua = tinymce.get(`content-sua-noi-dung`).getContent();
         @* contentSua =contentSua.split(">")[1].split("<")[0]; *@
         $(`#${idSua}`).html(contentSua);
-        console.log(contentSua);
         $("#modal-sua-noi-dung .btn-close").click();
     }
+    //////////////////////////////////////////////////////////////
+    let init = true;
     function clickXuatNoidung(textareaId){
         let textareaIdLength = textareaId.split("-");
         let id = textareaIdLength[textareaIdLength.length-1];
-        let content = tinymce.get(textareaId).getContent();
+        let quill = getValQuill(textareaId)
+        let content = quill.root.innerHTML;
+        let valid = true;
+        if(init==false){
+            if($(`#${textareaId}`).attr("isHasInput")=="true"){
+                let value = $("#input-dia-chi-giao-hang").val();
+                if(!value){
+                    valid = false
+                }else{
+                    let arrP = content.split("<p>");
+                    arrP[2] = `- Địa chỉ giao hàng: ${value.trim()}</p>`
+                    quill.root.innerHTML = arrP.join("<p>");
+                    $(`#noi-dung-dieu-khoan-${id}`).html(arrP.join("<p>"));
+                    $(`#noi-dung-dieu-khoan-${id}`).css("display","block");
+                    $(`#container-textarea-noi-dung-dieu-khoan-${id}`).css("display","none");
+                    return;
+                }
+            }
+        }
+        if(!valid){
+            Swal.fire({
+                title: "Cảnh báo !",
+                text: "Tồn tại trường nhập để trống",
+                icon: "error"
+            });
+            return;
+        }
+        
         $(`#noi-dung-dieu-khoan-${id}`).html(content);
         $(`#noi-dung-dieu-khoan-${id}`).css("display","block");
         $(`#container-textarea-noi-dung-dieu-khoan-${id}`).css("display","none");
@@ -507,13 +587,16 @@
                     <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">II. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" /></div>
                     
                     <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
-                        <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
-                            
-                        </textarea>
+                        <div class="textarea-noi-dung-dieu-khoan" style="width: 100%;">
+                            <div isHasInput=false id="textarea-noi-dung-dieu-khoan-${id}">
+
+                            </div>
+                        </div>
+
                         <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
                     </div>
                     
-                    <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
+                    <div class="noi-dung-dieu-khoan ql-editor" id="noi-dung-dieu-khoan-${id}" style="display: block;">
                         
                     </div>
                 </div>
@@ -562,6 +645,9 @@
     function autoThemDieuKhoan(){
         let contents = "";
         let listContainer = $(".container-dieu-khoan-thi-hanh");
+        $(`#tieu-de-dieu-khoan-1`).dblclick();
+        $($(".btn-xuat-dieu-khoan")[0]).click();
+    
         for(let i=0; i<dieuKhoans.length; i++){
             let id = i+2;
             let content = 
@@ -571,13 +657,20 @@
                         <div ondblclick="hienThiNoidung('textarea-noi-dung-dieu-khoan-${id}')" class="tieu-de-dieu-khoan" id="tieu-de-dieu-khoan-${id}">Điều <span class="stt-dieu-khoan">${doiSoThanhLaMa(id+1)}. </span><input placeholder="Điền tên điều khoản vào đây" class="input-title-quy-cach" style="font-weight: bold;" id="title-quy-cach-${id}" value="${dieuKhoans[i].title}"/></div>
                         
                         <div class="container-textarea-noi-dung-dieu-khoan" style="display: none; gap: 5px;" id="container-textarea-noi-dung-dieu-khoan-${id}">
-                            <textarea class="textarea-noi-dung-dieu-khoan" id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
-                                ${dieuKhoans[i].content}
-                            </textarea>
+                            <div class="textarea-noi-dung-dieu-khoan">
+                                <div isHasInput=false id="textarea-noi-dung-dieu-khoan-${id}" style="width: 100%;">
+                                    ${dieuKhoans[i].content}
+                                </div>
+                                <div style="display:none" id="container-input-dia-chi-giao-hang">
+                                    <label>Địa chỉ giao hàng: </label>
+                                    <input class="form-control" id="input-dia-chi-giao-hang" placeholder="Nhập địa chỉ nhận hàng" value=""/>
+                                </div>
+                            </div>
+                            
                             <div><button class="btn btn-primary btn-xuat-dieu-khoan" onclick="clickXuatNoidung('textarea-noi-dung-dieu-khoan-${id}')"><i class="fas fa-pencil-alt"></i></button></div>
                         </div>
-                        
-                        <div class="noi-dung-dieu-khoan" id="noi-dung-dieu-khoan-${id}" style="display: block;">
+
+                        <div class="noi-dung-dieu-khoan ql-editor" id="noi-dung-dieu-khoan-${id}" style="display: block;">
                             ${dieuKhoans[i].content}
                         </div>
                     </div>
@@ -590,12 +683,19 @@
             `;
             $(content).insertAfter(`#container-dieu-khoan-thi-hanh-${i+1}`);
             initTiniMCE(`textarea-noi-dung-dieu-khoan-${id}`);
+            if(i==0){
+                $(`#textarea-noi-dung-dieu-khoan-${id}`).attr("isHasInput", true);
+                $("#container-input-dia-chi-giao-hang").css("display","flex");
+            }
+            $(`#tieu-de-dieu-khoan-${id}`).dblclick();
+            $($(".btn-xuat-dieu-khoan")[i+1]).click();
         }
+        init = false;
     }
     autoThemDieuKhoan();
     //bien doi noi dung tu tinimce sang html
     function convertTiMCEToHtml(selector){
-        let content = tinymce.get(`${selector}`).getContent();
+        let content = getValQuill(selector).root.innerHTML;
         $("#textarea-convertHTML").html(content);
         return $("#textarea-convertHTML").text();
     }
@@ -890,7 +990,6 @@
     @* ==========================INIT DATA========================================= *@
     let data = @Html.Raw(Json.Serialize(ViewBag.result));
     @* lay du lieu tu bao gia de khoi tao gia tri cho hop dong *@
-    console.log(data)
     function initData(){
         if(data.nhaCungUng){
             let ngay = +data.ngayKiKet.split("T")[0].split("-")[2];
@@ -932,6 +1031,10 @@
         }
     }
     initData()
+    if($("#input-dia-chi-giao-hang").val()){
+        $(`#tieu-de-dieu-khoan-2`).dblclick();
+        $($(".btn-xuat-dieu-khoan")[1]).click();
+    }
 </script>
 </body>
 <html>

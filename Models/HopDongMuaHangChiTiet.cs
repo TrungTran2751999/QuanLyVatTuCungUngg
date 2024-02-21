@@ -17,8 +17,7 @@ public class HopDongMuaHangChiTiet{
     public decimal? DonGia{get;set;}
     [Column("HopDongId")]
     public Guid HopDongId{get;set;}
-    [ForeignKey("HopDongId")]
-    public HopDongMuaHangChiTiet HopDong{get;set;}
+    
     [Column("CreatedBy")]
     public long? CreatedBy {get;set;}
     [Column("CreatedAt")]

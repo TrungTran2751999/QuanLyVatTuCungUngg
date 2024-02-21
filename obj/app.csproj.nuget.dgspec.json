@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\app.csproj": {}
+    "E:\\QuanLyVatTuCungUngg\\app.csproj": {}
   },
   "projects": {
-    "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\app.csproj": {
+    "E:\\QuanLyVatTuCungUngg\\app.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\app.csproj",
+        "projectUniqueName": "E:\\QuanLyVatTuCungUngg\\app.csproj",
         "projectName": "app",
-        "projectPath": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\app.csproj",
+        "projectPath": "E:\\QuanLyVatTuCungUngg\\app.csproj",
         "packagesPath": "C:\\Users\\COMPUTER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\COMPUTER\\Desktop\\QuanLyVatTuCungUngg\\obj\\",
+        "outputPath": "E:\\QuanLyVatTuCungUngg\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\COMPUTER\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -71,9 +71,21 @@
               "target": "Package",
               "version": "[6.0.6, )"
             },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[6.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
             },
             "MySQL.Data": {
               "target": "Package",
@@ -94,10 +106,29 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.26, 6.0.26]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[6.0.26, 6.0.26]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.26, 6.0.26]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.26, 6.0.26]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -106,7 +137,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.320\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }
